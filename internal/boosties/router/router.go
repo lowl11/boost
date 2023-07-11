@@ -1,23 +1,21 @@
 package router
 
 import (
-	"github.com/lowl11/boost/pkg/context"
+	"github.com/lowl11/boost/pkg/boost_handler"
 )
 
 type Router struct {
-	routes map[string]routeItem
+	routes map[string]RouteContext
 }
 
 func New() *Router {
 	return &Router{
-		routes: make(map[string]routeItem),
+		routes: make(map[string]RouteContext),
 	}
 }
 
-type HandlerFunc func(ctx context.IBoostContext) error
-
-type routeItem struct {
-	path   string
-	method string
-	action HandlerFunc
+type RouteContext struct {
+	Path   string
+	Method string
+	Action boost_handler.HandlerFunc
 }

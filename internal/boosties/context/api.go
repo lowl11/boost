@@ -2,7 +2,7 @@ package context
 
 import (
 	"encoding/json"
-	"github.com/lowl11/boost/pkg/context"
+	"github.com/lowl11/boost/pkg/boost_context"
 	"github.com/valyala/fasthttp"
 )
 
@@ -10,7 +10,7 @@ func (ctx *Context) Request() *fasthttp.Request {
 	return &ctx.inner.Request
 }
 
-func (ctx *Context) Status(status int) context.IBoostContext {
+func (ctx *Context) Status(status int) boost_context.Context {
 	ctx.status = status
 	return ctx
 }

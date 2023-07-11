@@ -1,11 +1,11 @@
-package context
+package boost_context
 
 import "github.com/valyala/fasthttp"
 
-type IBoostContext interface {
+type Context interface {
 	Request() *fasthttp.Request
-	
-	Status(status int) IBoostContext
+
+	Status(status int) Context
 
 	JSON(body any) error
 	String(message string) error
