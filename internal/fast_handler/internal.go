@@ -7,16 +7,32 @@ import (
 	"net/http"
 )
 
+const (
+	methodAny = "ANY"
+)
+
 func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 	routeCtx, ok := handler.router.Map()[string(ctx.Path())]
+
+	// if route not found
 	if !ok {
 		ctx.SetStatusCode(http.StatusNotFound)
 		ctx.Response.Header.Set("Content-Type", "application/json")
-		ctx.SetBody([]byte("{\"message\": \"error message\"}"))
+		ctx.SetBody([]byte("{\"message\": \"not found\"}"))
 		// TODO: implement normal NOT FOUND object
 		return
 	}
 
+	// if incoming method & registered are not match
+	// in other case, registered may use method "ANY"
+	if routeCtx.Method != string(ctx.Method()) && routeCtx.Method != methodAny {
+		ctx.SetStatusCode(http.StatusMethodNotAllowed)
+		ctx.Response.Header.Set("Content-Type", "application/json")
+		ctx.SetBody([]byte("{\"message\": \"method not allowed\"}"))
+		return
+	}
+
+	// call action
 	err := routeCtx.Action(context.New(ctx))
 	if err != nil {
 		// TODO: implement me
