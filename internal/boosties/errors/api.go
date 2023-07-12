@@ -6,6 +6,10 @@ import (
 	"github.com/lowl11/boost/pkg/content_types"
 )
 
+const (
+	status = "ERROR"
+)
+
 func (err *Error) SetHttpCode(code int) *Error {
 	err.httpCode = code
 	return err
@@ -30,6 +34,7 @@ func (err *Error) ContentType() string {
 
 func (err *Error) Error() string {
 	output := OutputError{
+		Status:  status,
 		Message: err.message,
 		Type:    err.errorType,
 		Code:    err.httpCode,
@@ -41,6 +46,7 @@ func (err *Error) Error() string {
 
 func (err *Error) JSON() []byte {
 	output := OutputError{
+		Status:  status,
 		Message: err.message,
 		Type:    err.errorType,
 		Code:    err.httpCode,

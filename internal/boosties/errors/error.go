@@ -13,6 +13,7 @@ type Error struct {
 }
 
 type OutputError struct {
+	Status  string `json:"status"`
 	Message string `json:"message"`
 	Type    string `json:"type"`
 	Code    int    `json:"code"`

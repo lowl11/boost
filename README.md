@@ -20,3 +20,21 @@ func main() {
     app.Run(":8080")	
 }
 ```
+
+
+### TODO
+
+- "requests" service to send requests: with retries
+- configurations (yaml, .env)
+- webhooks
+- public error interface
+- middlewares
+- destroy functions
+
+### External TODO
+
+- gRPC support
+- cron support
+- RMQ support
+- request validation support
+- DB support
