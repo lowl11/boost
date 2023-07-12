@@ -9,8 +9,7 @@ const (
 type Error struct {
 	message   string
 	errorType string
-
-	httpCode int
+	httpCode  int
 }
 
 func New(message string) *Error {

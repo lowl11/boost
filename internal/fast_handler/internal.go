@@ -1,10 +1,10 @@
 package fast_handler
 
 import (
-	"fmt"
 	"github.com/lowl11/boost/internal/boosties/context"
 	"github.com/lowl11/boost/internal/helpers/fast_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
+	"github.com/lowl11/boost/pkg/boost_error"
 	"github.com/lowl11/boost/pkg/content_types"
 	"github.com/valyala/fasthttp"
 	"net/http"
@@ -44,7 +44,28 @@ func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 	// call action
 	err := routeCtx.Action(context.New(ctx).SetParams(routeCtx.Params))
 	if err != nil {
-		// TODO: implement me
-		fmt.Println("handler action error:", err)
+		boostError, errorParse := err.(boost_error.Error)
+		if !errorParse {
+			writeUnknownError(ctx)
+			return
+		}
+
+		fast_helper.Write(
+			ctx,
+			boostError.ContentType(),
+			boostError.HttpCode(),
+			type_helper.StringToBytes(boostError.Error()),
+		)
+
+		return
 	}
+}
+
+func writeUnknownError(ctx *fasthttp.RequestCtx) {
+	fast_helper.Write(
+		ctx,
+		content_types.Text,
+		http.StatusInternalServerError,
+		type_helper.StringToBytes("unknown error"),
+	)
 }
