@@ -1,4 +1,4 @@
-package boost_error
+package errors
 
 import (
 	"github.com/lowl11/boost/internal/boosties/errors"

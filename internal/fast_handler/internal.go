@@ -4,7 +4,7 @@ import (
 	"github.com/lowl11/boost/internal/boosties/context"
 	"github.com/lowl11/boost/internal/helpers/fast_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	"github.com/lowl11/boost/pkg/boost_error"
+	"github.com/lowl11/boost/pkg/errors"
 	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/valyala/fasthttp"
 )
@@ -18,14 +18,14 @@ func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 
 	// if route not found
 	if !ok {
-		writeError(ctx, boost_error.ErrorNotFound())
+		writeError(ctx, errors.ErrorNotFound())
 		return
 	}
 
 	// if incoming method & registered are not match
 	// in other case, registered may use method "ANY"
 	if routeCtx.Method != type_helper.BytesToString(ctx.Method()) && routeCtx.Method != methodAny {
-		writeError(ctx, boost_error.ErrorMethodNotAllowed())
+		writeError(ctx, errors.ErrorMethodNotAllowed())
 		return
 	}
 
@@ -45,7 +45,7 @@ func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 }
 
 func writeUnknownError(ctx *fasthttp.RequestCtx, err error) {
-	writeError(ctx, boost_error.ErrorUnknown(err))
+	writeError(ctx, errors.ErrorUnknown(err))
 }
 
 func writeError(ctx *fasthttp.RequestCtx, err interfaces.Error) {

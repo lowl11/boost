@@ -8,4 +8,5 @@ type Error interface {
 	Error() string
 	ContentType() string
 	JSON() []byte
+	Is(compare error) bool
 }

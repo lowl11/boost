@@ -56,3 +56,12 @@ func (err *Error) JSON() []byte {
 	outputInBytes, _ := json.Marshal(output)
 	return outputInBytes
 }
+
+func (err *Error) Is(compare error) bool {
+	boostError, ok := compare.(interfaces.Error)
+	if !ok {
+		return false
+	}
+
+	return equals(err, boostError)
+}
