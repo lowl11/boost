@@ -2,9 +2,8 @@ package printer
 
 import "fmt"
 
-func PrintGreeting() {
-	fmt.Println(
-		`
+const (
+	greetingText = `
 
   | |__   ___   ___  ___| |_ 
   | '_ \ / _ \ / _ \/ __| __|
@@ -12,6 +11,9 @@ func PrintGreeting() {
   |_.__/ \___/ \___/|___/\__|
   Minimalist Go framework based on FastHTTP
   https://github.com/lowl11/boost
---------------------------------------------`,
-	)
+--------------------------------------------`
+)
+
+func PrintGreeting() {
+	fmt.Println(greetingText)
 }
