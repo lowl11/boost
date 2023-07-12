@@ -36,5 +36,5 @@ func (app *App) DELETE(path string, action HandlerFunc) {
 }
 
 func (app *App) Group(base string) Group {
-	return nil
+	return newGroup(app, base)
 }
