@@ -33,7 +33,7 @@ func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 	if err != nil {
 		boostError, errorParse := err.(boost_error.Error)
 		if !errorParse {
-			writeUnknownError(ctx)
+			writeUnknownError(ctx, err)
 			return
 		}
 
@@ -43,8 +43,8 @@ func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 	}
 }
 
-func writeUnknownError(ctx *fasthttp.RequestCtx) {
-	writeError(ctx, boost_error.ErrorUnknown())
+func writeUnknownError(ctx *fasthttp.RequestCtx, err error) {
+	writeError(ctx, boost_error.ErrorUnknown(err))
 }
 
 func writeError(ctx *fasthttp.RequestCtx, err boost_error.Error) {

@@ -7,12 +7,20 @@ import (
 )
 
 const (
+	typeErrorUnknownType        = "UnknownType"
 	typeErrorUnknownContentType = "UnknownContentType"
 )
 
+func ErrorUnknownType(err error) boost_error.Error {
+	return errors.
+		New("Unknown error: " + err.Error()).
+		SetType(typeErrorUnknownType).
+		SetHttpCode(http.StatusInternalServerError)
+}
+
 func ErrorUnknownContentType(contentType string) boost_error.Error {
 	return errors.
-		New("unknown content-type: " + contentType).
+		New("Unknown Content-Type: " + contentType).
 		SetType(typeErrorUnknownContentType).
 		SetHttpCode(http.StatusBadRequest)
 }

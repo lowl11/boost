@@ -5,4 +5,5 @@ type Error interface {
 	Type() string
 	Error() string
 	ContentType() string
+	JSON() []byte
 }

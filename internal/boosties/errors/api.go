@@ -38,3 +38,14 @@ func (err *Error) Error() string {
 	outputInBytes, _ := json.Marshal(output)
 	return type_helper.BytesToString(outputInBytes)
 }
+
+func (err *Error) JSON() []byte {
+	output := OutputError{
+		Message: err.message,
+		Type:    err.errorType,
+		Code:    err.httpCode,
+	}
+
+	outputInBytes, _ := json.Marshal(output)
+	return outputInBytes
+}

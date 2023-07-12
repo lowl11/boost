@@ -6,6 +6,8 @@ import (
 	"github.com/lowl11/boost/internal/helpers/fast_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/boost_context"
+	"github.com/lowl11/boost/pkg/boost_error"
+	"github.com/lowl11/boost/pkg/boost_request"
 	"github.com/lowl11/boost/pkg/content_types"
 	"github.com/valyala/fasthttp"
 	"strings"
@@ -15,8 +17,8 @@ func (ctx *Context) Request() *fasthttp.Request {
 	return &ctx.inner.Request
 }
 
-func (ctx *Context) Param(name string) string {
-	return ctx.params[name]
+func (ctx *Context) Param(name string) boost_request.Param {
+	return NewParam(ctx.params[name])
 }
 
 func (ctx *Context) SetParams(params map[string]string) *Context {
@@ -28,8 +30,8 @@ func (ctx *Context) SetParams(params map[string]string) *Context {
 	return ctx
 }
 
-func (ctx *Context) QueryParam(name string) string {
-	return type_helper.BytesToString(ctx.inner.URI().QueryArgs().Peek(name))
+func (ctx *Context) QueryParam(name string) boost_request.Param {
+	return NewParam(type_helper.BytesToString(ctx.inner.URI().QueryArgs().Peek(name)))
 }
 
 func (ctx *Context) Header(name string) string {
@@ -110,6 +112,7 @@ func (ctx *Context) String(message string) error {
 	fast_helper.Write(ctx.inner, content_types.Text, ctx.status, type_helper.StringToBytes(message))
 
 	return nil
+
 }
 
 func (ctx *Context) Bytes(body []byte) error {
@@ -136,6 +139,26 @@ func (ctx *Context) XML(body any) error {
 	}
 
 	fast_helper.Write(ctx.inner, content_types.XML, ctx.status, bodyInBytes)
+
+	return nil
+}
+
+func (ctx *Context) Error(err error) error {
+	if err == nil {
+		return nil
+	}
+
+	boostError, ok := err.(boost_error.Error)
+	if !ok {
+		boostError = ErrorUnknownType(err)
+	}
+
+	fast_helper.Write(
+		ctx.inner,
+		boostError.ContentType(),
+		boostError.HttpCode(),
+		boostError.JSON(),
+	)
 
 	return nil
 }

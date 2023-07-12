@@ -11,9 +11,9 @@ const (
 	TypeErrorMethodNotAllowed = "Method not allowed"
 )
 
-func ErrorUnknown() Error {
+func ErrorUnknown(err error) Error {
 	return errors.
-		New("Unknown error").
+		New("Unknown error: " + err.Error()).
 		SetType(TypeErrorUnknown).
 		SetHttpCode(http.StatusInternalServerError)
 }
