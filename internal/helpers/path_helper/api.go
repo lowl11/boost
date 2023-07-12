@@ -5,33 +5,35 @@ import (
 	"unicode/utf8"
 )
 
-func Equals(searchPath, routePath string) bool {
+func Equals(searchPath, routePath string) (map[string]string, bool) {
 	searchArray := strings.Split(searchPath, "/")
 	routeArray := strings.Split(routePath, "/")
 
 	if len(searchArray) != len(routeArray) {
-		return false
+		return nil, false
 	}
 
+	variables := make(map[string]string)
 	for index, item := range searchArray {
 		if index == 0 && item == "" {
 			continue
 		}
 
 		if index >= len(routeArray) {
-			return false
+			return nil, false
 		}
 
 		if IsVariable(routeArray[index]) {
+			variables[routeArray[index][1:]] = searchArray[index]
 			continue
 		}
 
 		if item != routeArray[index] {
-			return false
+			return nil, false
 		}
 	}
 
-	return true
+	return variables, true
 }
 
 func IsVariable(value string) bool {

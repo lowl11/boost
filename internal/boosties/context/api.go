@@ -13,7 +13,16 @@ func (ctx *Context) Request() *fasthttp.Request {
 }
 
 func (ctx *Context) Param(name string) string {
-	panic("implement me")
+	return ctx.params[name]
+}
+
+func (ctx *Context) SetParams(params map[string]string) *Context {
+	if params == nil {
+		return ctx
+	}
+
+	ctx.params = params
+	return ctx
 }
 
 func (ctx *Context) QueryParam(name string) string {

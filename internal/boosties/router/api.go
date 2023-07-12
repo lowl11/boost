@@ -71,12 +71,15 @@ func (router *Router) Search(searchPath string) (RouteContext, bool) {
 		}
 
 		// if paths are equal - found
-		if path_helper.Equals(searchPath, routePathString) {
+		variables, equals := path_helper.Equals(searchPath, routePathString)
+		if equals {
 			found = true
 			searchRoute = routeCtx.(RouteContext)
+			searchRoute.Params = variables
 			return false
 		}
 
+		// keep going
 		return true
 	})
 

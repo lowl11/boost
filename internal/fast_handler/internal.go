@@ -33,7 +33,7 @@ func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 	}
 
 	// call action
-	err := routeCtx.Action(context.New(ctx))
+	err := routeCtx.Action(context.New(ctx).SetParams(routeCtx.Params))
 	if err != nil {
 		// TODO: implement me
 		fmt.Println("handler action error:", err)

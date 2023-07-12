@@ -11,11 +11,13 @@ type Context struct {
 
 	status       int
 	keyContainer sync.Map
+	params       map[string]string
 }
 
 func New(inner *fasthttp.RequestCtx) *Context {
 	return &Context{
 		inner:  inner,
 		status: http.StatusOK,
+		params: make(map[string]string),
 	}
 }

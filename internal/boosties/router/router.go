@@ -19,4 +19,5 @@ type RouteContext struct {
 	Action boost_handler.HandlerFunc
 
 	WaitParam bool
+	Params    map[string]string
 }
