@@ -22,3 +22,21 @@ type (
 	HandlerFunc = func(ctx Context) error
 	Context     = boost_context.Context
 )
+
+type routing interface {
+	ANY(path string, action HandlerFunc)
+	GET(path string, action HandlerFunc)
+	POST(path string, action HandlerFunc)
+	PUT(path string, action HandlerFunc)
+	DELETE(path string, action HandlerFunc)
+}
+
+type Router interface {
+	routing
+
+	Group(base string) Group
+}
+
+type Group interface {
+	routing
+}

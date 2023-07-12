@@ -10,27 +10,31 @@ const (
 	methodAny = "ANY"
 )
 
-func (boost *App) Run(port string) {
+func (app *App) Run(port string) {
 	printer.PrintGreeting()
-	log.Fatal(boost.handler.Run(port))
+	log.Fatal(app.handler.Run(port))
 }
 
-func (boost *App) ANY(path string, action HandlerFunc) {
-	boost.handler.RegisterRoute(methodAny, path, action)
+func (app *App) ANY(path string, action HandlerFunc) {
+	app.handler.RegisterRoute(methodAny, path, action)
 }
 
-func (boost *App) GET(path string, action HandlerFunc) {
-	boost.handler.RegisterRoute(http.MethodGet, path, action)
+func (app *App) GET(path string, action HandlerFunc) {
+	app.handler.RegisterRoute(http.MethodGet, path, action)
 }
 
-func (boost *App) POST(path string, action HandlerFunc) {
-	boost.handler.RegisterRoute(http.MethodPost, path, action)
+func (app *App) POST(path string, action HandlerFunc) {
+	app.handler.RegisterRoute(http.MethodPost, path, action)
 }
 
-func (boost *App) PUT(path string, action HandlerFunc) {
-	boost.handler.RegisterRoute(http.MethodPut, path, action)
+func (app *App) PUT(path string, action HandlerFunc) {
+	app.handler.RegisterRoute(http.MethodPut, path, action)
 }
 
-func (boost *App) DELETE(path string, action HandlerFunc) {
-	boost.handler.RegisterRoute(http.MethodDelete, path, action)
+func (app *App) DELETE(path string, action HandlerFunc) {
+	app.handler.RegisterRoute(http.MethodDelete, path, action)
+}
+
+func (app *App) Group(base string) Group {
+	return nil
 }
