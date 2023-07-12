@@ -16,21 +16,21 @@ func (boost *App) Run(port string) {
 }
 
 func (boost *App) ANY(path string, action HandlerFunc) {
-	boost.handler.AddRoute(methodAny, path, action)
+	boost.handler.RegisterRoute(methodAny, path, action)
 }
 
 func (boost *App) GET(path string, action HandlerFunc) {
-	boost.handler.AddRoute(http.MethodGet, path, action)
+	boost.handler.RegisterRoute(http.MethodGet, path, action)
 }
 
 func (boost *App) POST(path string, action HandlerFunc) {
-	boost.handler.AddRoute(http.MethodPost, path, action)
+	boost.handler.RegisterRoute(http.MethodPost, path, action)
 }
 
 func (boost *App) PUT(path string, action HandlerFunc) {
-	boost.handler.AddRoute(http.MethodPut, path, action)
+	boost.handler.RegisterRoute(http.MethodPut, path, action)
 }
 
 func (boost *App) DELETE(path string, action HandlerFunc) {
-	boost.handler.AddRoute(http.MethodDelete, path, action)
+	boost.handler.RegisterRoute(http.MethodDelete, path, action)
 }

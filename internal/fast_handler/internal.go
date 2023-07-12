@@ -12,7 +12,7 @@ const (
 )
 
 func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
-	routeCtx, ok := handler.router.Map()[string(ctx.Path())]
+	routeCtx, ok := handler.router.Search(string(ctx.Path()))
 
 	// if route not found
 	if !ok {

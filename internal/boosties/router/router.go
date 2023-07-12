@@ -2,20 +2,21 @@ package router
 
 import (
 	"github.com/lowl11/boost/pkg/boost_handler"
+	"sync"
 )
 
 type Router struct {
-	routes map[string]RouteContext
+	routes sync.Map
 }
 
 func New() *Router {
-	return &Router{
-		routes: make(map[string]RouteContext),
-	}
+	return &Router{}
 }
 
 type RouteContext struct {
 	Path   string
 	Method string
 	Action boost_handler.HandlerFunc
+
+	WaitParam bool
 }

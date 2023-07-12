@@ -5,7 +5,6 @@ import (
 	"encoding/xml"
 	"github.com/lowl11/boost/pkg/boost_context"
 	"github.com/valyala/fasthttp"
-	"net/url"
 	"strings"
 )
 
@@ -18,17 +17,7 @@ func (ctx *Context) Param(name string) string {
 }
 
 func (ctx *Context) QueryParam(name string) string {
-	uri, err := url.ParseRequestURI(string(ctx.inner.RequestURI()))
-	if err != nil {
-		return ""
-	}
-
-	queryParam, ok := uri.Query()[name]
-	if !ok || len(queryParam) == 0 {
-		return ""
-	}
-
-	return queryParam[0]
+	return string(ctx.inner.URI().QueryArgs().Peek(name))
 }
 
 func (ctx *Context) IsWebSocket() bool {
