@@ -1,6 +1,9 @@
 package context
 
-import "strconv"
+import (
+	"strconv"
+	"strings"
+)
 
 type Param struct {
 	value string
@@ -23,4 +26,7 @@ func (param Param) Int() int {
 	}
 
 	return intValue
+}
+func (param Param) Bool() bool {
+	return strings.ToLower(param.value) == "true"
 }
