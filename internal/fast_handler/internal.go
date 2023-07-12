@@ -5,9 +5,7 @@ import (
 	"github.com/lowl11/boost/internal/helpers/fast_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/boost_error"
-	"github.com/lowl11/boost/pkg/content_types"
 	"github.com/valyala/fasthttp"
-	"net/http"
 )
 
 const (
@@ -19,25 +17,14 @@ func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 
 	// if route not found
 	if !ok {
-		fast_helper.Write(
-			ctx,
-			content_types.JSON,
-			http.StatusNotFound,
-			type_helper.StringToBytes("{\"message\": \"not found\"}"),
-		)
-		// TODO: implement normal NOT FOUND object
+		writeError(ctx, boost_error.ErrorNotFound())
 		return
 	}
 
 	// if incoming method & registered are not match
 	// in other case, registered may use method "ANY"
 	if routeCtx.Method != type_helper.BytesToString(ctx.Method()) && routeCtx.Method != methodAny {
-		fast_helper.Write(
-			ctx,
-			content_types.JSON,
-			http.StatusMethodNotAllowed,
-			type_helper.StringToBytes("{\"message\": \"method not allowed\"}"),
-		)
+		writeError(ctx, boost_error.ErrorMethodNotAllowed())
 		return
 	}
 
@@ -50,22 +37,21 @@ func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 			return
 		}
 
-		fast_helper.Write(
-			ctx,
-			boostError.ContentType(),
-			boostError.HttpCode(),
-			type_helper.StringToBytes(boostError.Error()),
-		)
+		writeError(ctx, boostError)
 
 		return
 	}
 }
 
 func writeUnknownError(ctx *fasthttp.RequestCtx) {
+	writeError(ctx, boost_error.ErrorUnknown())
+}
+
+func writeError(ctx *fasthttp.RequestCtx, err boost_error.Error) {
 	fast_helper.Write(
 		ctx,
-		content_types.Text,
-		http.StatusInternalServerError,
-		type_helper.StringToBytes("unknown error"),
+		err.ContentType(),
+		err.HttpCode(),
+		type_helper.StringToBytes(err.Error()),
 	)
 }
