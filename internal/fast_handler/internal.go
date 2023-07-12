@@ -5,6 +5,7 @@ import (
 	"github.com/lowl11/boost/internal/helpers/fast_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/boost_error"
+	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/valyala/fasthttp"
 )
 
@@ -31,7 +32,7 @@ func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 	// call action
 	err := routeCtx.Action(context.New(ctx).SetParams(routeCtx.Params))
 	if err != nil {
-		boostError, errorParse := err.(boost_error.Error)
+		boostError, errorParse := err.(interfaces.Error)
 		if !errorParse {
 			writeUnknownError(ctx, err)
 			return
@@ -47,7 +48,7 @@ func writeUnknownError(ctx *fasthttp.RequestCtx, err error) {
 	writeError(ctx, boost_error.ErrorUnknown(err))
 }
 
-func writeError(ctx *fasthttp.RequestCtx, err boost_error.Error) {
+func writeError(ctx *fasthttp.RequestCtx, err interfaces.Error) {
 	fast_helper.Write(
 		ctx,
 		err.ContentType(),

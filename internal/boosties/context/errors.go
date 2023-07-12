@@ -2,7 +2,7 @@ package context
 
 import (
 	"github.com/lowl11/boost/internal/boosties/errors"
-	"github.com/lowl11/boost/pkg/boost_error"
+	"github.com/lowl11/boost/pkg/interfaces"
 	"net/http"
 )
 
@@ -11,14 +11,14 @@ const (
 	typeErrorUnknownContentType = "UnknownContentType"
 )
 
-func ErrorUnknownType(err error) boost_error.Error {
+func ErrorUnknownType(err error) interfaces.Error {
 	return errors.
 		New("Unknown error: " + err.Error()).
 		SetType(typeErrorUnknownType).
 		SetHttpCode(http.StatusInternalServerError)
 }
 
-func ErrorUnknownContentType(contentType string) boost_error.Error {
+func ErrorUnknownContentType(contentType string) interfaces.Error {
 	return errors.
 		New("Unknown Content-Type: " + contentType).
 		SetType(typeErrorUnknownContentType).

@@ -6,9 +6,9 @@ import (
 	"github.com/lowl11/boost/internal/helpers/fast_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/boost_context"
-	"github.com/lowl11/boost/pkg/boost_error"
 	"github.com/lowl11/boost/pkg/boost_request"
 	"github.com/lowl11/boost/pkg/content_types"
+	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/valyala/fasthttp"
 	"strings"
 )
@@ -148,7 +148,7 @@ func (ctx *Context) Error(err error) error {
 		return nil
 	}
 
-	boostError, ok := err.(boost_error.Error)
+	boostError, ok := err.(interfaces.Error)
 	if !ok {
 		boostError = ErrorUnknownType(err)
 	}
