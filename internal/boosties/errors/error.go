@@ -12,6 +12,12 @@ type Error struct {
 	httpCode  int
 }
 
+type OutputError struct {
+	Message string `json:"message"`
+	Type    string `json:"type"`
+	Code    int    `json:"code"`
+}
+
 func New(message string) *Error {
 	return &Error{
 		message:   message,

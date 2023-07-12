@@ -1,8 +1,9 @@
 package errors
 
 import (
+	"encoding/json"
+	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/content_types"
-	"strings"
 )
 
 func (err *Error) SetHttpCode(code int) *Error {
@@ -28,10 +29,12 @@ func (err *Error) ContentType() string {
 }
 
 func (err *Error) Error() string {
-	builder := strings.Builder{}
-	builder.Grow(len(err.message))
+	output := OutputError{
+		Message: err.message,
+		Type:    err.errorType,
+		Code:    err.httpCode,
+	}
 
-	builder.WriteString(err.message)
-
-	return builder.String()
+	outputInBytes, _ := json.Marshal(output)
+	return type_helper.BytesToString(outputInBytes)
 }
