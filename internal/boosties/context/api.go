@@ -60,6 +60,23 @@ func (ctx *Context) Cookies() map[string]string {
 	return cookies
 }
 
+func (ctx *Context) Body() []byte {
+	return ctx.inner.Request.Body()
+}
+
+func (ctx *Context) Parse(object any) error {
+	contentType := ctx.Header("Content-Type")
+
+	switch contentType {
+	case content_types.JSON:
+		return json.Unmarshal(ctx.Body(), &object)
+	case content_types.XML:
+		return xml.Unmarshal(ctx.Body(), &object)
+	}
+
+	return ErrorUnknownContentType(contentType)
+}
+
 func (ctx *Context) IsWebSocket() bool {
 	headerUpgrade := type_helper.BytesToString(ctx.inner.Request.Header.Peek("Upgrade"))
 	return strings.EqualFold(headerUpgrade, "websocket")

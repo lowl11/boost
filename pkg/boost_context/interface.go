@@ -10,6 +10,8 @@ type Context interface {
 	Headers() map[string]string
 	Cookie(name string) string
 	Cookies() map[string]string
+	Body() []byte
+	Parse(object any) error
 
 	IsWebSocket() bool
 
