@@ -5,8 +5,6 @@ import (
 	"encoding/xml"
 	"github.com/lowl11/boost/internal/helpers/fast_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	"github.com/lowl11/boost/pkg/boost_context"
-	"github.com/lowl11/boost/pkg/boost_request"
 	"github.com/lowl11/boost/pkg/content_types"
 	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/valyala/fasthttp"
@@ -17,7 +15,7 @@ func (ctx *Context) Request() *fasthttp.Request {
 	return &ctx.inner.Request
 }
 
-func (ctx *Context) Param(name string) boost_request.Param {
+func (ctx *Context) Param(name string) interfaces.Param {
 	return NewParam(ctx.params[name])
 }
 
@@ -30,7 +28,7 @@ func (ctx *Context) SetParams(params map[string]string) *Context {
 	return ctx
 }
 
-func (ctx *Context) QueryParam(name string) boost_request.Param {
+func (ctx *Context) QueryParam(name string) interfaces.Param {
 	return NewParam(type_helper.BytesToString(ctx.inner.URI().QueryArgs().Peek(name)))
 }
 
@@ -97,7 +95,7 @@ func (ctx *Context) Get(key string) any {
 	return value
 }
 
-func (ctx *Context) Status(status int) boost_context.Context {
+func (ctx *Context) Status(status int) interfaces.Context {
 	ctx.status = status
 	return ctx
 }

@@ -2,11 +2,11 @@ package router
 
 import (
 	"github.com/lowl11/boost/internal/helpers/path_helper"
-	"github.com/lowl11/boost/pkg/boost_handler"
+	"github.com/lowl11/boost/pkg/types"
 	"strings"
 )
 
-func (router *Router) Register(method, path string, action boost_handler.HandlerFunc) *Router {
+func (router *Router) Register(method, path string, action types.HandlerFunc) *Router {
 	// if path contains dynamic params
 	var waitParam bool
 	if strings.Contains(path, ":") {

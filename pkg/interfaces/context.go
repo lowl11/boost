@@ -1,14 +1,13 @@
-package boost_context
+package interfaces
 
 import (
-	"github.com/lowl11/boost/pkg/boost_request"
 	"github.com/valyala/fasthttp"
 )
 
 type Context interface {
 	Request() *fasthttp.Request
-	Param(name string) boost_request.Param
-	QueryParam(name string) boost_request.Param
+	Param(name string) Param
+	QueryParam(name string) Param
 	Header(name string) string
 	Headers() map[string]string
 	Cookie(name string) string

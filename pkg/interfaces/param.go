@@ -1,4 +1,4 @@
-package boost_request
+package interfaces
 
 type Param interface {
 	String() string

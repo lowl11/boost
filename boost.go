@@ -2,7 +2,6 @@ package boost
 
 import (
 	"github.com/lowl11/boost/internal/fast_handler"
-	"github.com/lowl11/boost/pkg/boost_context"
 	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/lowl11/lazylog/log/log_internal"
 )
@@ -21,7 +20,7 @@ func New() *App {
 
 type (
 	HandlerFunc = func(ctx Context) error
-	Context     = boost_context.Context
+	Context     = interfaces.Context
 	Error       = interfaces.Error
 )
 
