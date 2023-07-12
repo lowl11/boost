@@ -3,7 +3,10 @@ package context
 import (
 	"encoding/json"
 	"encoding/xml"
+	"github.com/lowl11/boost/internal/helpers/fast_helper"
+	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/boost_context"
+	"github.com/lowl11/boost/pkg/content_types"
 	"github.com/valyala/fasthttp"
 	"strings"
 )
@@ -26,11 +29,39 @@ func (ctx *Context) SetParams(params map[string]string) *Context {
 }
 
 func (ctx *Context) QueryParam(name string) string {
-	return string(ctx.inner.URI().QueryArgs().Peek(name))
+	return type_helper.BytesToString(ctx.inner.URI().QueryArgs().Peek(name))
+}
+
+func (ctx *Context) Header(name string) string {
+	return type_helper.BytesToString(ctx.inner.Request.Header.Peek(name))
+}
+
+func (ctx *Context) Headers() map[string]string {
+	headers := make(map[string]string)
+
+	ctx.inner.Request.Header.VisitAll(func(key, value []byte) {
+		headers[type_helper.BytesToString(key)] = type_helper.BytesToString(value)
+	})
+
+	return headers
+}
+
+func (ctx *Context) Cookie(name string) string {
+	return type_helper.BytesToString(ctx.inner.Request.Header.Cookie(name))
+}
+
+func (ctx *Context) Cookies() map[string]string {
+	cookies := make(map[string]string)
+
+	ctx.inner.Request.Header.VisitAllCookie(func(key, value []byte) {
+		cookies[type_helper.BytesToString(key)] = type_helper.BytesToString(value)
+	})
+
+	return cookies
 }
 
 func (ctx *Context) IsWebSocket() bool {
-	headerUpgrade := string(ctx.inner.Request.Header.Peek("Upgrade"))
+	headerUpgrade := type_helper.BytesToString(ctx.inner.Request.Header.Peek("Upgrade"))
 	return strings.EqualFold(headerUpgrade, "websocket")
 }
 
@@ -53,9 +84,19 @@ func (ctx *Context) Status(status int) boost_context.Context {
 }
 
 func (ctx *Context) Empty() error {
-	ctx.inner.SetStatusCode(ctx.status)
-	ctx.inner.Response.Header.Set("Content-Type", "application/json")
-	ctx.inner.SetBody(nil)
+	fast_helper.Write(ctx.inner, content_types.Text, ctx.status, nil)
+
+	return nil
+}
+
+func (ctx *Context) String(message string) error {
+	fast_helper.Write(ctx.inner, content_types.Text, ctx.status, type_helper.StringToBytes(message))
+
+	return nil
+}
+
+func (ctx *Context) Bytes(body []byte) error {
+	fast_helper.Write(ctx.inner, content_types.Bytes, ctx.status, body)
 
 	return nil
 }
@@ -66,9 +107,7 @@ func (ctx *Context) JSON(body any) error {
 		return err
 	}
 
-	ctx.inner.SetStatusCode(ctx.status)
-	ctx.inner.Response.Header.Set("Content-Type", "application/json")
-	ctx.inner.SetBody(bodyInBytes)
+	fast_helper.Write(ctx.inner, content_types.JSON, ctx.status, bodyInBytes)
 
 	return nil
 }
@@ -79,17 +118,7 @@ func (ctx *Context) XML(body any) error {
 		return err
 	}
 
-	ctx.inner.SetStatusCode(ctx.status)
-	ctx.inner.Response.Header.Set("Content-Type", "application/xml")
-	ctx.inner.SetBody(bodyInBytes)
-
-	return nil
-}
-
-func (ctx *Context) String(message string) error {
-	ctx.inner.SetStatusCode(ctx.status)
-	ctx.inner.Response.Header.Set("Content-Type", "text/plain")
-	ctx.inner.SetBody([]byte(message))
+	fast_helper.Write(ctx.inner, content_types.XML, ctx.status, bodyInBytes)
 
 	return nil
 }

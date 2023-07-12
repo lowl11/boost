@@ -3,6 +3,9 @@ package fast_handler
 import (
 	"fmt"
 	"github.com/lowl11/boost/internal/boosties/context"
+	"github.com/lowl11/boost/internal/helpers/fast_helper"
+	"github.com/lowl11/boost/internal/helpers/type_helper"
+	"github.com/lowl11/boost/pkg/content_types"
 	"github.com/valyala/fasthttp"
 	"net/http"
 )
@@ -12,23 +15,29 @@ const (
 )
 
 func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
-	routeCtx, ok := handler.router.Search(string(ctx.Path()))
+	routeCtx, ok := handler.router.Search(type_helper.BytesToString(ctx.Path()))
 
 	// if route not found
 	if !ok {
-		ctx.SetStatusCode(http.StatusNotFound)
-		ctx.Response.Header.Set("Content-Type", "application/json")
-		ctx.SetBody([]byte("{\"message\": \"not found\"}"))
+		fast_helper.Write(
+			ctx,
+			content_types.JSON,
+			http.StatusNotFound,
+			type_helper.StringToBytes("{\"message\": \"not found\"}"),
+		)
 		// TODO: implement normal NOT FOUND object
 		return
 	}
 
 	// if incoming method & registered are not match
 	// in other case, registered may use method "ANY"
-	if routeCtx.Method != string(ctx.Method()) && routeCtx.Method != methodAny {
-		ctx.SetStatusCode(http.StatusMethodNotAllowed)
-		ctx.Response.Header.Set("Content-Type", "application/json")
-		ctx.SetBody([]byte("{\"message\": \"method not allowed\"}"))
+	if routeCtx.Method != type_helper.BytesToString(ctx.Method()) && routeCtx.Method != methodAny {
+		fast_helper.Write(
+			ctx,
+			content_types.JSON,
+			http.StatusMethodNotAllowed,
+			type_helper.StringToBytes("{\"message\": \"method not allowed\"}"),
+		)
 		return
 	}
 
