@@ -27,7 +27,6 @@ func main() {
 - "requests" service to send requests: with retries
 - configurations (yaml, .env)
 - webhooks
-- public error interface
 - middlewares
 - destroy functions
 

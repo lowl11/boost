@@ -3,6 +3,7 @@ package boost
 import (
 	"github.com/lowl11/boost/internal/fast_handler"
 	"github.com/lowl11/boost/pkg/interfaces"
+	"github.com/lowl11/lazyconfig/config/config_internal"
 	"github.com/lowl11/lazylog/log/log_internal"
 )
 
@@ -12,6 +13,7 @@ type App struct {
 
 func New() *App {
 	log_internal.Init(log_internal.LogConfig{})
+	config_internal.Init(config_internal.Config{})
 
 	return &App{
 		handler: fast_handler.New(),
