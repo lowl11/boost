@@ -25,7 +25,6 @@ func main() {
 ### TODO
 
 - "requests" service to send requests: with retries
-- configurations (yaml, .env)
 - webhooks
 - middlewares
 - destroy functions
