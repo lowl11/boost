@@ -160,3 +160,7 @@ func (ctx *Context) Error(err error) error {
 
 	return nil
 }
+
+func (ctx *Context) Next() error {
+	return nil
+}

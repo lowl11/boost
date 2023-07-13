@@ -2,44 +2,47 @@ package router
 
 import (
 	"github.com/lowl11/boost/internal/helpers/path_helper"
+	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/lowl11/boost/pkg/types"
 	"strings"
 )
 
-func (router *Router) Register(method, path string, action types.HandlerFunc) *Router {
+func (router *Router) Register(method, path string, action types.HandlerFunc) interfaces.Route {
 	// if path contains dynamic params
 	var waitParam bool
 	if strings.Contains(path, ":") {
 		waitParam = true
 	}
 
-	// skip add route if already exist
-	if _, exist := router.routes.Load(path); exist {
-		return router
-	}
-
-	// register new route
-	router.routes.Store(path, RouteContext{
+	route := &RouteContext{
 		Path:   path,
 		Method: method,
 		Action: action,
 
 		WaitParam: waitParam,
-	})
-
-	return router
-}
-
-func (router *Router) Get(path string) (RouteContext, bool) {
-	route, ok := router.routes.Load(path)
-	if !ok {
-		return RouteContext{}, false
 	}
 
-	return route.(RouteContext), true
+	// skip add route if already exist
+	if _, exist := router.routes.Load(path); exist {
+		return route
+	}
+
+	// register new route
+	router.routes.Store(path, route)
+
+	return route
 }
 
-func (router *Router) Search(searchPath string) (RouteContext, bool) {
+func (router *Router) Get(path string) (*RouteContext, bool) {
+	route, ok := router.routes.Load(path)
+	if !ok {
+		return nil, false
+	}
+
+	return route.(*RouteContext), true
+}
+
+func (router *Router) Search(searchPath string) (*RouteContext, bool) {
 	// try to find by static path
 	route, ok := router.Get(searchPath)
 
@@ -49,7 +52,7 @@ func (router *Router) Search(searchPath string) (RouteContext, bool) {
 	}
 
 	// not found by static path, may have variable
-	var searchRoute RouteContext
+	var searchRoute *RouteContext
 	var found bool
 
 	// if searchPath ends with '/'
@@ -74,7 +77,7 @@ func (router *Router) Search(searchPath string) (RouteContext, bool) {
 		variables, equals := path_helper.Equals(searchPath, routePathString)
 		if equals {
 			found = true
-			searchRoute = routeCtx.(RouteContext)
+			searchRoute = routeCtx.(*RouteContext)
 			searchRoute.Params = variables
 			return false
 		}
@@ -89,5 +92,5 @@ func (router *Router) Search(searchPath string) (RouteContext, bool) {
 	}
 
 	// not found case
-	return RouteContext{}, false
+	return nil, false
 }

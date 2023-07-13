@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/lowl11/boost/pkg/types"
 	"sync"
 )
@@ -20,4 +21,12 @@ type RouteContext struct {
 
 	WaitParam bool
 	Params    map[string]string
+}
+
+func (route *RouteContext) Use(middlewareFunc ...func(ctx interfaces.Context) error) {
+	if len(middlewareFunc) == 0 {
+		return
+	}
+
+	//
 }

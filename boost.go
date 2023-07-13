@@ -21,17 +21,19 @@ func New() *App {
 }
 
 type (
-	HandlerFunc = func(ctx Context) error
-	Context     = interfaces.Context
-	Error       = interfaces.Error
+	HandlerFunc    = func(ctx Context) error
+	MiddlewareFunc = func(ctx Context) error
+	Context        = interfaces.Context
+	Error          = interfaces.Error
+	Route          = interfaces.Route
 )
 
 type routing interface {
-	ANY(path string, action HandlerFunc)
-	GET(path string, action HandlerFunc)
-	POST(path string, action HandlerFunc)
-	PUT(path string, action HandlerFunc)
-	DELETE(path string, action HandlerFunc)
+	ANY(path string, action HandlerFunc) Route
+	GET(path string, action HandlerFunc) Route
+	POST(path string, action HandlerFunc) Route
+	PUT(path string, action HandlerFunc) Route
+	DELETE(path string, action HandlerFunc) Route
 }
 
 type Router interface {

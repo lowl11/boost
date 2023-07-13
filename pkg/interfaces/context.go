@@ -28,4 +28,6 @@ type Context interface {
 	JSON(body any) error
 	XML(body any) error
 	Error(err error) error
+
+	Next() error
 }
