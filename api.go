@@ -16,6 +16,10 @@ func (app *App) Run(port string) {
 	log.Fatal(app.handler.Run(port))
 }
 
+func (app *App) Destroy(destroyFunc func()) {
+	app.destroyer.AddFunction(destroyFunc)
+}
+
 func (app *App) ANY(path string, action HandlerFunc) Route {
 	return app.handler.RegisterRoute(methodAny, path, action)
 }

@@ -27,7 +27,6 @@ func main() {
 - "requests" service to send requests: with retries
 - webhooks
 - middlewares
-- destroy functions
 
 ### External TODO
 

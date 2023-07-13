@@ -2,46 +2,44 @@ package boost
 
 import (
 	"github.com/lowl11/boost/internal/fast_handler"
-	"github.com/lowl11/boost/pkg/interfaces"
+	"github.com/lowl11/boost/pkg/destroyer"
 	"github.com/lowl11/lazyconfig/config/config_internal"
 	"github.com/lowl11/lazylog/log/log_internal"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 type App struct {
-	handler *fast_handler.Handler
+	handler   *fast_handler.Handler
+	destroyer *destroyer.Destroyer
 }
 
 func New() *App {
 	log_internal.Init(log_internal.LogConfig{})
 	config_internal.Init(config_internal.Config{})
 
-	return &App{
-		handler: fast_handler.New(),
+	app := &App{
+		handler:   fast_handler.New(),
+		destroyer: destroyer.New(),
 	}
+	go app.shutdown()
+
+	return app
 }
 
-type (
-	HandlerFunc    = func(ctx Context) error
-	MiddlewareFunc = func(ctx Context) error
-	Context        = interfaces.Context
-	Error          = interfaces.Error
-	Route          = interfaces.Route
-)
+func (app *App) shutdown() {
+	// create a channel to receive signals
+	signalChannel := make(chan os.Signal, 1)
 
-type routing interface {
-	ANY(path string, action HandlerFunc) Route
-	GET(path string, action HandlerFunc) Route
-	POST(path string, action HandlerFunc) Route
-	PUT(path string, action HandlerFunc) Route
-	DELETE(path string, action HandlerFunc) Route
-}
+	// notify the signal channel when a SIGINT or SIGTERM signal is received
+	signal.Notify(signalChannel, os.Interrupt, syscall.SIGTERM)
 
-type Router interface {
-	routing
+	<-signalChannel
 
-	Group(base string) Group
-}
+	// run destroy actions
+	app.destroyer.Destroy()
 
-type Group interface {
-	routing
+	// call shutdown
+	os.Exit(0)
 }
