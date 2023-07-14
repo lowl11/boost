@@ -1,12 +1,16 @@
 package boost
 
+import uuid "github.com/satori/go.uuid"
+
 type group struct {
-	router Router
+	id     uuid.UUID
+	router groupRouter
 	base   string
 }
 
-func newGroup(router Router, base string) *group {
+func newGroup(router groupRouter, base string) *group {
 	return &group{
+		id:     uuid.NewV4(),
 		router: router,
 		base:   base,
 	}
@@ -14,29 +18,29 @@ func newGroup(router Router, base string) *group {
 
 func (group *group) ANY(path string, action HandlerFunc) Route {
 	endpoint := group.base + path
-	return group.router.ANY(endpoint, action)
+	return group.router.groupANY(endpoint, action, group.id.String())
 }
 
 func (group *group) GET(path string, action HandlerFunc) Route {
 	endpoint := group.base + path
-	return group.router.GET(endpoint, action)
+	return group.router.groupGET(endpoint, action, group.id.String())
 }
 
 func (group *group) POST(path string, action HandlerFunc) Route {
 	endpoint := group.base + path
-	return group.router.POST(endpoint, action)
+	return group.router.groupPOST(endpoint, action, group.id.String())
 }
 
 func (group *group) PUT(path string, action HandlerFunc) Route {
 	endpoint := group.base + path
-	return group.router.PUT(endpoint, action)
+	return group.router.groupPUT(endpoint, action, group.id.String())
 }
 
 func (group *group) DELETE(path string, action HandlerFunc) Route {
 	endpoint := group.base + path
-	return group.router.DELETE(endpoint, action)
+	return group.router.groupDELETE(endpoint, action, group.id.String())
 }
 
-func (group *group) Use(middlewareFunc MiddlewareFunc) {
-	//
+func (group *group) Use(middlewareFunc ...MiddlewareFunc) {
+	group.router.useGroup(group.id, middlewareFunc...)
 }

@@ -21,6 +21,8 @@ type RouteContext struct {
 
 	WaitParam bool
 	Params    map[string]string
+
+	GroupID string
 }
 
 func (route *RouteContext) Use(middlewareFunc ...func(ctx interfaces.Context) error) {

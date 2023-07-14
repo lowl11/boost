@@ -8,11 +8,13 @@ import (
 type Handler struct {
 	router            *router.Router
 	globalMiddlewares []types.HandlerFunc
+	groupMiddlewares  map[string][]types.HandlerFunc
 }
 
 func New() *Handler {
 	return &Handler{
 		router:            router.New(),
 		globalMiddlewares: make([]types.HandlerFunc, 0),
+		groupMiddlewares:  make(map[string][]types.HandlerFunc),
 	}
 }

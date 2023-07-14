@@ -14,20 +14,27 @@ type Context struct {
 	keyContainer sync.Map
 	params       map[string]string
 
-	action             types.HandlerFunc
+	action       types.HandlerFunc
+	actionCalled bool
+
 	nextHandler        types.HandlerFunc
 	handlersChain      []types.HandlerFunc
 	handlersChainIndex int
 }
 
 func New(inner *fasthttp.RequestCtx, action types.HandlerFunc, handlersChain []types.HandlerFunc) *Context {
+	var nextHandler types.HandlerFunc
+	if len(handlersChain) > 0 {
+		nextHandler = handlersChain[0]
+	}
+
 	return &Context{
 		inner:  inner,
 		status: http.StatusOK,
 		params: make(map[string]string),
 
 		action:        action,
-		nextHandler:   handlersChain[0],
+		nextHandler:   nextHandler,
 		handlersChain: handlersChain,
 	}
 }

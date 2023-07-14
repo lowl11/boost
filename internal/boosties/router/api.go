@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func (router *Router) Register(method, path string, action types.HandlerFunc) interfaces.Route {
+func (router *Router) Register(method, path string, action types.HandlerFunc, groupID string) interfaces.Route {
 	// if path contains dynamic params
 	var waitParam bool
 	if strings.Contains(path, ":") {
@@ -20,6 +20,7 @@ func (router *Router) Register(method, path string, action types.HandlerFunc) in
 		Action: action,
 
 		WaitParam: waitParam,
+		GroupID:   groupID,
 	}
 
 	// skip add route if already exist

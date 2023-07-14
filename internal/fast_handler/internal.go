@@ -6,6 +6,7 @@ import (
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/errors"
 	"github.com/lowl11/boost/pkg/interfaces"
+	"github.com/lowl11/boost/pkg/types"
 	"github.com/valyala/fasthttp"
 )
 
@@ -29,9 +30,22 @@ func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
+	// get group middlewares
+	groupMiddlewares, ok := handler.groupMiddlewares[routeCtx.GroupID]
+	if !ok {
+		groupMiddlewares = []types.HandlerFunc{}
+	}
+
+	// create handlers chain (with middlewares)
+	// order which given handlers is IMPORTANT!!!
+	handlersChain := append(
+		handler.globalMiddlewares,
+		groupMiddlewares...,
+	)
+
 	// create new boost context
 	boostCtx := context.
-		New(ctx, routeCtx.Action, handler.globalMiddlewares).
+		New(ctx, routeCtx.Action, handlersChain).
 		SetParams(routeCtx.Params)
 
 	// call action
