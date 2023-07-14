@@ -22,13 +22,19 @@ type RouteContext struct {
 	WaitParam bool
 	Params    map[string]string
 
-	GroupID string
+	GroupID     string
+	Middlewares []types.HandlerFunc
 }
 
-func (route *RouteContext) Use(middlewareFunc ...func(ctx interfaces.Context) error) {
-	if len(middlewareFunc) == 0 {
+func (route *RouteContext) Use(middlewares ...func(ctx interfaces.Context) error) {
+	if len(middlewares) == 0 {
 		return
 	}
 
-	//
+	middlewareHandlers := make([]types.HandlerFunc, 0, len(middlewares))
+	for _, middleware := range middlewares {
+		middlewareHandlers = append(middlewareHandlers, middleware)
+	}
+
+	route.Middlewares = middlewareHandlers
 }

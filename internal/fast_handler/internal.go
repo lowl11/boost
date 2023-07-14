@@ -32,16 +32,19 @@ func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 
 	// get group middlewares
 	groupMiddlewares, ok := handler.groupMiddlewares[routeCtx.GroupID]
-	if !ok {
+	if !ok || routeCtx.GroupID == "" {
 		groupMiddlewares = []types.HandlerFunc{}
+	}
+
+	endpointMiddlewares := routeCtx.Middlewares
+	if endpointMiddlewares == nil {
+		endpointMiddlewares = []types.HandlerFunc{}
 	}
 
 	// create handlers chain (with middlewares)
 	// order which given handlers is IMPORTANT!!!
-	handlersChain := append(
-		handler.globalMiddlewares,
-		groupMiddlewares...,
-	)
+	handlersChain := append(handler.globalMiddlewares, groupMiddlewares...)
+	handlersChain = append(handlersChain, endpointMiddlewares...)
 
 	// create new boost context
 	boostCtx := context.
