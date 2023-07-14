@@ -55,5 +55,5 @@ func (app *App) Use(middlewareFunc ...MiddlewareFunc) {
 		middlewares = append(middlewares, mFunc)
 	}
 
-	app.handler.RegisterMiddleware(middlewares...)
+	app.handler.RegisterGlobalMiddlewares(middlewares...)
 }

@@ -15,6 +15,10 @@ func (handler *Handler) RegisterRoute(method, path string, action types.HandlerF
 	return handler.router.Register(method, path, action)
 }
 
-func (handler *Handler) RegisterMiddleware(middlewareFunc ...types.MiddlewareFunc) {
-	//
+func (handler *Handler) RegisterGlobalMiddlewares(middlewareFunc ...types.MiddlewareFunc) {
+	middlewareHandlers := make([]types.HandlerFunc, 0, len(middlewareFunc))
+	for _, middleware := range middlewareFunc {
+		middlewareHandlers = append(middlewareHandlers, types.HandlerFunc(middleware))
+	}
+	handler.globalMiddlewares = append(handler.globalMiddlewares, middlewareHandlers...)
 }

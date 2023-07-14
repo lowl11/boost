@@ -29,8 +29,13 @@ func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
+	// create new boost context
+	boostCtx := context.
+		New(ctx, routeCtx.Action, handler.globalMiddlewares).
+		SetParams(routeCtx.Params)
+
 	// call action
-	err := routeCtx.Action(context.New(ctx).SetParams(routeCtx.Params))
+	err := boostCtx.Next()
 	if err != nil {
 		boostError, errorParse := err.(interfaces.Error)
 		if !errorParse {

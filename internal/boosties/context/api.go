@@ -162,5 +162,18 @@ func (ctx *Context) Error(err error) error {
 }
 
 func (ctx *Context) Next() error {
-	return nil
+	nextHandler := ctx.nextHandler
+	if nextHandler == nil {
+		return nil
+	}
+
+	ctx.handlersChainIndex++
+	
+	if ctx.handlersChainIndex >= len(ctx.handlersChain) {
+		ctx.nextHandler = ctx.action
+	} else {
+		ctx.nextHandler = ctx.handlersChain[ctx.handlersChainIndex]
+	}
+
+	return nextHandler(ctx)
 }
