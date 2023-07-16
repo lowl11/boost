@@ -21,13 +21,6 @@ func main() {
 }
 ```
 
-
-### TODO
-
-- "requests" service to send requests: with retries
-- webhooks
-- middlewares
-
 ### External TODO
 
 - gRPC support
