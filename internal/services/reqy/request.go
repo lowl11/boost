@@ -22,6 +22,9 @@ type Request struct {
 	timeout      time.Duration
 	isTimeoutSet bool
 
+	retryCount    int
+	retryWaitTime time.Duration
+
 	response *Response
 	result   any
 }

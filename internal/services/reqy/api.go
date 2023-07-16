@@ -82,6 +82,16 @@ func (req *Request) Timeout() time.Duration {
 	return req.timeout
 }
 
+func (req *Request) SetRetryCount(count int) *Request {
+	req.retryCount = count
+	return req
+}
+
+func (req *Request) SetRetryWaitTime(waitTime time.Duration) *Request {
+	req.retryWaitTime = waitTime
+	return req
+}
+
 func (req *Request) SetResult(result any) *Request {
 	req.result = result
 	return req

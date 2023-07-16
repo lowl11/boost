@@ -5,12 +5,33 @@ import (
 	"context"
 	"encoding/json"
 	"encoding/xml"
+	"github.com/lowl11/boost/pkg/errors"
 	"github.com/lowl11/lazylog/log"
 	"io"
 	"net/http"
+	"time"
 )
 
 func (req *Request) do(method, url string, ctx context.Context) error {
+	if req.retryCount > 0 {
+		if req.retryWaitTime == 0 {
+			req.retryWaitTime = time.Millisecond * 100
+		}
+
+		for i := 0; i < req.retryCount; i++ {
+			err := req.execute(method, url, ctx)
+			if err == nil {
+				return nil
+			}
+
+			time.Sleep(req.retryWaitTime)
+		}
+	}
+
+	return errors.New("retries count is done")
+}
+
+func (req *Request) execute(method, url string, ctx context.Context) error {
 	var request *http.Request
 	var err error
 
@@ -61,7 +82,7 @@ func (req *Request) do(method, url string, ctx context.Context) error {
 	req.response.setBody(responseBody)
 
 	if err = req.unmarshal(responseBody, &req.result); err != nil {
-		return err
+		log.Error(err, "Unmarshal result error")
 	}
 
 	return nil

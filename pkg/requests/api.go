@@ -13,7 +13,9 @@ func (service *Service) R() *reqy.Request {
 	request := reqy.
 		NewRequest(service.baseURL, service.client).
 		SetHeaders(service.headers).
-		SetCookies(service.cookies)
+		SetCookies(service.cookies).
+		SetRetryCount(service.retryCount).
+		SetRetryWaitTime(service.retryWaitTime)
 
 	if service.timeout != nil {
 		request.SetTimeout(*service.timeout)
@@ -89,5 +91,15 @@ func (service *Service) SetProxy(proxyURL string) *Service {
 
 	transport.Proxy = http.ProxyURL(parsedURL)
 
+	return service
+}
+
+func (service *Service) SetRetryCount(count int) *Service {
+	service.retryCount = count
+	return service
+}
+
+func (service *Service) SetRetryWaitTime(waitTime time.Duration) *Service {
+	service.retryWaitTime = waitTime
 	return service
 }
