@@ -15,6 +15,14 @@ func (ctx *Context) Request() *fasthttp.Request {
 	return &ctx.inner.Request
 }
 
+func (ctx *Context) Response() *fasthttp.Response {
+	return &ctx.inner.Response
+}
+
+func (ctx *Context) Method() string {
+	return type_helper.BytesToString(ctx.inner.Method())
+}
+
 func (ctx *Context) Param(name string) interfaces.Param {
 	return NewParam(ctx.params[name])
 }

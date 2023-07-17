@@ -3,6 +3,7 @@ package boost
 import (
 	"github.com/lowl11/boost/internal/fast_handler"
 	"github.com/lowl11/boost/pkg/destroyer"
+	"github.com/lowl11/boost/pkg/middlewares"
 	"github.com/lowl11/lazyconfig/config/config_internal"
 	"github.com/lowl11/lazylog/log/log_internal"
 	"os"
@@ -16,14 +17,25 @@ type App struct {
 }
 
 func New() *App {
+	// init
 	log_internal.Init(log_internal.LogConfig{})
 	config_internal.Init(config_internal.Config{})
 
+	// create Boost App instance
 	app := &App{
 		handler:   fast_handler.New(),
 		destroyer: destroyer.New(),
 	}
+
+	// catch shutdown signal
 	go app.shutdown()
+
+	// default middlewares
+	app.Use(
+		middlewares.CORS(),
+		middlewares.Secure(),
+		middlewares.Timeout(),
+	)
 
 	return app
 }

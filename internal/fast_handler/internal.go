@@ -17,12 +17,18 @@ const (
 )
 
 func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
+	// handler panic
 	defer func() {
 		err := panicer.Handle(recover())
+		if err == nil {
+			return
+		}
+
 		log.Error(err, "PANIC RECOVERED")
 		writePanicError(ctx, err)
 	}()
 
+	// find route
 	routeCtx, ok := handler.router.Search(type_helper.BytesToString(ctx.Path()))
 
 	// if route not found
@@ -44,6 +50,7 @@ func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 		groupMiddlewares = []types.HandlerFunc{}
 	}
 
+	// get endpoint middlewares
 	endpointMiddlewares := routeCtx.Middlewares
 	if endpointMiddlewares == nil {
 		endpointMiddlewares = []types.HandlerFunc{}

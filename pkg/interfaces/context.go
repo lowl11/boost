@@ -6,6 +6,10 @@ import (
 
 type Context interface {
 	Request() *fasthttp.Request
+	Response() *fasthttp.Response
+
+	Method() string
+
 	Param(name string) Param
 	QueryParam(name string) Param
 	Header(name string) string
