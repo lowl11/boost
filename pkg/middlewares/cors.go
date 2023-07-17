@@ -11,7 +11,6 @@ import (
 )
 
 type CORSConfig struct {
-	//Skipper                                  Skipper
 	AllowOrigins                             []string
 	AllowOriginFunc                          func(origin string) (bool, error)
 	AllowMethods                             []string

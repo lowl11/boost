@@ -19,6 +19,7 @@ type Context interface {
 	Body() []byte
 	Parse(object any) error
 
+	IsTLS() bool
 	IsWebSocket() bool
 
 	Get(key string) any

@@ -90,6 +90,10 @@ func (ctx *Context) IsWebSocket() bool {
 	return strings.EqualFold(headerUpgrade, "websocket")
 }
 
+func (ctx *Context) IsTLS() bool {
+	return ctx.inner.IsTLS()
+}
+
 func (ctx *Context) Set(key string, value any) {
 	ctx.keyContainer.Store(key, value)
 }
