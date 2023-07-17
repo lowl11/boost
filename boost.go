@@ -9,14 +9,32 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
+
+type Config struct {
+	Timeout time.Duration
+}
+
+func defaultConfig() Config {
+	return Config{
+		Timeout: 0,
+	}
+}
 
 type App struct {
 	handler   *fast_handler.Handler
 	destroyer *destroyer.Destroyer
 }
 
-func New() *App {
+func New(configs ...Config) *App {
+	var config Config
+	if len(configs) > 0 {
+		config = configs[0]
+	} else {
+		config = defaultConfig()
+	}
+
 	// init
 	log_internal.Init(log_internal.LogConfig{})
 	config_internal.Init(config_internal.Config{})
@@ -34,8 +52,11 @@ func New() *App {
 	app.Use(
 		middlewares.CORS(),
 		middlewares.Secure(),
-		middlewares.Timeout(),
 	)
+
+	if config.Timeout != 0 {
+		app.Use(middlewares.Timeout(config.Timeout))
+	}
 
 	return app
 }
