@@ -2,11 +2,13 @@ package fast_handler
 
 import (
 	"github.com/lowl11/boost/internal/boosties/context"
+	"github.com/lowl11/boost/internal/boosties/panicer"
 	"github.com/lowl11/boost/internal/helpers/fast_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/errors"
 	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/lowl11/boost/pkg/types"
+	"github.com/lowl11/lazylog/log"
 	"github.com/valyala/fasthttp"
 )
 
@@ -15,6 +17,12 @@ const (
 )
 
 func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
+	defer func() {
+		err := panicer.Handle(recover())
+		log.Error(err, "PANIC RECOVERED")
+		writePanicError(ctx, err)
+	}()
+
 	routeCtx, ok := handler.router.Search(type_helper.BytesToString(ctx.Path()))
 
 	// if route not found
@@ -68,6 +76,10 @@ func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 
 func writeUnknownError(ctx *fasthttp.RequestCtx, err error) {
 	writeError(ctx, errors.ErrorUnknown(err))
+}
+
+func writePanicError(ctx *fasthttp.RequestCtx, err error) {
+	writeError(ctx, errors.ErrorPanic(err))
 }
 
 func writeError(ctx *fasthttp.RequestCtx, err interfaces.Error) {

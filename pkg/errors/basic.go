@@ -8,6 +8,7 @@ import (
 
 const (
 	TypeErrorUnknown          = "Unknown error"
+	TypeErrorPanic            = "Panic error"
 	TypeErrorEndpointNotFound = "Endpoint not found"
 	TypeErrorMethodNotAllowed = "Method not allowed"
 )
@@ -16,6 +17,13 @@ func ErrorUnknown(err error) interfaces.Error {
 	return errors.
 		New("Unknown error: " + err.Error()).
 		SetType(TypeErrorUnknown).
+		SetHttpCode(http.StatusInternalServerError)
+}
+
+func ErrorPanic(err error) interfaces.Error {
+	return errors.
+		New("PANIC RECOVER: " + err.Error()).
+		SetType(TypeErrorPanic).
 		SetHttpCode(http.StatusInternalServerError)
 }
 
