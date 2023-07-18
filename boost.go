@@ -12,6 +12,7 @@ import (
 	"time"
 )
 
+// Config is model of App configuration
 type Config struct {
 	Timeout time.Duration
 }
@@ -22,12 +23,15 @@ func defaultConfig() Config {
 	}
 }
 
+// App is Boost application to run application
 type App struct {
 	handler   *fast_handler.Handler
 	destroyer *destroyer.Destroyer
 }
 
+// New method creates new instance of Boost App
 func New(configs ...Config) *App {
+	// init config
 	var config Config
 	if len(configs) > 0 {
 		config = configs[0]
@@ -54,6 +58,7 @@ func New(configs ...Config) *App {
 		middlewares.Secure(),
 	)
 
+	// if timeout was set in config
 	if config.Timeout != 0 {
 		app.Use(middlewares.Timeout(config.Timeout))
 	}
@@ -61,6 +66,7 @@ func New(configs ...Config) *App {
 	return app
 }
 
+// shutdown handle signal for shutting down App
 func (app *App) shutdown() {
 	// create a channel to receive signals
 	signalChannel := make(chan os.Signal, 1)

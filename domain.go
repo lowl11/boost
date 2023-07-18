@@ -6,11 +6,20 @@ import (
 )
 
 type (
-	HandlerFunc    = func(ctx Context) error
+	// HandlerFunc is REST handler for actions
+	HandlerFunc = func(ctx Context) error
+
+	// MiddlewareFunc is type of middleware functions
 	MiddlewareFunc = func(ctx Context) error
-	Context        = interfaces.Context
-	Error          = interfaces.Error
-	Route          = interfaces.Route
+
+	// Context is interface for HandlerFunc context argument
+	Context = interfaces.Context
+
+	// Error is custom error for Boost
+	Error = interfaces.Error
+
+	// Route is interface which will return after adding new route
+	Route = interfaces.Route
 )
 
 type routing interface {
@@ -42,6 +51,7 @@ type groupRouter interface {
 	useGroup(groupID uuid.UUID, middlewares ...MiddlewareFunc)
 }
 
+// Group is interface which will return after creating new group
 type Group interface {
 	routing
 

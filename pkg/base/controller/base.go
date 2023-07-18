@@ -8,10 +8,13 @@ import (
 	"net/http"
 )
 
+// Base is base controller with easy use methods to work with REST
 type Base struct {
 	WrappedOK bool
 }
 
+// Ok returns response with code 200 and given body.
+// Note: if given body is primitive variable (int, string, bool, etc.) it will be returned with text/plain
 func (controller *Base) Ok(ctx boost.Context, body ...any) error {
 	ctx.Status(http.StatusOK)
 	if len(body) > 0 {
@@ -25,22 +28,39 @@ func (controller *Base) Ok(ctx boost.Context, body ...any) error {
 	return ctx.JSON(domain.NewJustOK())
 }
 
+// Created returns response with code 201, with no body
 func (controller *Base) Created(ctx boost.Context) error {
 	return ctx.Status(http.StatusCreated).Empty()
 }
 
+// CreatedBody returns response with code 201, with given body
 func (controller *Base) CreatedBody(ctx boost.Context, body any) error {
 	return ctx.Status(http.StatusCreated).JSON(body)
 }
 
+// CreatedID returns response with code 201, with given ID to return.
+// Note: response object will be in JSON. If id is int, will be returns int, if string will be returned string
+// Example:
+//
+//	{
+//		"id": 123
+//	}
 func (controller *Base) CreatedID(ctx boost.Context, id any) error {
 	return ctx.Status(http.StatusCreated).JSON(domain.NewCreatedWithID(id))
 }
 
+// NotFound returns response with status 404, with no body
 func (controller *Base) NotFound(ctx boost.Context) error {
 	return ctx.Status(http.StatusNotFound).Empty()
 }
 
+// NotFoundString returns response with status 404, with given message
+func (controller *Base) NotFoundString(ctx boost.Context, message string) error {
+	return ctx.Status(http.StatusNotFound).JSON(domain.NewNotFoundMessage(message))
+}
+
+// Error returns response with given error status, error object.
+// Note: if given err will not be defined as Boost Error, default status code is 500
 func (controller *Base) Error(ctx boost.Context, err error) error {
 	if err == nil {
 		return ctx.Status(http.StatusInternalServerError).Empty()
