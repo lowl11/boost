@@ -25,6 +25,7 @@ func defaultConfig() Config {
 
 // App is Boost application to run application
 type App struct {
+	config    Config
 	handler   *fast_handler.Handler
 	destroyer *destroyer.Destroyer
 }
@@ -45,6 +46,7 @@ func New(configs ...Config) *App {
 
 	// create Boost App instance
 	app := &App{
+		config:    config,
 		handler:   fast_handler.New(),
 		destroyer: destroyer.New(),
 	}

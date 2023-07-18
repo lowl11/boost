@@ -103,6 +103,10 @@ func (app *App) useGroup(groupID uuid.UUID, middlewareFunc ...MiddlewareFunc) {
 	middlewares := make([]types.MiddlewareFunc, 0, len(middlewareFunc))
 
 	for _, mFunc := range middlewareFunc {
+		if mFunc == nil {
+			continue
+		}
+
 		middlewares = append(middlewares, mFunc)
 	}
 
