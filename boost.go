@@ -5,7 +5,7 @@ import (
 	"github.com/lowl11/boost/pkg/destroyer"
 	"github.com/lowl11/boost/pkg/middlewares"
 	"github.com/lowl11/lazyconfig/config/config_internal"
-	"github.com/lowl11/lazylog/log/log_internal"
+	"github.com/lowl11/lazylog/logapi"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,7 +14,20 @@ import (
 
 // Config is model of App configuration
 type Config struct {
+	// Timeout for every request in this App
 	Timeout time.Duration
+
+	// CustomLoggers is container with custom loggers inherited by interface logapi.ILogger
+	CustomLoggers []logapi.ILogger
+
+	// LogJSON turns on JSON mode. Logs will be printed in JSON format
+	LogJSON bool
+	// LogLevel controls which logs should be printed
+	LogLevel int
+	// LogFolderName change default logs containing folder name. Default folder is /logs
+	LogFolderName string
+	// LogFilePattern change default logs file names pattern. Default pattern is info
+	LogFilePattern string
 }
 
 func defaultConfig() Config {
@@ -41,7 +54,7 @@ func New(configs ...Config) *App {
 	}
 
 	// init
-	log_internal.Init(log_internal.LogConfig{})
+	initLogger(config)
 	config_internal.Init(config_internal.Config{})
 
 	// create Boost App instance
