@@ -28,10 +28,14 @@ type Config struct {
 	// LogFilePattern change default logs file names pattern. Default pattern is info
 	LogFilePattern string
 
+	// EnvironmentVariableName sets environment (dev/test/production) from OS variable name
 	EnvironmentVariableName string
-	EnvironmentFileName     string
-	Environment             string
-	ConfigBaseFolder        string
+	// EnvironmentFileName sets environment file name. Default is .env
+	EnvironmentFileName string
+	// Environment sets environment value (dev/test/production)
+	Environment string
+	// ConfigBaseFolder sets base folder for profiles. Default is /profiles
+	ConfigBaseFolder string
 }
 
 func defaultConfig() Config {
