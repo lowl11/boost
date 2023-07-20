@@ -4,7 +4,6 @@ import (
 	"github.com/lowl11/boost/internal/fast_handler"
 	"github.com/lowl11/boost/pkg/destroyer"
 	"github.com/lowl11/boost/pkg/middlewares"
-	"github.com/lowl11/lazyconfig/config/config_internal"
 	"github.com/lowl11/lazylog/logapi"
 	"os"
 	"os/signal"
@@ -28,6 +27,11 @@ type Config struct {
 	LogFolderName string
 	// LogFilePattern change default logs file names pattern. Default pattern is info
 	LogFilePattern string
+
+	EnvironmentVariableName string
+	EnvironmentFileName     string
+	Environment             string
+	ConfigBaseFolder        string
 }
 
 func defaultConfig() Config {
@@ -55,7 +59,7 @@ func New(configs ...Config) *App {
 
 	// init
 	initLogger(config)
-	config_internal.Init(config_internal.Config{})
+	initConfig(config)
 
 	// create Boost App instance
 	app := &App{

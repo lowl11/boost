@@ -20,6 +20,22 @@ func StringToBytes(s string) []byte {
 	}))
 }
 
+func GetString(setValue string) string {
+	if setValue == "" {
+		return ""
+	}
+
+	return setValue
+}
+
+func GetStringPtr(setValue *string) string {
+	if setValue == nil {
+		return ""
+	}
+
+	return *setValue
+}
+
 func ToString(anyValue any) string {
 	if _, ok := anyValue.(error); ok {
 		return anyValue.(error).Error()
