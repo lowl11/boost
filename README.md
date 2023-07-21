@@ -29,7 +29,6 @@ func main() {
 ### External TODO
 
 - gRPC support
-- cron support
 - RMQ support
 - request validation support
 - DB support

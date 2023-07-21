@@ -3,6 +3,7 @@ package boost
 import (
 	"github.com/lowl11/boost/internal/boosties/printer"
 	"github.com/lowl11/boost/pkg/types"
+	"github.com/lowl11/boostcron"
 	"github.com/lowl11/lazylog/log"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
@@ -16,6 +17,11 @@ const (
 // Run starts listening TCP with given port
 func (app *App) Run(port string) {
 	printer.PrintGreeting()
+
+	// run cron
+	app.cron.RunAsync()
+
+	// run server app
 	log.Fatal(app.handler.Run(port))
 }
 
@@ -73,6 +79,15 @@ func (app *App) groupDELETE(path string, action HandlerFunc, groupID string) Rou
 // Group creates new group for endpoints with base url/endpoint
 func (app *App) Group(base string) Group {
 	return newGroup(app, base)
+}
+
+// CronApp returns boost cron application
+func (app *App) CronApp() boostcron.CronRouter {
+	if app.cron == nil {
+		app.cron = boostcron.New(app.config.CronConfig)
+	}
+
+	return app.cron
 }
 
 // Use add usable middleware to global App.

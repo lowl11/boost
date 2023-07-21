@@ -4,6 +4,7 @@ import (
 	"github.com/lowl11/boost/internal/fast_handler"
 	"github.com/lowl11/boost/pkg/destroyer"
 	"github.com/lowl11/boost/pkg/middlewares"
+	"github.com/lowl11/boostcron"
 	"github.com/lowl11/lazylog/logapi"
 	"os"
 	"os/signal"
@@ -36,6 +37,8 @@ type Config struct {
 	Environment string
 	// ConfigBaseFolder sets base folder for profiles. Default is /profiles
 	ConfigBaseFolder string
+
+	CronConfig boostcron.Config
 }
 
 func defaultConfig() Config {
@@ -49,6 +52,7 @@ type App struct {
 	config    Config
 	handler   *fast_handler.Handler
 	destroyer *destroyer.Destroyer
+	cron      *boostcron.Cron
 }
 
 // New method creates new instance of Boost App
