@@ -29,6 +29,15 @@ func (ctx *Context) Param(name string) interfaces.Param {
 	return NewParam(ctx.params[name])
 }
 
+func (ctx *Context) Params() map[string]interfaces.Param {
+	params := make(map[string]interfaces.Param)
+	for key, value := range ctx.params {
+		params[key] = NewParam(value)
+	}
+
+	return params
+}
+
 func (ctx *Context) SetParams(params map[string]string) *Context {
 	if params == nil {
 		return ctx
@@ -40,6 +49,15 @@ func (ctx *Context) SetParams(params map[string]string) *Context {
 
 func (ctx *Context) QueryParam(name string) interfaces.Param {
 	return NewParam(type_helper.BytesToString(ctx.inner.URI().QueryArgs().Peek(name)))
+}
+
+func (ctx *Context) QueryParams() map[string]interfaces.Param {
+	params := make(map[string]interfaces.Param)
+	ctx.inner.QueryArgs().VisitAll(func(key, value []byte) {
+		params[type_helper.BytesToString(key)] = NewParam(type_helper.BytesToString(value))
+	})
+
+	return params
 }
 
 func (ctx *Context) Header(name string) string {

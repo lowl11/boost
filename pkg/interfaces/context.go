@@ -16,8 +16,12 @@ type Context interface {
 
 	// Param returns variable param from query
 	Param(name string) Param
+	// Params returns all variable params
+	Params() map[string]Param
 	// QueryParam returns query param from query
 	QueryParam(name string) Param
+	// QueryParams returns all query params
+	QueryParams() map[string]Param
 	// Header returns header value from given name
 	Header(name string) string
 	// Headers returns all map of headers
