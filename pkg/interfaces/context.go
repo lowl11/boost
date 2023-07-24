@@ -30,6 +30,8 @@ type Context interface {
 	Body() []byte
 	// Parse converts response body to given object (JSON, XML)
 	Parse(object any) error
+	// FormFile returns content of file in bytes
+	FormFile(key string) []byte
 
 	// IsTLS returns flag is TLS
 	IsTLS() bool

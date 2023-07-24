@@ -5,6 +5,7 @@ import (
 	"github.com/valyala/fasthttp"
 	"net/http"
 	"sync"
+	"sync/atomic"
 )
 
 type Context struct {
@@ -14,8 +15,9 @@ type Context struct {
 	keyContainer sync.Map
 	params       map[string]string
 
-	action       types.HandlerFunc
-	actionCalled bool
+	action            types.HandlerFunc
+	goingToCallAction atomic.Bool
+	actionCalled      atomic.Bool
 
 	nextHandler        types.HandlerFunc
 	handlersChain      []types.HandlerFunc

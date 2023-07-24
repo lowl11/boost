@@ -7,7 +7,9 @@ import (
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/content_types"
 	"github.com/lowl11/boost/pkg/interfaces"
+	"github.com/lowl11/lazylog/log"
 	"github.com/valyala/fasthttp"
+	"io"
 	"strings"
 )
 
@@ -83,6 +85,26 @@ func (ctx *Context) Parse(object any) error {
 	}
 
 	return ErrorUnknownContentType(contentType)
+}
+
+func (ctx *Context) FormFile(key string) []byte {
+	file, err := ctx.inner.FormFile(key)
+	if err != nil {
+		log.Error(err, "Parse form-data file")
+		return nil
+	}
+
+	fileObject, err := file.Open()
+	defer func() {
+		_ = fileObject.Close()
+	}()
+
+	fileInBytes, err := io.ReadAll(fileObject)
+	if err != nil {
+		return nil
+	}
+
+	return fileInBytes
 }
 
 func (ctx *Context) IsWebSocket() bool {
@@ -175,11 +197,15 @@ func (ctx *Context) Error(err error) error {
 
 func (ctx *Context) Next() error {
 	nextHandler := ctx.nextHandler
-	if nextHandler == nil {
-		if !ctx.actionCalled {
-			return ctx.action(ctx)
-		}
 
+	// check need to load action
+	if !ctx.actionCalled.Load() && ctx.goingToCallAction.Load() {
+		ctx.actionCalled.Store(true)
+		return ctx.action(ctx)
+	}
+
+	// if action already called
+	if ctx.actionCalled.Load() {
 		return nil
 	}
 
@@ -187,9 +213,13 @@ func (ctx *Context) Next() error {
 
 	if ctx.handlersChainIndex >= len(ctx.handlersChain) {
 		ctx.nextHandler = ctx.action
-		ctx.actionCalled = true
+		ctx.goingToCallAction.Store(true)
 	} else {
 		ctx.nextHandler = ctx.handlersChain[ctx.handlersChainIndex]
+	}
+
+	if nextHandler == nil {
+		return nil
 	}
 
 	return nextHandler(ctx)
