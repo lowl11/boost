@@ -19,7 +19,9 @@ func (app *App) Run(port string) {
 	printer.PrintGreeting()
 
 	// run cron
-	app.cron.RunAsync()
+	if app.cron != nil {
+		app.cron.RunAsync()
+	}
 
 	// run server app
 	log.Fatal(app.handler.Run(port))
