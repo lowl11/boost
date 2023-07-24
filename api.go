@@ -28,7 +28,11 @@ func (app *App) Run(port string) {
 }
 
 // Destroy adds function which will be called in shutdown
-func (app *App) Destroy(destroyFunc func()) {
+func (app *App) Destroy(destroyFunc types.DestroyFunc) {
+	if destroyFunc == nil {
+		return
+	}
+
 	app.destroyer.AddFunction(destroyFunc)
 }
 

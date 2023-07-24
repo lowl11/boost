@@ -13,6 +13,10 @@ func (handler *Handler) Run(port string) error {
 }
 
 func (handler *Handler) RegisterRoute(method, path string, action types.HandlerFunc, groupID string) interfaces.Route {
+	if action == nil {
+		panic("route action is NULL")
+	}
+
 	return handler.router.Register(method, path, action, groupID)
 }
 

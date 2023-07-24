@@ -2,10 +2,11 @@ package destroyer
 
 import (
 	"errors"
+	"github.com/lowl11/boost/pkg/types"
 	"github.com/lowl11/lazylog/log"
 )
 
-func (destroyer *Destroyer) runFunc(action func()) {
+func (destroyer *Destroyer) runFunc(action types.DestroyFunc) {
 	defer func() {
 		if value := recover(); value != nil {
 			var err error

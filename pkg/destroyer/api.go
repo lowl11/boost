@@ -1,6 +1,8 @@
 package destroyer
 
-func (destroyer *Destroyer) AddFunction(destroyFunc func()) *Destroyer {
+import "github.com/lowl11/boost/pkg/types"
+
+func (destroyer *Destroyer) AddFunction(destroyFunc types.DestroyFunc) *Destroyer {
 	destroyer.mutex.Lock()
 	defer destroyer.mutex.Unlock()
 

@@ -1,14 +1,17 @@
 package destroyer
 
-import "sync"
+import (
+	"github.com/lowl11/boost/pkg/types"
+	"sync"
+)
 
 type Destroyer struct {
-	functions []func()
+	functions []types.DestroyFunc
 	mutex     sync.Mutex
 }
 
 func New() *Destroyer {
 	return &Destroyer{
-		functions: make([]func(), 0),
+		functions: make([]types.DestroyFunc, 0),
 	}
 }
