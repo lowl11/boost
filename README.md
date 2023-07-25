@@ -26,6 +26,12 @@ func main() {
 }
 ```
 
+### TODO
+
+- healthcheck service
+- static controller with healthcheck & swagger endpoints
+- Swagger support
+
 ### External TODO
 
 - gRPC support
