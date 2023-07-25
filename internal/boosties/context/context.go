@@ -1,6 +1,7 @@
 package context
 
 import (
+	"github.com/lowl11/boost/internal/boosties/fast_writer"
 	"github.com/lowl11/boost/pkg/types"
 	"github.com/valyala/fasthttp"
 	"net/http"
@@ -9,7 +10,8 @@ import (
 )
 
 type Context struct {
-	inner *fasthttp.RequestCtx
+	inner  *fasthttp.RequestCtx
+	writer *fast_writer.Writer
 
 	status       int
 	keyContainer sync.Map
@@ -32,6 +34,8 @@ func New(inner *fasthttp.RequestCtx, action types.HandlerFunc, handlersChain []t
 
 	return &Context{
 		inner:  inner,
+		writer: fast_writer.New(inner),
+
 		status: http.StatusOK,
 		params: make(map[string]string),
 

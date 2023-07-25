@@ -3,7 +3,6 @@ package context
 import (
 	"encoding/json"
 	"encoding/xml"
-	"github.com/lowl11/boost/internal/helpers/fast_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/enums/content_types"
 	"github.com/lowl11/boost/pkg/enums/headers"
@@ -187,20 +186,20 @@ func (ctx *Context) Status(status int) interfaces.Context {
 }
 
 func (ctx *Context) Empty() error {
-	fast_helper.Write(ctx.inner, content_types.Text, ctx.status, nil)
+	ctx.writer.Write(content_types.Text, ctx.status, nil)
 
 	return nil
 }
 
 func (ctx *Context) String(message string) error {
-	fast_helper.Write(ctx.inner, content_types.Text, ctx.status, type_helper.StringToBytes(message))
+	ctx.writer.Write(content_types.Text, ctx.status, type_helper.StringToBytes(message))
 
 	return nil
 
 }
 
 func (ctx *Context) Bytes(body []byte) error {
-	fast_helper.Write(ctx.inner, content_types.Bytes, ctx.status, body)
+	ctx.writer.Write(content_types.Bytes, ctx.status, body)
 
 	return nil
 }
@@ -211,7 +210,7 @@ func (ctx *Context) JSON(body any) error {
 		return err
 	}
 
-	fast_helper.Write(ctx.inner, content_types.JSON, ctx.status, bodyInBytes)
+	ctx.writer.Write(content_types.JSON, ctx.status, bodyInBytes)
 
 	return nil
 }
@@ -222,7 +221,7 @@ func (ctx *Context) XML(body any) error {
 		return err
 	}
 
-	fast_helper.Write(ctx.inner, content_types.XML, ctx.status, bodyInBytes)
+	ctx.writer.Write(content_types.XML, ctx.status, bodyInBytes)
 
 	return nil
 }
@@ -237,8 +236,7 @@ func (ctx *Context) Error(err error) error {
 		boostError = ErrorUnknownType(err)
 	}
 
-	fast_helper.Write(
-		ctx.inner,
+	ctx.writer.Write(
 		boostError.ContentType(),
 		boostError.HttpCode(),
 		boostError.JSON(),

@@ -3,7 +3,6 @@ package fast_handler
 import (
 	"github.com/lowl11/boost/internal/boosties/context"
 	"github.com/lowl11/boost/internal/boosties/panicer"
-	"github.com/lowl11/boost/internal/helpers/fast_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/errors"
 	"github.com/lowl11/boost/pkg/interfaces"
@@ -96,10 +95,7 @@ func writePanicError(ctx *fasthttp.RequestCtx, err error) {
 }
 
 func writeError(ctx *fasthttp.RequestCtx, err interfaces.Error) {
-	fast_helper.Write(
-		ctx,
-		err.ContentType(),
-		err.HttpCode(),
-		type_helper.StringToBytes(err.Error()),
-	)
+	ctx.SetStatusCode(err.HttpCode())
+	ctx.Response.Header.Set("Content-Type", err.ContentType())
+	ctx.SetBody(type_helper.StringToBytes(err.Error()))
 }
