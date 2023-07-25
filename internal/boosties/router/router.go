@@ -33,6 +33,10 @@ func (route *RouteContext) Use(middlewares ...func(ctx interfaces.Context) error
 
 	middlewareHandlers := make([]types.HandlerFunc, 0, len(middlewares))
 	for _, middleware := range middlewares {
+		if middleware == nil {
+			continue
+		}
+
 		middlewareHandlers = append(middlewareHandlers, middleware)
 	}
 

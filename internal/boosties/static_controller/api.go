@@ -6,6 +6,10 @@ import (
 	"github.com/lowl11/boost/pkg/types"
 )
 
+const (
+	RouteCount = 2
+)
+
 func Healthcheck(healthcheck *healthcheck.Healthcheck) types.HandlerFunc {
 	return func(ctx interfaces.Context) error {
 		if err := healthcheck.Trigger(); err != nil {

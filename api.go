@@ -20,7 +20,7 @@ func (app *App) Run(port string) {
 	registerStaticEndpoints(app, app.healthcheck)
 
 	// print greeting text
-	printer.PrintGreeting()
+	printer.PrintGreeting(app.handler.GetCounter())
 
 	// run cron
 	if app.cron != nil {
@@ -93,6 +93,7 @@ func (app *App) groupDELETE(path string, action HandlerFunc, groupID string) Rou
 
 // Group creates new group for endpoints with base url/endpoint
 func (app *App) Group(base string) Group {
+	app.handler.RegisterGroup()
 	return newGroup(app, base)
 }
 
