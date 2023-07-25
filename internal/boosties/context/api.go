@@ -213,6 +213,21 @@ func (ctx *Context) Error(err error) error {
 	return nil
 }
 
+func (ctx *Context) Redirect(url string, customStatus ...int) error {
+	ctx.inner.Response.Header.SetCanonical(
+		type_helper.StringToBytes("Location"),
+		type_helper.StringToBytes(url),
+	)
+
+	if len(customStatus) > 0 {
+		ctx.Status(customStatus[0])
+	}
+
+	ctx.inner.Redirect(url, ctx.status)
+
+	return nil
+}
+
 func (ctx *Context) Next() error {
 	nextHandler := ctx.nextHandler
 

@@ -62,6 +62,8 @@ type Context interface {
 	XML(body any) error
 	// Error writes response body of given error to JSON object
 	Error(err error) error
+	// Redirect redirects to the given URL
+	Redirect(url string, customStatus ...int) error
 
 	// Next method which calls next handler from handlers chain
 	Next() error
