@@ -29,6 +29,8 @@ func main() {
 ### TODO
 
 - Swagger support
+- Authentication Basic
+- Authentication JWT
 
 ### External TODO
 
