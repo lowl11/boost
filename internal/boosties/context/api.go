@@ -50,6 +50,15 @@ func (ctx *Context) Scheme() string {
 	return "http"
 }
 
+func (ctx *Context) Authorization() string {
+	_, after, found := strings.Cut(ctx.Header(headers.HeaderAuthorization), " ")
+	if !found {
+		return ""
+	}
+
+	return after
+}
+
 func (ctx *Context) Param(name string) interfaces.Param {
 	return NewParam(ctx.params[name])
 }

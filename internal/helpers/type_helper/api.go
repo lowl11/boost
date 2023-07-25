@@ -36,6 +36,14 @@ func GetStringPtr(setValue *string) string {
 	return *setValue
 }
 
+func StringFromError(err error, defaultMessage string) string {
+	if err == nil {
+		return defaultMessage
+	}
+
+	return err.Error()
+}
+
 func ToString(anyValue any) string {
 	if _, ok := anyValue.(error); ok {
 		return anyValue.(error).Error()

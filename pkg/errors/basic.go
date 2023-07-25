@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	TypeErrorUnknown          = "Unknown error"
-	TypeErrorPanic            = "Panic error"
-	TypeErrorEndpointNotFound = "Endpoint not found"
-	TypeErrorMethodNotAllowed = "Method not allowed"
+	TypeErrorUnknown          = "UnknownError"
+	TypeErrorPanic            = "PanicError"
+	TypeErrorRouteNotFound    = "RouteNotFound"
+	TypeErrorMethodNotAllowed = "MethodNotAllowed"
 )
 
 // ErrorUnknown returns Boost Error for unknown type errors
@@ -32,8 +32,8 @@ func ErrorPanic(err error) interfaces.Error {
 // ErrorNotFound returns Boost Error for not found endpoints
 func ErrorNotFound() interfaces.Error {
 	return errors.
-		New("Endpoint not found").
-		SetType(TypeErrorEndpointNotFound).
+		New("Route not found").
+		SetType(TypeErrorRouteNotFound).
 		SetHttpCode(http.StatusNotFound)
 }
 

@@ -4,12 +4,14 @@ import (
 	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/lowl11/boost/pkg/types"
 	uuid "github.com/satori/go.uuid"
-	"github.com/valyala/fasthttp"
 )
 
 func (handler *Handler) Run(port string) error {
+	// prepare server
+	handler.server.Handler = handler.handler
+
 	// run server
-	return fasthttp.ListenAndServe(port, handler.commonHandler)
+	return handler.server.ListenAndServe(port)
 }
 
 func (handler *Handler) RegisterRoute(method, path string, action types.HandlerFunc, groupID string) interfaces.Route {

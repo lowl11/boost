@@ -16,7 +16,13 @@ const (
 	methodAny = "ANY"
 )
 
-func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
+func getServer() *fasthttp.Server {
+	return &fasthttp.Server{
+		ErrorHandler: writeUnknownError,
+	}
+}
+
+func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
 	// handler panic
 	defer func() {
 		err := panicer.Handle(recover())
@@ -66,7 +72,7 @@ func (handler *Handler) commonHandler(ctx *fasthttp.RequestCtx) {
 		New(ctx, routeCtx.Action, handlersChain).
 		SetParams(routeCtx.Params)
 
-	// call action
+	// call chain of handlers/middlewares
 	err := boostCtx.Next()
 	if err != nil {
 		boostError, errorParse := err.(interfaces.Error)

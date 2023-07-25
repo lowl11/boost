@@ -32,6 +32,8 @@ type Context interface {
 	Cookie(name string) string
 	// Cookies returns all map of cookies
 	Cookies() map[string]string
+	// Authorization returns "Authorization" header value without
+	Authorization() string
 	// Body returns body of response object
 	Body() []byte
 	// Parse converts response body to given object (JSON, XML)
