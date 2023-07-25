@@ -2,6 +2,7 @@ package boost
 
 import (
 	"github.com/lowl11/boost/internal/fast_handler"
+	"github.com/lowl11/boost/internal/services/healthcheck"
 	"github.com/lowl11/boost/pkg/destroyer"
 	"github.com/lowl11/boost/pkg/middlewares"
 	"github.com/lowl11/boostcron"
@@ -49,10 +50,11 @@ func defaultConfig() Config {
 
 // App is Boost application to run application
 type App struct {
-	config    Config
-	handler   *fast_handler.Handler
-	destroyer *destroyer.Destroyer
-	cron      *boostcron.Cron
+	config      Config
+	handler     *fast_handler.Handler
+	destroyer   *destroyer.Destroyer
+	cron        *boostcron.Cron
+	healthcheck *healthcheck.Healthcheck
 }
 
 // New method creates new instance of Boost App
@@ -71,9 +73,10 @@ func New(configs ...Config) *App {
 
 	// create Boost App instance
 	app := &App{
-		config:    config,
-		handler:   fast_handler.New(),
-		destroyer: destroyer.New(),
+		config:      config,
+		handler:     fast_handler.New(),
+		destroyer:   destroyer.New(),
+		healthcheck: healthcheck.New(),
 	}
 
 	// catch shutdown signal

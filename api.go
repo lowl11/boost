@@ -16,6 +16,10 @@ const (
 
 // Run starts listening TCP with given port
 func (app *App) Run(port string) {
+	// register static endpoints
+	registerStaticEndpoints(app, app.healthcheck)
+
+	// print greeting text
 	printer.PrintGreeting()
 
 	// run cron
@@ -34,6 +38,11 @@ func (app *App) Destroy(destroyFunc types.DestroyFunc) {
 	}
 
 	app.destroyer.AddFunction(destroyFunc)
+}
+
+// Healthcheck add new application service to healthcheck
+func (app *App) Healthcheck(name, url string) {
+	app.healthcheck.Register(name, url)
 }
 
 // ANY add new route to App with method ANY.
