@@ -1,6 +1,8 @@
 package headers
 
 const (
+	ContextKeyHeaderAllow = "boost_header_allow"
+
 	HeaderAccept              = "Accept"
 	HeaderAcceptEncoding      = "Accept-Encoding"
 	HeaderAllow               = "Allow"
@@ -33,7 +35,6 @@ const (
 	HeaderCacheControl        = "Cache-Control"
 	HeaderConnection          = "Connection"
 
-	// Access control
 	HeaderAccessControlRequestMethod    = "Access-Control-Request-Method"
 	HeaderAccessControlRequestHeaders   = "Access-Control-Request-Headers"
 	HeaderAccessControlAllowOrigin      = "Access-Control-Allow-Origin"
@@ -43,7 +44,6 @@ const (
 	HeaderAccessControlExposeHeaders    = "Access-Control-Expose-Headers"
 	HeaderAccessControlMaxAge           = "Access-Control-Max-Age"
 
-	// Security
 	HeaderStrictTransportSecurity         = "Strict-Transport-Security"
 	HeaderXContentTypeOptions             = "X-Content-Type-Options"
 	HeaderXXSSProtection                  = "X-XSS-Protection"

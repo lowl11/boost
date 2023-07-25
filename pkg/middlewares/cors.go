@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"github.com/lowl11/boost/internal/helpers/type_helper"
+	"github.com/lowl11/boost/pkg/enums/headers"
 	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/lowl11/boost/pkg/types"
 	"net/http"
@@ -72,10 +73,10 @@ func CORSWithConfig(config CORSConfig) types.MiddlewareFunc {
 		req := ctx.Request()
 		res := ctx.Response()
 
-		origin := type_helper.BytesToString(req.Header.Peek(headerOrigin))
+		origin := type_helper.BytesToString(req.Header.Peek(headers.HeaderOrigin))
 		var allowOrigin string
 
-		res.Header.Set(headerVary, headerOrigin)
+		res.Header.Set(headers.HeaderVary, headers.HeaderOrigin)
 
 		// Preflight request is an OPTIONS request, using three HTTP request headers: Access-Control-Request-Method,
 		// Access-Control-Request-Headers, and the Origin header. See: https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request
@@ -84,10 +85,10 @@ func CORSWithConfig(config CORSConfig) types.MiddlewareFunc {
 
 		routerAllowMethods := ""
 		if preflight {
-			tmpAllowMethods, ok := ctx.Get(contextKeyHeaderAllow).(string)
+			tmpAllowMethods, ok := ctx.Get(headers.ContextKeyHeaderAllow).(string)
 			if ok && tmpAllowMethods != "" {
 				routerAllowMethods = tmpAllowMethods
-				ctx.Response().Header.Set(headerAllow, routerAllowMethods)
+				ctx.Response().Header.Set(headers.HeaderAllow, routerAllowMethods)
 			}
 		}
 
@@ -152,41 +153,41 @@ func CORSWithConfig(config CORSConfig) types.MiddlewareFunc {
 			return ctx.Status(http.StatusNoContent).Empty()
 		}
 
-		res.Header.Set(headerAccessControlAllowOrigin, allowOrigin)
+		res.Header.Set(headers.HeaderAccessControlAllowOrigin, allowOrigin)
 		if config.AllowCredentials {
-			res.Header.Set(headerAccessControlAllowCredentials, "true")
+			res.Header.Set(headers.HeaderAccessControlAllowCredentials, "true")
 		}
 
 		// Simple request
 		if !preflight {
 			if exposeHeaders != "" {
-				res.Header.Set(headerAccessControlExposeHeaders, exposeHeaders)
+				res.Header.Set(headers.HeaderAccessControlExposeHeaders, exposeHeaders)
 			}
 
 			return ctx.Next()
 		}
 
 		// Preflight request
-		res.Header.Add(headerVary, headerAccessControlRequestMethod)
-		res.Header.Add(headerVary, headerAccessControlRequestHeaders)
+		res.Header.Add(headers.HeaderVary, headers.HeaderAccessControlRequestMethod)
+		res.Header.Add(headers.HeaderVary, headers.HeaderAccessControlRequestHeaders)
 
 		if !hasCustomAllowMethods && routerAllowMethods != "" {
-			res.Header.Set(headerAccessControlAllowMethods, routerAllowMethods)
+			res.Header.Set(headers.HeaderAccessControlAllowMethods, routerAllowMethods)
 		} else {
-			res.Header.Set(headerAccessControlAllowMethods, allowMethods)
+			res.Header.Set(headers.HeaderAccessControlAllowMethods, allowMethods)
 		}
 
 		if allowHeaders != "" {
-			res.Header.Set(headerAccessControlAllowHeaders, allowHeaders)
+			res.Header.Set(headers.HeaderAccessControlAllowHeaders, allowHeaders)
 		} else {
-			h := type_helper.BytesToString(req.Header.Peek(headerAccessControlRequestHeaders))
+			h := type_helper.BytesToString(req.Header.Peek(headers.HeaderAccessControlRequestHeaders))
 			if h != "" {
-				res.Header.Set(headerAccessControlAllowHeaders, h)
+				res.Header.Set(headers.HeaderAccessControlAllowHeaders, h)
 			}
 		}
 
 		if config.MaxAge > 0 {
-			res.Header.Set(headerAccessControlMaxAge, maxAge)
+			res.Header.Set(headers.HeaderAccessControlMaxAge, maxAge)
 		}
 
 		return ctx.Status(http.StatusNoContent).Empty()
