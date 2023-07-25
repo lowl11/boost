@@ -6,6 +6,7 @@ import (
 	"github.com/lowl11/boost/internal/helpers/fast_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/content_types"
+	"github.com/lowl11/boost/pkg/enums/headers"
 	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/lowl11/lazylog/log"
 	"github.com/valyala/fasthttp"
@@ -23,6 +24,30 @@ func (ctx *Context) Response() *fasthttp.Response {
 
 func (ctx *Context) Method() string {
 	return type_helper.BytesToString(ctx.inner.Method())
+}
+
+func (ctx *Context) Scheme() string {
+	if ctx.IsTLS() {
+		return "https"
+	}
+
+	if scheme := ctx.Header(headers.HeaderXForwardedProto); scheme != "" {
+		return scheme
+	}
+
+	if scheme := ctx.Header(headers.HeaderXForwardedProtocol); scheme != "" {
+		return scheme
+	}
+	
+	if ssl := ctx.Header(headers.HeaderXForwardedSSL); ssl == "on" {
+		return "https"
+	}
+
+	if scheme := ctx.Header(headers.HeaderXUrlScheme); scheme != "" {
+		return scheme
+	}
+
+	return "http"
 }
 
 func (ctx *Context) Param(name string) interfaces.Param {

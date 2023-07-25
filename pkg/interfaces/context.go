@@ -13,6 +13,8 @@ type Context interface {
 
 	// Method returns request method
 	Method() string
+	// Scheme returns scheme of request (http/https)
+	Scheme() string
 
 	// Param returns variable param from query
 	Param(name string) Param
