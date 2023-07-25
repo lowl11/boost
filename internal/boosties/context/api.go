@@ -5,7 +5,7 @@ import (
 	"encoding/xml"
 	"github.com/lowl11/boost/internal/helpers/fast_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	"github.com/lowl11/boost/pkg/content_types"
+	"github.com/lowl11/boost/pkg/enums/content_types"
 	"github.com/lowl11/boost/pkg/enums/headers"
 	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/lowl11/lazylog/log"
@@ -38,7 +38,7 @@ func (ctx *Context) Scheme() string {
 	if scheme := ctx.Header(headers.HeaderXForwardedProtocol); scheme != "" {
 		return scheme
 	}
-	
+
 	if ssl := ctx.Header(headers.HeaderXForwardedSSL); ssl == "on" {
 		return "https"
 	}

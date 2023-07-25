@@ -3,7 +3,7 @@ package errors
 import (
 	"encoding/json"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	"github.com/lowl11/boost/pkg/content_types"
+	"github.com/lowl11/boost/pkg/enums/content_types"
 	"github.com/lowl11/boost/pkg/interfaces"
 )
 
