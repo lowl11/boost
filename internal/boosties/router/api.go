@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/lowl11/boost/internal/helpers/path_helper"
+	"github.com/lowl11/boost/internal/services/route_searcher"
 	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/lowl11/boost/pkg/types"
 	"strings"
@@ -68,22 +69,16 @@ func (router *Router) Search(searchPath string) (*RouteContext, bool) {
 	// search route...
 	router.routes.Range(func(routePath, routeCtx any) bool {
 		routePathString := routePath.(string)
+
 		// if routePath ends with '/'
 		if path_helper.IsLastSlash(routePathString) {
 			routePathString = path_helper.RemoveLast(routePathString)
 		}
 
-		// if route does not have variable - skip
-		if !strings.Contains(routePathString, ":") {
-			return true
-		}
-
-		// if paths are equal - found
-		variables, equals := path_helper.Equals(searchPath, routePathString)
-		if equals {
+		if searcher := route_searcher.New(searchPath, routePathString); searcher.Find() {
 			found = true
 			searchRoute = routeCtx.(*RouteContext)
-			searchRoute.Params = variables
+			searchRoute.Params = searcher.Params()
 			return false
 		}
 
