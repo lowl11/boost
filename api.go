@@ -1,7 +1,7 @@
 package boost
 
 import (
-	"github.com/lowl11/boost/internal/boosties/printer"
+	"github.com/lowl11/boost/internal/services/greeting"
 	"github.com/lowl11/boost/pkg/types"
 	"github.com/lowl11/boostcron"
 	"github.com/lowl11/lazylog/log"
@@ -20,7 +20,7 @@ func (app *App) Run(port string) {
 	registerStaticEndpoints(app, app.healthcheck)
 
 	// print greeting text
-	printer.PrintGreeting(app.handler.GetCounter())
+	greeting.New(app.handler.GetCounter()).Print()
 
 	// run cron
 	if app.cron != nil {
