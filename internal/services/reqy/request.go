@@ -25,6 +25,8 @@ type Request struct {
 	retryCount    int
 	retryWaitTime time.Duration
 
+	basicAuth *BasicAuth
+
 	response *Response
 	result   any
 }
@@ -37,4 +39,9 @@ func NewRequest(baseURL string, client http.Client) *Request {
 		headers: make(map[string]string),
 		cookies: make(map[string]string),
 	}
+}
+
+type BasicAuth struct {
+	Username string
+	Password string
 }

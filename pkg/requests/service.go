@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"github.com/lowl11/boost/internal/services/reqy"
 	"net/http"
 	"time"
 )
@@ -15,6 +16,8 @@ type Service struct {
 
 	retryCount    int
 	retryWaitTime time.Duration
+
+	basicAuth *reqy.BasicAuth
 
 	client http.Client
 }

@@ -21,6 +21,10 @@ func (service *Service) R() *reqy.Request {
 		request.SetTimeout(*service.timeout)
 	}
 
+	if service.basicAuth != nil {
+		request.SetBasicAuth(service.basicAuth)
+	}
+
 	return request
 }
 
@@ -101,5 +105,13 @@ func (service *Service) SetRetryCount(count int) *Service {
 
 func (service *Service) SetRetryWaitTime(waitTime time.Duration) *Service {
 	service.retryWaitTime = waitTime
+	return service
+}
+
+func (service *Service) SetBasicAuth(username, password string) *Service {
+	service.basicAuth = &reqy.BasicAuth{
+		Username: username,
+		Password: password,
+	}
 	return service
 }

@@ -61,6 +61,11 @@ func (req *Request) execute(method, url string, ctx context.Context) error {
 		return err
 	}
 
+	// set basic auth
+	if req.basicAuth != nil {
+		request.SetBasicAuth(req.basicAuth.Username, req.basicAuth.Password)
+	}
+
 	response, err := req.client.Do(request)
 	if err != nil {
 		return err

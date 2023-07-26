@@ -92,6 +92,11 @@ func (req *Request) SetRetryWaitTime(waitTime time.Duration) *Request {
 	return req
 }
 
+func (req *Request) SetBasicAuth(basicAuth *BasicAuth) *Request {
+	req.basicAuth = basicAuth
+	return req
+}
+
 func (req *Request) SetResult(result any) *Request {
 	req.result = result
 	return req
