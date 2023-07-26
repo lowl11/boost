@@ -2,6 +2,7 @@ package boost
 
 import (
 	"github.com/lowl11/boost/internal/services/greeting"
+	"github.com/lowl11/boost/pkg/enums/colors"
 	"github.com/lowl11/boost/pkg/types"
 	"github.com/lowl11/boostcron"
 	"github.com/lowl11/lazylog/log"
@@ -20,7 +21,11 @@ func (app *App) Run(port string) {
 	registerStaticEndpoints(app, app.healthcheck)
 
 	// print greeting text
-	greeting.New(app.handler.GetCounter()).Print()
+	greeting.
+		New(app.handler.GetCounter()).
+		MainColor(colors.Gray).
+		SpecificColor(colors.Green).
+		Print()
 
 	// run cron
 	if app.cron != nil {
