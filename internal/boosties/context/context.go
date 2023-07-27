@@ -2,6 +2,7 @@ package context
 
 import (
 	"github.com/lowl11/boost/internal/boosties/fast_writer"
+	"github.com/lowl11/boost/internal/services/validator"
 	"github.com/lowl11/boost/pkg/types"
 	"github.com/valyala/fasthttp"
 	"net/http"
@@ -10,8 +11,9 @@ import (
 )
 
 type Context struct {
-	inner  *fasthttp.RequestCtx
-	writer *fast_writer.Writer
+	inner    *fasthttp.RequestCtx
+	writer   *fast_writer.Writer
+	validate *validator.Validator
 
 	status       int
 	keyContainer sync.Map
@@ -26,15 +28,21 @@ type Context struct {
 	handlersChainIndex int
 }
 
-func New(inner *fasthttp.RequestCtx, action types.HandlerFunc, handlersChain []types.HandlerFunc) *Context {
+func New(
+	inner *fasthttp.RequestCtx,
+	action types.HandlerFunc,
+	handlersChain []types.HandlerFunc,
+	validate *validator.Validator,
+) *Context {
 	var nextHandler types.HandlerFunc
 	if len(handlersChain) > 0 {
 		nextHandler = handlersChain[0]
 	}
 
 	return &Context{
-		inner:  inner,
-		writer: fast_writer.New(inner),
+		inner:    inner,
+		writer:   fast_writer.New(inner),
+		validate: validate,
 
 		status: http.StatusOK,
 		params: make(map[string]string),

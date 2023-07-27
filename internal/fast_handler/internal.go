@@ -68,7 +68,7 @@ func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
 
 	// create new boost context
 	boostCtx := context.
-		New(ctx, routeCtx.Action, handlersChain).
+		New(ctx, routeCtx.Action, handlersChain, handler.validate).
 		SetParams(routeCtx.Params)
 
 	// call chain of handlers/middlewares

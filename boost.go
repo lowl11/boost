@@ -3,9 +3,11 @@ package boost
 import (
 	"github.com/lowl11/boost/internal/fast_handler"
 	"github.com/lowl11/boost/internal/services/healthcheck"
+	"github.com/lowl11/boost/internal/services/validator"
 	"github.com/lowl11/boost/pkg/destroyer"
 	"github.com/lowl11/boost/pkg/middlewares"
 	"github.com/lowl11/boostcron"
+	"github.com/lowl11/lazylog/log"
 	"github.com/lowl11/lazylog/logapi"
 	"os"
 	"os/signal"
@@ -71,10 +73,16 @@ func New(configs ...Config) *App {
 	initLogger(config)
 	initConfig(config)
 
+	// create validator
+	validate, err := validator.New()
+	if err != nil {
+		log.Fatal(err, "Create validator error")
+	}
+
 	// create Boost App instance
 	app := &App{
 		config:      config,
-		handler:     fast_handler.New(),
+		handler:     fast_handler.New(validate),
 		destroyer:   destroyer.New(),
 		healthcheck: healthcheck.New(),
 	}

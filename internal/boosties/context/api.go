@@ -130,9 +130,25 @@ func (ctx *Context) Parse(object any) error {
 
 	switch contentType {
 	case content_types.JSON:
-		return json.Unmarshal(ctx.Body(), &object)
+		if err := json.Unmarshal(ctx.Body(), &object); err != nil {
+			return ErrorParseBody(err, content_types.JSON)
+		}
+
+		if err := ctx.validate.Struct(object); err != nil {
+			return err
+		}
+
+		return nil
 	case content_types.XML:
-		return xml.Unmarshal(ctx.Body(), &object)
+		if err := xml.Unmarshal(ctx.Body(), &object); err != nil {
+			return ErrorParseBody(err, content_types.XML)
+		}
+
+		if err := ctx.validate.Struct(object); err != nil {
+			return err
+		}
+
+		return nil
 	}
 
 	return ErrorUnknownContentType(contentType)

@@ -9,6 +9,7 @@ import (
 const (
 	typeErrorUnknownType        = "UnknownType"
 	typeErrorUnknownContentType = "UnknownContentType"
+	typeErrorParseBody          = "ParseBody"
 )
 
 func ErrorUnknownType(err error) interfaces.Error {
@@ -20,7 +21,17 @@ func ErrorUnknownType(err error) interfaces.Error {
 
 func ErrorUnknownContentType(contentType string) interfaces.Error {
 	return errors.
-		New("Unknown Content-Type: " + contentType).
+		New("Unknown Content-Type").
 		SetType(typeErrorUnknownContentType).
-		SetHttpCode(http.StatusBadRequest)
+		SetHttpCode(http.StatusBadRequest).
+		AddContext("Content-Type", contentType)
+}
+
+func ErrorParseBody(err error, format string) error {
+	return errors.
+		New("Parse body error").
+		SetType(typeErrorParseBody).
+		SetHttpCode(http.StatusBadRequest).
+		SetError(err).
+		AddContext("format", format)
 }

@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"encoding/base64"
-	"fmt"
 	"github.com/lowl11/boost/internal/boosties/errors"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/interfaces"
@@ -13,7 +12,6 @@ import (
 
 func BasicAuth(username, password string) types.MiddlewareFunc {
 	return func(ctx interfaces.Context) error {
-		fmt.Println("BasicAuth()")
 		authorizationToken := ctx.Authorization()
 
 		parsedToken, err := base64.StdEncoding.DecodeString(authorizationToken)
