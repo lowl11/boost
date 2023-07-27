@@ -49,11 +49,6 @@ func (greeting *Greeting) appendDescription() {
 }
 
 func (greeting *Greeting) appendStatistic() {
-	//greeting.message += printer.Build(
-	//	statistics,
-	//	printer.Color(greeting.counter.GetRoutes()-static_controller.RouteCount, colors.Cyan),
-	//	printer.Color(greeting.counter.GetGroups(), colors.Cyan),
-	//)
 	greeting.message += greeting.getStatistic()
 }
 
@@ -98,6 +93,8 @@ func (greeting *Greeting) getStatistic() string {
 	const (
 		startLine = " │ "
 		endLine   = " │\n"
+
+		betweenSpacesLen = 17
 	)
 
 	builder := strings.Builder{}
@@ -108,8 +105,11 @@ func (greeting *Greeting) getStatistic() string {
 
 	builder.WriteString(printer.Color(startLine, greeting.getMainColor()))
 	builder.WriteString("Routes: ........")
+
 	builder.WriteString(printer.Color(routes, greeting.getSpecificColor()))
-	builder.WriteString("               Groups: ........")
+
+	builder.WriteString(printer.Spaces(betweenSpacesLen - len(routes) - len(groups)))
+	builder.WriteString("Groups: ........")
 	builder.WriteString(printer.Color(groups, greeting.getSpecificColor()))
 	builder.WriteString(printer.Color(endLine, greeting.getMainColor()))
 

@@ -27,3 +27,14 @@ func Color(text any, color string) string {
 	coloredText.WriteString(colors.Reset)
 	return coloredText.String()
 }
+
+func Spaces(count int) string {
+	const space = " "
+
+	var spaces string
+	for i := 0; i < count; i++ {
+		spaces += space
+	}
+
+	return spaces
+}
