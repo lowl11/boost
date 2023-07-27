@@ -4,6 +4,7 @@ import (
 	"github.com/lowl11/boost/internal/boosties/static_controller"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/internal/services/greeting/printer"
+	"os"
 	"strings"
 )
 
@@ -94,7 +95,7 @@ func (greeting *Greeting) getStatistic() string {
 		startLine = " │ "
 		endLine   = " │\n"
 
-		betweenSpacesLen = 17
+		spaces = 17
 	)
 
 	builder := strings.Builder{}
@@ -108,9 +109,23 @@ func (greeting *Greeting) getStatistic() string {
 
 	builder.WriteString(printer.Color(routes, greeting.getSpecificColor()))
 
-	builder.WriteString(printer.Spaces(betweenSpacesLen - len(routes) - len(groups)))
+	builder.WriteString(printer.Spaces(spaces - len(routes) - len(groups)))
 	builder.WriteString("Groups: ........")
 	builder.WriteString(printer.Color(groups, greeting.getSpecificColor()))
+	builder.WriteString(printer.Color(endLine, greeting.getMainColor()))
+
+	// second line
+	port := greeting.ctx.Port
+	pid := type_helper.ToString(os.Getpid())
+
+	builder.WriteString(printer.Color(startLine, greeting.getMainColor()))
+	builder.WriteString("Port: ..........")
+
+	builder.WriteString(printer.Color(port, greeting.getSpecificColor()))
+
+	builder.WriteString(printer.Spaces(spaces - len(port) - len(pid)))
+	builder.WriteString("PID: ...........")
+	builder.WriteString(printer.Color(pid, greeting.getSpecificColor()))
 	builder.WriteString(printer.Color(endLine, greeting.getMainColor()))
 
 	return builder.String()

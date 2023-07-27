@@ -22,7 +22,9 @@ func (app *App) Run(port string) {
 
 	// print greeting text
 	greeting.
-		New(app.handler.GetCounter()).
+		New(app.handler.GetCounter(), greeting.Context{
+			Port: port,
+		}).
 		MainColor(colors.Gray).
 		SpecificColor(colors.Green).
 		Print()
