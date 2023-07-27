@@ -6,6 +6,11 @@ import (
 	"net/http"
 )
 
+const (
+	errorType  = "ValidateModel"
+	contextKey = "validate"
+)
+
 func (validator *Validator) TurnOff() *Validator {
 	validator.turnOff = true
 	return validator
@@ -18,7 +23,7 @@ func (validator *Validator) Struct(object any) error {
 
 	err := errors.
 		New("Model validation error").
-		SetType("ValidateModel").
+		SetType(errorType).
 		SetHttpCode(http.StatusUnprocessableEntity)
 
 	validateError := validator.Validate.Struct(object)
@@ -40,5 +45,37 @@ func (validator *Validator) Struct(object any) error {
 		validations = append(validations, validationError.Error())
 	}
 
-	return err.AddContext("validation", validations)
+	return err.AddContext(contextKey, validations)
+}
+
+func (validator *Validator) Var(variable any, tag string) error {
+	if validator.turnOff {
+		return nil
+	}
+
+	err := errors.
+		New("Variable validation error").
+		SetType(errorType).
+		SetHttpCode(http.StatusUnprocessableEntity)
+
+	validateError := validator.Validate.Var(variable, tag)
+	if err == nil {
+		return err
+	}
+
+	validationErrors, ok := validateError.(baseValidator.ValidationErrors)
+	if !ok {
+		return err.AddContext(contextKey, validateError.Error())
+	}
+
+	if len(validationErrors) == 0 {
+		return nil
+	}
+
+	validations := make([]string, 0, len(validationErrors))
+	for _, validationError := range validationErrors {
+		validations = append(validations, validationError.Error())
+	}
+
+	return err.AddContext(contextKey, validations)
 }
