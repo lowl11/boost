@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	"context"
 	"github.com/valyala/fasthttp"
 )
 
@@ -74,4 +75,6 @@ type Context interface {
 
 	// Next method which calls next handler from handlers chain
 	Next() error
+
+	Context() context.Context
 }

@@ -1,6 +1,7 @@
 package context
 
 import (
+	"context"
 	"encoding/json"
 	"encoding/xml"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
@@ -98,13 +99,13 @@ func (ctx *Context) Header(name string) string {
 }
 
 func (ctx *Context) Headers() map[string]string {
-	headers := make(map[string]string)
+	requestHeaders := make(map[string]string)
 
 	ctx.inner.Request.Header.VisitAll(func(key, value []byte) {
-		headers[type_helper.BytesToString(key)] = type_helper.BytesToString(value)
+		requestHeaders[type_helper.BytesToString(key)] = type_helper.BytesToString(value)
 	})
 
-	return headers
+	return requestHeaders
 }
 
 func (ctx *Context) Cookie(name string) string {
@@ -308,4 +309,8 @@ func (ctx *Context) Next() error {
 	}
 
 	return nextHandler(ctx)
+}
+
+func (ctx *Context) Context() context.Context {
+	return context.Background()
 }
