@@ -36,8 +36,11 @@ type Context interface {
 	Authorization() string
 	// Body returns body of response object
 	Body() []byte
-	// Parse converts response body to given object (JSON, XML)
+	// Parse converts response body to given object (JSON, XML).
+	// Using validation ("validate" tag by go-playground). Turn off validation in Boost Config
 	Parse(object any) error
+	// Validate check body fields by using "validate" tag
+	Validate(object any) error
 	// FormFile returns content of file in bytes
 	FormFile(key string) []byte
 

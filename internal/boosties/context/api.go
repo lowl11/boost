@@ -154,6 +154,10 @@ func (ctx *Context) Parse(object any) error {
 	return ErrorUnknownContentType(contentType)
 }
 
+func (ctx *Context) Validate(object any) error {
+	return ctx.validate.Struct(object)
+}
+
 func (ctx *Context) FormFile(key string) []byte {
 	file, err := ctx.inner.FormFile(key)
 	if err != nil {
