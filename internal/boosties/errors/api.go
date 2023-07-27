@@ -33,12 +33,31 @@ func (err *Error) ContentType() string {
 	return content_types.JSON
 }
 
+func (err *Error) Context() map[string]any {
+	return err.context
+}
+
+func (err *Error) SetContext(context map[string]any) interfaces.Error {
+	for key, value := range context {
+		err.context[key] = value
+	}
+
+	return err
+}
+
+func (err *Error) AddContext(key string, value any) interfaces.Error {
+	err.context[key] = value
+
+	return err
+}
+
 func (err *Error) Error() string {
 	output := OutputError{
 		Status:  status,
 		Message: err.message,
 		Type:    err.errorType,
 		Code:    err.httpCode,
+		Context: err.context,
 	}
 
 	outputInBytes, _ := json.Marshal(output)
@@ -51,6 +70,7 @@ func (err *Error) JSON() []byte {
 		Message: err.message,
 		Type:    err.errorType,
 		Code:    err.httpCode,
+		Context: err.context,
 	}
 
 	outputInBytes, _ := json.Marshal(output)

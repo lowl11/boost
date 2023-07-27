@@ -6,6 +6,9 @@ type Error interface {
 	SetHttpCode(code int) Error
 	Type() string
 	SetType(errorType string) Error
+	Context() map[string]any
+	SetContext(context map[string]any) Error
+	AddContext(key string, value any) Error
 	Error() string
 	ContentType() string
 	JSON() []byte
