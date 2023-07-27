@@ -9,6 +9,8 @@ type Error interface {
 	Context() map[string]any
 	SetContext(context map[string]any) Error
 	AddContext(key string, value any) Error
+	InnerError() error
+	SetError(err error) Error
 	Error() string
 	ContentType() string
 	JSON() []byte

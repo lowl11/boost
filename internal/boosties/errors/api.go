@@ -51,10 +51,24 @@ func (err *Error) AddContext(key string, value any) interfaces.Error {
 	return err
 }
 
+func (err *Error) InnerError() error {
+	return err.innerError
+}
+
+func (err *Error) SetError(innerError error) interfaces.Error {
+	err.innerError = innerError
+	return err
+}
+
 func (err *Error) Error() string {
+	errorMessage := err.message
+	if err.innerError != nil {
+		errorMessage += " | " + err.innerError.Error()
+	}
+
 	output := OutputError{
 		Status:  status,
-		Message: err.message,
+		Message: errorMessage,
 		Type:    err.errorType,
 		Code:    err.httpCode,
 		Context: err.context,
@@ -65,9 +79,14 @@ func (err *Error) Error() string {
 }
 
 func (err *Error) JSON() []byte {
+	errorMessage := err.message
+	if err.innerError != nil {
+		errorMessage += " | " + err.innerError.Error()
+	}
+
 	output := OutputError{
 		Status:  status,
-		Message: err.message,
+		Message: errorMessage,
 		Type:    err.errorType,
 		Code:    err.httpCode,
 		Context: err.context,

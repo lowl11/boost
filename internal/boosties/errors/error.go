@@ -7,10 +7,11 @@ const (
 )
 
 type Error struct {
-	message   string
-	errorType string
-	httpCode  int
-	context   map[string]any
+	message    string
+	errorType  string
+	httpCode   int
+	context    map[string]any
+	innerError error
 }
 
 type OutputError struct {
