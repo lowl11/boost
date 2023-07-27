@@ -54,6 +54,11 @@ func (controller Base) NotFound(ctx boost.Context) error {
 	return ctx.Status(http.StatusNotFound).Empty()
 }
 
+// NotFoundError returns response with status 404, with given body
+func (controller Base) NotFoundError(ctx boost.Context, err error) error {
+	return ctx.Status(http.StatusNotFound).Error(err)
+}
+
 // NotFoundString returns response with status 404, with given message
 func (controller Base) NotFoundString(ctx boost.Context, message string) error {
 	return ctx.Status(http.StatusNotFound).JSON(domain.NewNotFoundMessage(message))
