@@ -6,7 +6,16 @@ import (
 	"net/http"
 )
 
+func (validator *Validator) TurnOff() *Validator {
+	validator.turnOff = true
+	return validator
+}
+
 func (validator *Validator) Struct(object any) error {
+	if validator.turnOff {
+		return nil
+	}
+
 	err := errors.
 		New("Model validation error").
 		SetType("ValidateModel").

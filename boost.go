@@ -20,6 +20,9 @@ type Config struct {
 	// Timeout for every request in this App
 	Timeout time.Duration
 
+	// ValidationOff turns of validation
+	ValidationOff bool
+
 	// CustomLoggers is container with custom loggers inherited by interface logapi.ILogger
 	CustomLoggers []logapi.ILogger
 
@@ -41,6 +44,7 @@ type Config struct {
 	// ConfigBaseFolder sets base folder for profiles. Default is /profiles
 	ConfigBaseFolder string
 
+	// CronConfig config of Cron Application
 	CronConfig boostcron.Config
 }
 
@@ -77,6 +81,10 @@ func New(configs ...Config) *App {
 	validate, err := validator.New()
 	if err != nil {
 		log.Fatal(err, "Create validator error")
+	}
+
+	if config.ValidationOff {
+		validate.TurnOff()
 	}
 
 	// create Boost App instance
