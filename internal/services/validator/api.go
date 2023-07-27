@@ -13,9 +13,17 @@ func (validator *Validator) Struct(object any) error {
 		SetHttpCode(http.StatusUnprocessableEntity)
 
 	validateError := validator.Validate.Struct(object)
+	if validateError == nil {
+		return nil
+	}
+
 	validationErrors, ok := validateError.(baseValidator.ValidationErrors)
 	if !ok {
 		return err.SetError(err)
+	}
+
+	if len(validationErrors) == 0 {
+		return nil
 	}
 
 	validations := make([]string, 0, len(validationErrors))
