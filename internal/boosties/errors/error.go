@@ -18,7 +18,7 @@ type OutputError struct {
 	Message string         `json:"message"`
 	Type    string         `json:"type"`
 	Code    int            `json:"code"`
-	Context map[string]any `json:"context"`
+	Context map[string]any `json:"context,omitempty"`
 }
 
 func New(message string) *Error {
