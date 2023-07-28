@@ -33,6 +33,7 @@ func main() {
 
 ### External TODO
 
+- gateway
 - gRPC support
 - RMQ support
 - request validation support
