@@ -5,14 +5,21 @@ import (
 	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/lowl11/boost/pkg/types"
 	uuid "github.com/satori/go.uuid"
+	"net"
 )
 
 func (handler *Handler) Run(port string) error {
 	// prepare server
 	handler.server.Handler = handler.handler
 
+	// define listener
+	listener, err := net.Listen("tcp", port)
+	if err != nil {
+		return err
+	}
+
 	// run server
-	return handler.server.ListenAndServe(port)
+	return handler.server.Serve(listener)
 }
 
 func (handler *Handler) RegisterRoute(method, path string, action types.HandlerFunc, groupID string) interfaces.Route {
