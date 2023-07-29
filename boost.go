@@ -51,8 +51,6 @@ type Config struct {
 
 	// RpcConfig config of gRPC Application
 	RpcConfig boostrpc.Config
-	// RpcPort is gRPC server port
-	RpcPort string
 }
 
 func defaultConfig() Config {

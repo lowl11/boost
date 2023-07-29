@@ -4,7 +4,7 @@ func (greeting *Greeting) Print() {
 	greeting.appendHeader()
 
 	greeting.appendLogo()
-	greeting.appendDescription()
+	greeting.appendMode()
 	greeting.appendStatistic()
 
 	greeting.appendFooter()

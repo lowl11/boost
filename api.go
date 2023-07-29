@@ -3,6 +3,7 @@ package boost
 import (
 	"github.com/lowl11/boost/internal/services/greeting"
 	"github.com/lowl11/boost/pkg/enums/colors"
+	"github.com/lowl11/boost/pkg/enums/modes"
 	"github.com/lowl11/boost/pkg/types"
 	"github.com/lowl11/boostcron"
 	"github.com/lowl11/boostrpc"
@@ -24,28 +25,60 @@ func (app *App) Run(port string) {
 	// print greeting text
 	greeting.
 		New(app.handler.GetCounter(), greeting.Context{
+			Mode: modes.Http,
 			Port: port,
 		}).
 		MainColor(colors.Gray).
 		SpecificColor(colors.Green).
 		Print()
 
-	// run cron server
-	if app.cron != nil {
-		app.cron.RunAsync()
-	}
-
-	// run gRPC server
-	if app.rpcServer != nil {
-		if app.config.RpcPort == "" {
-			app.config.RpcPort = getDefaultPort(port)
-		}
-
-		app.rpcServer.RunAsync(app.config.RpcPort)
-	}
-
 	// run server app
 	log.Fatal(app.handler.Run(port))
+}
+
+// RunRPC starts listening TCP with given port
+func (app *App) RunRPC(port string) {
+	if app.rpcServer == nil {
+		panic("RPC server is NULL. Add one handler at least to initialize")
+	}
+
+	// register static endpoints
+	registerStaticEndpoints(app, app.healthcheck)
+
+	// print greeting text
+	greeting.
+		New(app.handler.GetCounter(), greeting.Context{
+			Mode: modes.RPC,
+			Port: port,
+		}).
+		MainColor(colors.Gray).
+		SpecificColor(colors.Green).
+		Print()
+
+	// run server app
+	log.Fatal(app.rpcServer.Run(port))
+}
+
+// RunCron starts listening TCP with given port
+func (app *App) RunCron() {
+	if app.cron == nil {
+		panic("Cron App is NULL. Add at least one action to initialize")
+	}
+
+	// register static endpoints
+	registerStaticEndpoints(app, app.healthcheck)
+
+	// print greeting text
+	greeting.
+		New(app.handler.GetCounter(), greeting.Context{
+			Mode: modes.Cron,
+		}).
+		MainColor(colors.Gray).
+		SpecificColor(colors.Green).
+		Print()
+
+	// run server app
+	app.cron.Run()
 }
 
 // Destroy adds function which will be called in shutdown

@@ -6,6 +6,7 @@ import (
 )
 
 type Context struct {
+	Mode string
 	Port string
 }
 
@@ -16,6 +17,8 @@ type Greeting struct {
 
 	mainColor     string
 	specificColor string
+
+	printed bool
 }
 
 func New(counter *counter.Counter, ctx Context) *Greeting {

@@ -10,6 +10,8 @@ type Counter struct {
 	globalMiddlewares atomic.Int32
 	groupMiddlewares  atomic.Int32
 	routeMiddlewares  atomic.Int32
+
+	cronActions atomic.Int32
 }
 
 func New() *Counter {

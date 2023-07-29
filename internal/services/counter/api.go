@@ -24,6 +24,10 @@ func (counter *Counter) GetRouteMiddlewares() int {
 	return int(counter.routeMiddlewares.Load())
 }
 
+func (counter *Counter) GetCronActions() int {
+	return int(counter.cronActions.Load())
+}
+
 func (counter *Counter) Route() {
 	counter.routes.Add(1)
 }
@@ -45,4 +49,8 @@ func (counter *Counter) GroupMiddleware() {
 func (counter *Counter) RouteMiddleware() {
 	counter.middlewares.Add(1)
 	counter.routeMiddlewares.Add(1)
+}
+
+func (counter *Counter) CronAction() {
+	counter.cronActions.Add(1)
 }

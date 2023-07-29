@@ -1,28 +1,23 @@
 package greeting
 
 import (
-	"github.com/lowl11/boost/internal/boosties/static_controller"
-	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/internal/services/greeting/printer"
-	"os"
+	"github.com/lowl11/boost/pkg/enums/modes"
 	"strings"
 )
 
 const (
 	header = " ┌───────────────────────────────────────────────────┐"
 	footer = " └───────────────────────────────────────────────────┘\n"
-
-	description = ` │     Minimalist Go framework based on FastHTTP     │
- │          https://github.com/lowl11/boost          │
-`
-
-	statistics = ` │ Routes: ........%s                                 │
- │ Groups: ........%s                                 │
-`
 )
 
 func (greeting *Greeting) printMessage() {
+	if greeting.printed {
+		return
+	}
+
 	printer.Print(greeting.message)
+	greeting.printed = true
 }
 
 func (greeting *Greeting) getMainColor() string {
@@ -45,8 +40,26 @@ func (greeting *Greeting) appendLogo() {
 	greeting.message += greeting.getLogo()
 }
 
-func (greeting *Greeting) appendDescription() {
-	greeting.message += printer.Color(description, greeting.getMainColor())
+func (greeting *Greeting) appendMode() {
+	const (
+		startLine = " │ "
+		endLine   = " │\n"
+
+		beforeSpaces = 18
+		afterSpaces  = 24
+	)
+
+	modeLength := len(greeting.ctx.Mode)
+
+	builder := strings.Builder{}
+	builder.WriteString(printer.Color(startLine, greeting.getMainColor()))
+	builder.WriteString(printer.Spaces(beforeSpaces))
+	builder.WriteString("Mode: ")
+	builder.WriteString(printer.Color(greeting.ctx.Mode, greeting.getSpecificColor()))
+	builder.WriteString(printer.Spaces(afterSpaces - modeLength + 1))
+	builder.WriteString(printer.Color(endLine, greeting.getMainColor()))
+
+	greeting.message += builder.String()
 }
 
 func (greeting *Greeting) appendStatistic() {
@@ -91,42 +104,14 @@ func (greeting *Greeting) getLogo() string {
 }
 
 func (greeting *Greeting) getStatistic() string {
-	const (
-		startLine = " │ "
-		endLine   = " │\n"
+	switch greeting.ctx.Mode {
+	case modes.Http:
+		return greeting.getHttpStatistic()
+	case modes.RPC:
+		return greeting.getRPCStatistic()
+	case modes.Cron:
+		return greeting.getCronStatistic()
+	}
 
-		spaces = 17
-	)
-
-	builder := strings.Builder{}
-
-	// first line
-	routes := type_helper.ToString(greeting.counter.GetRoutes() - static_controller.RouteCount)
-	groups := type_helper.ToString(greeting.counter.GetGroups())
-
-	builder.WriteString(printer.Color(startLine, greeting.getMainColor()))
-	builder.WriteString("Routes: ........")
-
-	builder.WriteString(printer.Color(routes, greeting.getSpecificColor()))
-
-	builder.WriteString(printer.Spaces(spaces - len(routes) - len(groups)))
-	builder.WriteString("Groups: ........")
-	builder.WriteString(printer.Color(groups, greeting.getSpecificColor()))
-	builder.WriteString(printer.Color(endLine, greeting.getMainColor()))
-
-	// second line
-	port := greeting.ctx.Port
-	pid := type_helper.ToString(os.Getpid())
-
-	builder.WriteString(printer.Color(startLine, greeting.getMainColor()))
-	builder.WriteString("Port: ..........")
-
-	builder.WriteString(printer.Color(port, greeting.getSpecificColor()))
-
-	builder.WriteString(printer.Spaces(spaces - len(port) - len(pid)))
-	builder.WriteString("PID: ...........")
-	builder.WriteString(printer.Color(pid, greeting.getSpecificColor()))
-	builder.WriteString(printer.Color(endLine, greeting.getMainColor()))
-
-	return builder.String()
+	return ""
 }
