@@ -7,15 +7,15 @@ import (
 )
 
 type Request struct {
+	// init data
 	baseURL string
 	body    any
+	ctx     context.Context
+	client  http.Client
 
+	// collect data
 	headers map[string]string
 	cookies map[string]string
-
-	ctx context.Context
-
-	client http.Client
 
 	isXML bool
 
@@ -27,6 +27,10 @@ type Request struct {
 
 	basicAuth *BasicAuth
 
+	// cached data
+	cache *http.Request
+
+	// result data
 	response  *Response
 	result    any
 	sendError error

@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"encoding/xml"
+	"github.com/lowl11/boost/internal/helpers/request_helper"
 	"github.com/lowl11/lazylog/log"
 	"io"
 	"net/http"
@@ -35,6 +36,55 @@ func (req *Request) execute(method, url string, ctx context.Context) error {
 	var request *http.Request
 	var err error
 
+	if req.cache == nil {
+		// create new request
+		request, err = req.createNewRequest(ctx, method, url)
+		if err != nil {
+			return err
+		}
+
+		// cache request
+		req.cache = request
+	} else {
+		request = req.cache
+	}
+
+	// send request
+	response, err := req.client.Do(request)
+	if err != nil {
+		return err
+	}
+
+	// save response
+	req.response = newResponse(response).
+		setStatus(response.Status, response.StatusCode)
+
+	// parse response
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err = response.Body.Close(); err != nil {
+			log.Warn(err, "Close request body error")
+		}
+	}()
+
+	// set response bytes body
+	req.response.setBody(responseBody)
+
+	// try to unmarshal response body
+	if err = req.unmarshal(responseBody, &req.result); err != nil {
+		log.Error(err, "Unmarshal result error")
+	}
+
+	return nil
+}
+
+func (req *Request) createNewRequest(ctx context.Context, method, url string) (*http.Request, error) {
+	var request *http.Request
+	var err error
+
 	requestURL := req.baseURL + url
 
 	if req.body == nil {
@@ -45,52 +95,32 @@ func (req *Request) execute(method, url string, ctx context.Context) error {
 		if !req.isXML {
 			parsedBody, err = json.Marshal(req.body)
 			if err != nil {
-				return err
+				return nil, err
 			}
 
 		} else {
 			parsedBody, err = xml.Marshal(req.body)
 			if err != nil {
-				return err
+				return nil, err
 			}
 		}
 
 		request, err = http.NewRequestWithContext(ctx, method, requestURL, bytes.NewBuffer(parsedBody))
 	}
 	if err != nil {
-		return err
+		return nil, err
 	}
+
+	// fill meta data
+	request_helper.FillHeaders(request, req.headers)
+	request_helper.FillCookies(request, req.cookies)
 
 	// set basic auth
 	if req.basicAuth != nil {
 		request.SetBasicAuth(req.basicAuth.Username, req.basicAuth.Password)
 	}
 
-	response, err := req.client.Do(request)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if err = response.Body.Close(); err != nil {
-			log.Warn(err, "Close request body error")
-		}
-	}()
-
-	req.response = newResponse(response).
-		setStatus(response.Status, response.StatusCode)
-
-	responseBody, err := io.ReadAll(response.Body)
-	if err != nil {
-		return err
-	}
-
-	req.response.setBody(responseBody)
-
-	if err = req.unmarshal(responseBody, &req.result); err != nil {
-		log.Error(err, "Unmarshal result error")
-	}
-
-	return nil
+	return request, nil
 }
 
 func (req *Request) getContext() context.Context {
