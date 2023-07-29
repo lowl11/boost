@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"encoding/xml"
-	"github.com/lowl11/boost/pkg/errors"
 	"github.com/lowl11/lazylog/log"
 	"io"
 	"net/http"
@@ -29,7 +28,7 @@ func (req *Request) do(method, url string, ctx context.Context) error {
 		}
 	}
 
-	return errors.New("retries count is done")
+	return req.sendError
 }
 
 func (req *Request) execute(method, url string, ctx context.Context) error {
