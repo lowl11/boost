@@ -102,6 +102,10 @@ func (req *Request) SetResult(result any) *Request {
 	return req
 }
 
+func (req *Request) Error() error {
+	return req.sendError
+}
+
 func (req *Request) GET(url string) (*Response, error) {
 	if err := req.do(http.MethodGet, url, req.getContext()); err != nil {
 		return nil, err

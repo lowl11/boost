@@ -27,8 +27,9 @@ type Request struct {
 
 	basicAuth *BasicAuth
 
-	response *Response
-	result   any
+	response  *Response
+	result    any
+	sendError error
 }
 
 func NewRequest(baseURL string, client http.Client) *Request {

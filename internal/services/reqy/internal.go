@@ -24,6 +24,7 @@ func (req *Request) do(method, url string, ctx context.Context) error {
 				return nil
 			}
 
+			req.sendError = err
 			time.Sleep(req.retryWaitTime)
 		}
 	}

@@ -5,6 +5,7 @@ import (
 	"github.com/lowl11/boost/pkg/enums/colors"
 	"github.com/lowl11/boost/pkg/types"
 	"github.com/lowl11/boostcron"
+	"github.com/lowl11/boostrpc"
 	"github.com/lowl11/lazylog/log"
 	uuid "github.com/satori/go.uuid"
 	"net/http"
@@ -29,9 +30,18 @@ func (app *App) Run(port string) {
 		SpecificColor(colors.Green).
 		Print()
 
-	// run cron
+	// run cron server
 	if app.cron != nil {
 		app.cron.RunAsync()
+	}
+
+	// run gRPC server
+	if app.rpcServer != nil {
+		if app.config.RpcPort == "" {
+			app.config.RpcPort = getDefaultPort(port)
+		}
+
+		app.rpcServer.RunAsync(app.config.RpcPort)
 	}
 
 	// run server app
@@ -111,6 +121,14 @@ func (app *App) CronApp() boostcron.CronRouter {
 	}
 
 	return app.cron
+}
+
+func (app *App) RpcApp() *boostrpc.App {
+	if app.rpcServer == nil {
+		app.rpcServer = boostrpc.New(app.config.RpcConfig)
+	}
+
+	return app.rpcServer
 }
 
 // Use add usable middleware to global App.

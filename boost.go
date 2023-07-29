@@ -7,8 +7,10 @@ import (
 	"github.com/lowl11/boost/pkg/destroyer"
 	"github.com/lowl11/boost/pkg/middlewares"
 	"github.com/lowl11/boostcron"
+	"github.com/lowl11/boostrpc"
 	"github.com/lowl11/lazylog/log"
 	"github.com/lowl11/lazylog/logapi"
+
 	"os"
 	"os/signal"
 	"syscall"
@@ -46,6 +48,11 @@ type Config struct {
 
 	// CronConfig config of Cron Application
 	CronConfig boostcron.Config
+
+	// RpcConfig config of gRPC Application
+	RpcConfig boostrpc.Config
+	// RpcPort is gRPC server port
+	RpcPort string
 }
 
 func defaultConfig() Config {
@@ -58,6 +65,7 @@ func defaultConfig() Config {
 type App struct {
 	config      Config
 	handler     *fast_handler.Handler
+	rpcServer   *boostrpc.App
 	destroyer   *destroyer.Destroyer
 	cron        *boostcron.Cron
 	healthcheck *healthcheck.Healthcheck
@@ -83,6 +91,7 @@ func New(configs ...Config) *App {
 		log.Fatal(err, "Create validator error")
 	}
 
+	// turn off model validations
 	if config.ValidationOff {
 		validate.TurnOff()
 	}
