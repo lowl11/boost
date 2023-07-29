@@ -312,5 +312,13 @@ func (ctx *Context) Next() error {
 }
 
 func (ctx *Context) Context() context.Context {
-	return context.Background()
+	if ctx.userCtx == nil {
+		return context.Background()
+	}
+
+	return ctx.userCtx
+}
+
+func (ctx *Context) SetContext(userContext context.Context) {
+	ctx.userCtx = userContext
 }

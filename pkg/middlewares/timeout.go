@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"context"
 	"github.com/lowl11/boost/internal/boosties/errors"
 	"github.com/lowl11/boost/internal/boosties/panicer"
 	"github.com/lowl11/boost/pkg/interfaces"
@@ -21,6 +22,10 @@ func Timeout(timeout time.Duration) types.MiddlewareFunc {
 
 		ch := make(chan struct{}, 1)
 		errorChannel := make(chan error, 1)
+		timeoutCtx, cancel := context.WithTimeout(ctx.Context(), timeout)
+		defer cancel()
+
+		ctx.SetContext(timeoutCtx)
 
 		go func() {
 			defer func() {
@@ -37,7 +42,7 @@ func Timeout(timeout time.Duration) types.MiddlewareFunc {
 			return ctx.Next()
 		case err := <-errorChannel:
 			return ctx.Error(err)
-		case <-time.After(timeout):
+		case <-timeoutCtx.Done():
 			return errorTimeout()
 		}
 	}

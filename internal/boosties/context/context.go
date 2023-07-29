@@ -1,6 +1,7 @@
 package context
 
 import (
+	"context"
 	"github.com/lowl11/boost/internal/boosties/fast_writer"
 	"github.com/lowl11/boost/internal/services/validator"
 	"github.com/lowl11/boost/pkg/types"
@@ -26,6 +27,8 @@ type Context struct {
 	nextHandler        types.HandlerFunc
 	handlersChain      []types.HandlerFunc
 	handlersChainIndex int
+
+	userCtx context.Context
 }
 
 func New(

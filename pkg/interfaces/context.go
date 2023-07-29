@@ -77,4 +77,5 @@ type Context interface {
 	Next() error
 
 	Context() context.Context
+	SetContext(ctx context.Context)
 }
