@@ -45,8 +45,16 @@ func StringFromError(err error, defaultMessage string) string {
 }
 
 func ToString(anyValue any) string {
+	if anyValue == nil {
+		return ""
+	}
+
 	if _, ok := anyValue.(error); ok {
 		return anyValue.(error).Error()
+	}
+
+	if bytesBuffer, ok := anyValue.([]byte); ok {
+		return BytesToString(bytesBuffer)
 	}
 
 	value := reflect.ValueOf(anyValue)
@@ -74,6 +82,21 @@ func ToString(anyValue any) string {
 		return ToString(value.Elem().Interface())
 	default:
 		return fmt.Sprintf("%v", value)
+	}
+}
+
+func ToBytes(anyValue any) []byte {
+	if anyValue == nil {
+		return nil
+	}
+
+	valueType := reflect.TypeOf(anyValue)
+
+	switch valueType.Kind() {
+	case reflect.String:
+		return StringToBytes(anyValue.(string))
+	default:
+		return StringToBytes(ToString(anyValue))
 	}
 }
 
