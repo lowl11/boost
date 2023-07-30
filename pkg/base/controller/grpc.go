@@ -19,10 +19,10 @@ func (controller Grpc) Error(err error) error {
 	log.Error(err)
 	boostError, ok := err.(interfaces.Error)
 	if !ok {
-		return err
+		return status.Error(codes.Internal, err.Error())
 	}
 
-	return status.Error(boostError.GrpcCode(), boostError.String())
+	return status.Error(boostError.GrpcCode(), boostError.Error())
 }
 
 func (controller Grpc) NotFound(err error) error {
@@ -33,8 +33,8 @@ func (controller Grpc) NotFound(err error) error {
 	log.Error(err)
 	boostError, ok := err.(interfaces.Error)
 	if !ok {
-		return status.Error(codes.Unknown, err.Error())
+		return status.Error(codes.Internal, err.Error())
 	}
 
-	return status.Error(codes.NotFound, boostError.String())
+	return status.Error(codes.NotFound, boostError.Error())
 }

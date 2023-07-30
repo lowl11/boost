@@ -27,7 +27,7 @@ func ToGrpcCode(code int) codes.Code {
 		return codes.Unimplemented
 	case http.StatusServiceUnavailable:
 		return codes.Unavailable
-	case http.StatusBadRequest:
+	case http.StatusBadRequest, http.StatusUnprocessableEntity:
 		return codes.InvalidArgument
 	case http.StatusInternalServerError:
 		return codes.Internal
@@ -60,13 +60,9 @@ func ToHttpCode(code codes.Code) int {
 		return http.StatusNotImplemented
 	case codes.Unavailable:
 		return http.StatusServiceUnavailable
-	case codes.InvalidArgument:
-	case codes.FailedPrecondition:
-	case codes.OutOfRange:
+	case codes.InvalidArgument, codes.FailedPrecondition, codes.OutOfRange:
 		return http.StatusBadRequest
-	case codes.Internal:
-	case codes.DataLoss:
-	case codes.Unknown:
+	case codes.Internal, codes.DataLoss, codes.Unknown:
 		return http.StatusInternalServerError
 	}
 
