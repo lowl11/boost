@@ -6,9 +6,11 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"github.com/lowl11/boost/internal/helpers/request_helper"
+	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/lazylog/log"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -73,9 +75,12 @@ func (req *Request) execute(method, url string, ctx context.Context) error {
 	// set response bytes body
 	req.response.setBody(responseBody)
 
-	// try to unmarshal response body
-	if err = req.unmarshal(responseBody, &req.result); err != nil {
-		log.Error(err, "Unmarshal result error")
+	// try to unmarshal response body if response code is success
+	if response.StatusCode < http.StatusBadRequest &&
+		!strings.Contains(type_helper.ToString(responseBody), "<!DOCTYPE html>") {
+		if err = req.unmarshal(responseBody, &req.result); err != nil {
+			log.Error(err, "Unmarshal result error")
+		}
 	}
 
 	return nil
