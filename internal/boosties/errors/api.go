@@ -2,9 +2,12 @@ package errors
 
 import (
 	"encoding/json"
+	"github.com/lowl11/boost/internal/helpers/error_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/enums/content_types"
 	"github.com/lowl11/boost/pkg/interfaces"
+	"google.golang.org/grpc/codes"
+	"strings"
 )
 
 const (
@@ -13,11 +16,17 @@ const (
 
 func (err *Error) SetHttpCode(code int) interfaces.Error {
 	err.httpCode = code
+	err.grpcCode = error_helper.ToGrpcCode(code)
+
 	return err
 }
 
 func (err *Error) HttpCode() int {
 	return err.httpCode
+}
+
+func (err *Error) GrpcCode() codes.Code {
+	return err.grpcCode
 }
 
 func (err *Error) SetType(errorType string) interfaces.Error {
@@ -94,6 +103,26 @@ func (err *Error) JSON() []byte {
 
 	outputInBytes, _ := json.Marshal(output)
 	return outputInBytes
+}
+
+func (err *Error) String() string {
+	builder := strings.Builder{}
+	builder.Grow(500)
+	builder.WriteString(err.message)
+	builder.WriteString(". ")
+	builder.WriteString("")
+
+	if err.context != nil {
+		builder.WriteString("Context: ")
+		for key, value := range err.context {
+			builder.WriteString(key)
+			builder.WriteString("=")
+			builder.WriteString(type_helper.ToString(value))
+			builder.WriteString(";")
+		}
+	}
+
+	return builder.String()
 }
 
 func (err *Error) Is(compare error) bool {

@@ -1,6 +1,9 @@
 package errors
 
-import "net/http"
+import (
+	"google.golang.org/grpc/codes"
+	"net/http"
+)
 
 const (
 	unknownErrorType = "Unknown error type"
@@ -10,6 +13,7 @@ type Error struct {
 	message    string
 	errorType  string
 	httpCode   int
+	grpcCode   codes.Code
 	context    map[string]any
 	innerError error
 }
@@ -27,6 +31,7 @@ func New(message string) *Error {
 		message:   message,
 		errorType: unknownErrorType,
 		httpCode:  http.StatusInternalServerError,
+		grpcCode:  codes.Unknown,
 		context:   make(map[string]any),
 	}
 }
