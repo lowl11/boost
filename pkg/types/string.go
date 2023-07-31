@@ -9,3 +9,7 @@ func ToString(value any) string {
 func ToBytes(value any) []byte {
 	return type_helper.ToBytes(value)
 }
+
+func StringToBool(value string) bool {
+	return type_helper.StringToBool(value)
+}
