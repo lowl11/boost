@@ -1,8 +1,8 @@
 package boost
 
 import (
+	"github.com/google/uuid"
 	"github.com/lowl11/boost/pkg/interfaces"
-	uuid "github.com/satori/go.uuid"
 )
 
 type (

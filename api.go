@@ -1,6 +1,7 @@
 package boost
 
 import (
+	"github.com/google/uuid"
 	"github.com/lowl11/boost/internal/services/greeting"
 	"github.com/lowl11/boost/pkg/enums/colors"
 	"github.com/lowl11/boost/pkg/enums/modes"
@@ -8,7 +9,6 @@ import (
 	"github.com/lowl11/boostcron"
 	"github.com/lowl11/boostrpc"
 	"github.com/lowl11/lazylog/log"
-	uuid "github.com/satori/go.uuid"
 	"net/http"
 )
 

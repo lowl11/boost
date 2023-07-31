@@ -1,6 +1,6 @@
 package boost
 
-import uuid "github.com/satori/go.uuid"
+import "github.com/google/uuid"
 
 type group struct {
 	id     uuid.UUID
@@ -10,7 +10,7 @@ type group struct {
 
 func newGroup(router groupRouter, base string) *group {
 	return &group{
-		id:     uuid.NewV4(),
+		id:     uuid.New(),
 		router: router,
 		base:   base,
 	}

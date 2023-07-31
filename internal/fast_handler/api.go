@@ -1,10 +1,10 @@
 package fast_handler
 
 import (
+	"github.com/google/uuid"
 	"github.com/lowl11/boost/internal/services/counter"
 	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/lowl11/boost/pkg/types"
-	uuid "github.com/satori/go.uuid"
 	"net"
 )
 

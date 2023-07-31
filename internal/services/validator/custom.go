@@ -2,15 +2,25 @@ package validator
 
 import (
 	baseValidator "github.com/go-playground/validator/v10"
-	uuid "github.com/satori/go.uuid"
+	"github.com/google/uuid"
 )
 
 func validateUUID(fl baseValidator.FieldLevel) (isValid bool) {
 	switch val := fl.Field().Interface().(type) {
 	case string:
-		isValid = uuid.FromStringOrNil(val) != uuid.Nil
+		_, err := uuid.Parse(val)
+		if err != nil {
+			return false
+		}
+
+		return true
 	case *string:
-		isValid = *val == "" || uuid.FromStringOrNil(*val) != uuid.Nil
+		_, err := uuid.Parse(*val)
+		if err != nil {
+			return false
+		}
+
+		return true
 	case uuid.UUID:
 		isValid = val != uuid.Nil
 	case *uuid.UUID:

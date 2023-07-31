@@ -4,11 +4,11 @@ go 1.20
 
 require (
 	github.com/go-playground/validator/v10 v10.14.1
+	github.com/google/uuid v1.3.0
 	github.com/lowl11/boostcron v0.0.4
 	github.com/lowl11/boostrpc v0.0.6
 	github.com/lowl11/lazyconfig v1.1.9
 	github.com/lowl11/lazylog v1.2.9
-	github.com/satori/go.uuid v1.2.0
 	github.com/valyala/fasthttp v1.48.0
 	google.golang.org/grpc v1.57.0
 )
