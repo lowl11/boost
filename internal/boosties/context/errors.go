@@ -10,6 +10,7 @@ const (
 	typeErrorUnknownType        = "UnknownType"
 	typeErrorUnknownContentType = "UnknownContentType"
 	typeErrorParseBody          = "ParseBody"
+	typeErrorPointerRequired    = "PointerRequired"
 )
 
 func ErrorUnknownType(err error) interfaces.Error {
@@ -34,4 +35,11 @@ func ErrorParseBody(err error, format string) error {
 		SetHttpCode(http.StatusBadRequest).
 		SetError(err).
 		AddContext("format", format)
+}
+
+func ErrorPointerRequired() error {
+	return errors.
+		New("Pointer required").
+		SetType(typeErrorPointerRequired).
+		SetHttpCode(http.StatusInternalServerError)
 }

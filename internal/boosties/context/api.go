@@ -11,6 +11,7 @@ import (
 	"github.com/lowl11/lazylog/log"
 	"github.com/valyala/fasthttp"
 	"io"
+	"reflect"
 	"strings"
 )
 
@@ -128,6 +129,10 @@ func (ctx *Context) Body() []byte {
 
 func (ctx *Context) Parse(object any) error {
 	contentType := ctx.Header("Content-Type")
+
+	if reflect.ValueOf(object).Kind() != reflect.Ptr {
+		return ErrorPointerRequired()
+	}
 
 	switch contentType {
 	case content_types.JSON:
