@@ -9,3 +9,7 @@ import (
 func New(message string) interfaces.Error {
 	return errors.New(message)
 }
+
+func Parse(response []byte) (interfaces.Error, bool) {
+	return errors.Parse(response)
+}

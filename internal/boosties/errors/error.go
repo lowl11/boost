@@ -1,6 +1,8 @@
 package errors
 
 import (
+	"encoding/json"
+	"github.com/lowl11/boost/internal/helpers/error_helper"
 	"google.golang.org/grpc/codes"
 	"net/http"
 )
@@ -34,4 +36,20 @@ func New(message string) *Error {
 		grpcCode:  codes.Unknown,
 		context:   make(map[string]any),
 	}
+}
+
+func Parse(response []byte) (*Error, bool) {
+	output := OutputError{}
+
+	if err := json.Unmarshal(response, &output); err != nil {
+		return nil, false
+	}
+
+	return &Error{
+		message:   output.Message,
+		errorType: output.Type,
+		httpCode:  output.Code,
+		grpcCode:  error_helper.ToGrpcCode(output.Code),
+		context:   output.Context,
+	}, true
 }
