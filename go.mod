@@ -9,6 +9,7 @@ require (
 	github.com/lowl11/boostrpc v0.0.6
 	github.com/lowl11/lazyconfig v1.1.9
 	github.com/lowl11/lazylog v1.2.9
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/valyala/fasthttp v1.48.0
 	google.golang.org/grpc v1.57.0
 )
