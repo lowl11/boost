@@ -12,9 +12,9 @@ func getCacheRepository(cacheType string, cfg ...any) (interfaces.CacheRepositor
 	case caches.Memory:
 		return mem_repository.New(), nil
 	case caches.Redis:
-		var redisConfig redis_repository.Config
+		var redisConfig RedisConfig
 		if len(cfg) > 0 {
-			rdsCfg, ok := cfg[0].(redis_repository.Config)
+			rdsCfg, ok := cfg[0].(RedisConfig)
 			if !ok {
 				return nil, ErrorRedisConfigRequired()
 			}
@@ -22,7 +22,11 @@ func getCacheRepository(cacheType string, cfg ...any) (interfaces.CacheRepositor
 			redisConfig = rdsCfg
 		}
 
-		return redis_repository.New(redisConfig)
+		return redis_repository.New(redis_repository.Config{
+			URL:      redisConfig.URL,
+			Password: redisConfig.Password,
+			DB:       redisConfig.DB,
+		})
 	default:
 		return nil, ErrorUndefinedCacheType(cacheType)
 	}

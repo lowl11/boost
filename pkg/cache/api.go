@@ -4,6 +4,12 @@ import (
 	"github.com/lowl11/boost/pkg/interfaces"
 )
 
+type RedisConfig struct {
+	URL      string
+	Password string
+	DB       int
+}
+
 func New(cacheType string, cfg ...any) (interfaces.CacheRepository, error) {
 	cacheRepo, err := getCacheRepository(cacheType, cfg...)
 	if err != nil {
