@@ -1,10 +1,13 @@
 package interfaces
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type CacheRepository interface {
-	All() map[string]any
-	Set(string, any, ...time.Duration)
-	Get(string) any
-	Delete(string)
+	All(context.Context) (map[string][]byte, error)
+	Set(context.Context, string, any, ...time.Duration) error
+	Get(context.Context, string) ([]byte, error)
+	Delete(context.Context, string) error
 }

@@ -7,12 +7,22 @@ import (
 	"github.com/lowl11/boost/pkg/interfaces"
 )
 
-func getCacheRepository(cacheType string) (interfaces.CacheRepository, error) {
+func getCacheRepository(cacheType string, cfg ...any) (interfaces.CacheRepository, error) {
 	switch cacheType {
 	case caches.Memory:
 		return mem_repository.New(), nil
 	case caches.Redis:
-		return redis_repository.New(), nil
+		var redisConfig redis_repository.Config
+		if len(cfg) > 0 {
+			rdsCfg, ok := cfg[0].(redis_repository.Config)
+			if !ok {
+				return nil, ErrorRedisConfigRequired()
+			}
+
+			redisConfig = rdsCfg
+		}
+
+		return redis_repository.New(redisConfig)
 	default:
 		return nil, ErrorUndefinedCacheType(cacheType)
 	}

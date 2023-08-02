@@ -1,6 +1,7 @@
 package type_helper
 
 import (
+	"encoding/json"
 	"reflect"
 	"unsafe"
 )
@@ -26,4 +27,13 @@ func StringToBytes(s string) []byte {
 		Len:  len(s),
 		Cap:  len(s),
 	}))
+}
+
+func StringSliceToBytes(slice []string) ([]byte, error) {
+	marshalled, err := json.Marshal(slice)
+	if err != nil {
+		return nil, err
+	}
+
+	return marshalled, nil
 }

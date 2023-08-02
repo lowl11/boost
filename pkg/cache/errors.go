@@ -6,7 +6,8 @@ import (
 )
 
 const (
-	typeErrorUndefinedCacheType = "UndefinedCacheType"
+	typeErrorUndefinedCacheType  = "UndefinedCacheType"
+	typeErrorRedisConfigRequired = "RedisConfigRequired"
 )
 
 func ErrorUndefinedCacheType(cacheType string) error {
@@ -15,4 +16,11 @@ func ErrorUndefinedCacheType(cacheType string) error {
 		SetType(typeErrorUndefinedCacheType).
 		SetHttpCode(http.StatusInternalServerError).
 		AddContext("cache_type", cacheType)
+}
+
+func ErrorRedisConfigRequired() error {
+	return errors.
+		New("Redis config is required").
+		SetType(typeErrorRedisConfigRequired).
+		SetHttpCode(http.StatusInternalServerError)
 }

@@ -10,6 +10,7 @@ require (
 	github.com/lowl11/lazyconfig v1.1.9
 	github.com/lowl11/lazylog v1.2.9
 	github.com/patrickmn/go-cache v2.1.0+incompatible
+	github.com/redis/go-redis/v9 v9.0.5
 	github.com/valyala/fasthttp v1.48.0
 	google.golang.org/grpc v1.57.0
 )
@@ -17,6 +18,8 @@ require (
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/aptible/supercronic v0.2.25 // indirect
+	github.com/cespare/xxhash/v2 v2.2.0 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
