@@ -6,9 +6,11 @@ import (
 )
 
 const (
-	typeErrorPasswordsNotEqual = "PasswordsNotEqual"
-	typeErrorEncryptPassword   = "EncryptPassword"
-	typeErrorDecryptPassword   = "DecryptPassword"
+	typeErrorPasswordsNotEqual      = "PasswordsNotEqual"
+	typeErrorEncryptPassword        = "EncryptPassword"
+	typeErrorDecryptPassword        = "DecryptPassword"
+	typeErrorDecryptedPasswordEmpty = "DecryptedPasswordEmpty"
+	typeErrorEncryptedPasswordEmpty = "EncryptedPasswordEmpty"
 )
 
 func ErrorPasswordsNotEqual() error {
@@ -32,4 +34,18 @@ func ErrorDecryptPassword(err error) error {
 		SetType(typeErrorDecryptPassword).
 		SetHttpCode(http.StatusInternalServerError).
 		SetError(err)
+}
+
+func ErrorEncryptedPasswordEmpty() error {
+	return errors.
+		New("Encrypted password is empty").
+		SetType(typeErrorEncryptedPasswordEmpty).
+		SetHttpCode(http.StatusInternalServerError)
+}
+
+func ErrorDecryptedPasswordEmpty() error {
+	return errors.
+		New("Decrypted password is empty").
+		SetType(typeErrorDecryptedPasswordEmpty).
+		SetHttpCode(http.StatusInternalServerError)
 }
