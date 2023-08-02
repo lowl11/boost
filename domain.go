@@ -20,6 +20,9 @@ type (
 
 	// Route is interface which will return after adding new route
 	Route = interfaces.Route
+
+	// CacheRepository is interface for using cache
+	CacheRepository = interfaces.CacheRepository
 )
 
 type routing interface {
