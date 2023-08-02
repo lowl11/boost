@@ -63,3 +63,7 @@ func (repo Repository) Delete(ctx context.Context, key string) error {
 
 	return nil
 }
+
+func (repo Repository) Close() error {
+	return repo.client.Close()
+}

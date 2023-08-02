@@ -10,4 +10,6 @@ type CacheRepository interface {
 	Set(context.Context, string, any, ...time.Duration) error
 	Get(context.Context, string) ([]byte, error)
 	Delete(context.Context, string) error
+
+	Close() error
 }

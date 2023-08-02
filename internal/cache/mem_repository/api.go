@@ -40,3 +40,7 @@ func (repo Repository) Delete(_ context.Context, key string) error {
 	repo.client.Delete(key)
 	return nil
 }
+
+func (repo Repository) Close() error {
+	return nil
+}
