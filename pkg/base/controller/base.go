@@ -83,7 +83,7 @@ func (controller Base) Redirect(ctx boost.Context, url string) error {
 
 func (controller Base) returnOKObject(ctx boost.Context, value any) error {
 	if type_helper.IsPrimitive(value) {
-		return ctx.String(type_helper.ToString(value))
+		return ctx.String(type_helper.ToString(value, false))
 	}
 
 	return ctx.JSON(value)
