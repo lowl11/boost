@@ -19,7 +19,7 @@ func Build(text string, args ...any) string {
 }
 
 func Color(text any, color string) string {
-	textInString := type_helper.ToString(text)
+	textInString := type_helper.ToString(text, false)
 
 	coloredText := strings.Builder{}
 	coloredText.WriteString(color)

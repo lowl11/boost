@@ -19,8 +19,8 @@ func (greeting *Greeting) getHttpStatistic() string {
 	builder := strings.Builder{}
 
 	// first line
-	routes := type_helper.ToString(greeting.counter.GetRoutes() - static_controller.RouteCount)
-	groups := type_helper.ToString(greeting.counter.GetGroups())
+	routes := type_helper.ToString(greeting.counter.GetRoutes()-static_controller.RouteCount, false)
+	groups := type_helper.ToString(greeting.counter.GetGroups(), false)
 
 	builder.WriteString(printer.Color(startLine, greeting.getMainColor()))
 	builder.WriteString("Routes: ........")
@@ -34,7 +34,7 @@ func (greeting *Greeting) getHttpStatistic() string {
 
 	// second line
 	port := greeting.ctx.Port
-	pid := type_helper.ToString(os.Getpid())
+	pid := type_helper.ToString(os.Getpid(), false)
 
 	builder.WriteString(printer.Color(startLine, greeting.getMainColor()))
 	builder.WriteString("Port: ..........")
@@ -61,7 +61,7 @@ func (greeting *Greeting) getRPCStatistic() string {
 
 	// first line
 	port := greeting.ctx.Port
-	pid := type_helper.ToString(os.Getpid())
+	pid := type_helper.ToString(os.Getpid(), false)
 
 	builder.WriteString(printer.Color(startLine, greeting.getMainColor()))
 	builder.WriteString("Port: ..........")
@@ -87,8 +87,8 @@ func (greeting *Greeting) getCronStatistic() string {
 	builder := strings.Builder{}
 
 	// first line
-	actions := type_helper.ToString(greeting.counter.GetCronActions())
-	pid := type_helper.ToString(os.Getpid())
+	actions := type_helper.ToString(greeting.counter.GetCronActions(), false)
+	pid := type_helper.ToString(os.Getpid(), false)
 
 	builder.WriteString(printer.Color(startLine, greeting.getMainColor()))
 	builder.WriteString("Actions: ........")
