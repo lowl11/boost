@@ -8,7 +8,7 @@ import (
 	"unsafe"
 )
 
-func ToString(anyValue any) string {
+func ToString(anyValue any, memory bool) string {
 	if anyValue == nil {
 		return ""
 	}
@@ -43,7 +43,11 @@ func ToString(anyValue any) string {
 		}
 		return string(valueInBytes)
 	case reflect.Ptr:
-		return ToString(value.Elem().Interface())
+		if memory {
+			return fmt.Sprintf("%v", value)
+		}
+
+		return ToString(value.Elem().Interface(), true)
 	default:
 		return fmt.Sprintf("%v", value)
 	}
