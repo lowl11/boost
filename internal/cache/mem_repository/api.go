@@ -3,6 +3,8 @@ package mem_repository
 import (
 	"context"
 	"github.com/lowl11/boost/pkg/types"
+	"regexp"
+	"strings"
 	"time"
 )
 
@@ -15,6 +17,26 @@ func (repo Repository) All(_ context.Context) (map[string][]byte, error) {
 	}
 
 	return all, nil
+}
+
+func (repo Repository) Search(ctx context.Context, pattern string) ([]string, error) {
+	all, err := repo.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	regexPattern := strings.ReplaceAll(pattern, "*", "(.*)")
+	reg, _ := regexp.Compile(regexPattern)
+
+	matchKeys := make([]string, 0)
+	for key, _ := range all {
+		match := reg.FindAllString(key, -1)
+		if len(match) > 0 && match[0] == key {
+			matchKeys = append(matchKeys, key)
+		}
+	}
+
+	return matchKeys, nil
 }
 
 func (repo Repository) Set(_ context.Context, key string, x any, expiration ...time.Duration) error {

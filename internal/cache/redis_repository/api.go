@@ -25,6 +25,15 @@ func (repo Repository) All(ctx context.Context) (map[string][]byte, error) {
 	return all, nil
 }
 
+func (repo Repository) Search(ctx context.Context, pattern string) ([]string, error) {
+	keys, err := repo.client.Keys(ctx, pattern).Result()
+	if err != nil {
+		return nil, ErrorSearchKeys(pattern, err)
+	}
+
+	return keys, nil
+}
+
 func (repo Repository) Set(ctx context.Context, key string, x any, expiration ...time.Duration) error {
 	expires := defaultExpiration
 	if len(expiration) > 0 {

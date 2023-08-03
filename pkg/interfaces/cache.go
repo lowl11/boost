@@ -7,6 +7,7 @@ import (
 
 type CacheRepository interface {
 	All(context.Context) (map[string][]byte, error)
+	Search(context.Context, string) ([]string, error)
 	Set(context.Context, string, any, ...time.Duration) error
 	Get(context.Context, string) ([]byte, error)
 	Delete(context.Context, string) error

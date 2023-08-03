@@ -10,6 +10,7 @@ const (
 	typeErrorUnknownValueType = "RedisUnknownType"
 	typeErrorPing             = "RedisPing"
 	typeErrorParseValue       = "RedisParseValue"
+	typeErrorSearchKeys       = "SearchKeys"
 	typeErrorGetType          = "RedisGetType"
 	typeErrorGetAllKeys       = "GetAllKeys"
 	typeErrorGetCacheByKey    = "GetCacheByKey"
@@ -55,6 +56,15 @@ func ErrorRedisParseValue(err error) error {
 		SetType(typeErrorParseValue).
 		SetHttpCode(http.StatusInternalServerError).
 		SetError(err)
+}
+
+func ErrorSearchKeys(pattern string, err error) error {
+	return errors.
+		New("Search keys by pattern error").
+		SetType(typeErrorSearchKeys).
+		SetHttpCode(http.StatusInternalServerError).
+		SetError(err).
+		AddContext("pattern", pattern)
 }
 
 func ErrorGetAllKeys(err error) error {
