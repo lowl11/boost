@@ -6,7 +6,7 @@ import (
 	"unsafe"
 )
 
-func ToBytes(anyValue any) []byte {
+func ToBytes(anyValue any, memory bool) []byte {
 	if anyValue == nil {
 		return nil
 	}
@@ -28,7 +28,11 @@ func ToBytes(anyValue any) []byte {
 
 		return marshalled
 	case reflect.Ptr:
-		return ToBytes(reflect.ValueOf(anyValue).Interface())
+		if memory {
+			return nil
+		}
+
+		return ToBytes(reflect.ValueOf(anyValue).Interface(), true)
 	default:
 		return StringToBytes(ToString(anyValue))
 	}
