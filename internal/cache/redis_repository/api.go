@@ -3,6 +3,7 @@ package redis_repository
 import (
 	"context"
 	"github.com/lowl11/boost/pkg/enums/redis_types"
+	"github.com/lowl11/boost/pkg/types"
 	"time"
 )
 
@@ -40,7 +41,7 @@ func (repo Repository) Set(ctx context.Context, key string, x any, expiration ..
 		expires = expiration[0]
 	}
 
-	if err := repo.client.Set(ctx, key, x, expires).Err(); err != nil {
+	if err := repo.client.Set(ctx, key, types.ToBytes(x), expires).Err(); err != nil {
 		return ErrorSetCache(key, x, err)
 	}
 
