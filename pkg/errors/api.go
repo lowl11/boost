@@ -13,3 +13,12 @@ func New(message string) interfaces.Error {
 func Parse(response []byte) (interfaces.Error, bool) {
 	return errors.Parse(response)
 }
+
+func IsType(err error, errorType string) bool {
+	boostError, ok := err.(interfaces.Error)
+	if !ok {
+		return false
+	}
+
+	return boostError.Type() == errorType
+}
