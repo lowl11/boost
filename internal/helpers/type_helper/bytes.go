@@ -19,7 +19,7 @@ func ToBytes(anyValue any, memory bool) []byte {
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
 		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr,
 		reflect.Float32, reflect.Float64, reflect.Bool:
-		return StringToBytes(ToString(anyValue))
+		return StringToBytes(ToString(anyValue, false))
 	case reflect.Struct, reflect.Map, reflect.Slice, reflect.Array:
 		marshalled, err := json.Marshal(anyValue)
 		if err != nil {
@@ -34,7 +34,7 @@ func ToBytes(anyValue any, memory bool) []byte {
 
 		return ToBytes(reflect.ValueOf(anyValue).Interface(), true)
 	default:
-		return StringToBytes(ToString(anyValue))
+		return StringToBytes(ToString(anyValue, false))
 	}
 }
 

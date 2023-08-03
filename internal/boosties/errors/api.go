@@ -117,7 +117,7 @@ func (err *Error) String() string {
 		for key, value := range err.context {
 			builder.WriteString(key)
 			builder.WriteString("=")
-			builder.WriteString(type_helper.ToString(value))
+			builder.WriteString(type_helper.ToString(value, false))
 			builder.WriteString(";")
 		}
 	}
