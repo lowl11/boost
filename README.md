@@ -29,12 +29,8 @@ func main() {
 ### TODO
 
 - Swagger support
-- Authentication JWT
 
 ### External TODO
 
-- gateway
-- gRPC support
+- gateway (proxy router)
 - RMQ support
-- request validation support
-- DB support
