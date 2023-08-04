@@ -2,6 +2,7 @@ package rmq
 
 import (
 	"context"
+	"github.com/lowl11/boost/pkg/enums/content_types"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -12,14 +13,27 @@ type PublishConfig struct {
 	ContentType string
 }
 
-func Publish(ctx context.Context, channel *amqp.Channel, queue *amqp.Queue, body []byte, cfg PublishConfig) error {
+func defaultPublishConfig() PublishConfig {
+	return PublishConfig{
+		ContentType: content_types.JSON,
+	}
+}
+
+func Publish(ctx context.Context, channel *amqp.Channel, queue *amqp.Queue, body []byte, cfg ...PublishConfig) error {
+	var config PublishConfig
+	if len(cfg) > 0 {
+		config = cfg[0]
+	} else {
+		config = defaultPublishConfig()
+	}
+
 	err := channel.PublishWithContext(ctx,
-		cfg.Exchange,
+		config.Exchange,
 		queue.Name,
-		cfg.Mandatory,
-		cfg.Immediate,
+		config.Mandatory,
+		config.Immediate,
 		amqp.Publishing{
-			ContentType: cfg.ContentType,
+			ContentType: config.ContentType,
 			Body:        body,
 		})
 	if err != nil {

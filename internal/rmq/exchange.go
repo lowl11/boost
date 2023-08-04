@@ -11,14 +11,25 @@ type ExchangeConfig struct {
 	Args       amqp.Table
 }
 
-func NewExchange(channel *amqp.Channel, exchangeName string, cfg ExchangeConfig) error {
+func defaultExchangeConfig() ExchangeConfig {
+	return ExchangeConfig{}
+}
+
+func NewExchange(channel *amqp.Channel, exchangeName string, cfg ...ExchangeConfig) error {
+	var config ExchangeConfig
+	if len(cfg) > 0 {
+		config = cfg[0]
+	} else {
+		config = defaultExchangeConfig()
+	}
+
 	return channel.ExchangeDeclare(
 		exchangeName,
-		cfg.Kind,
-		cfg.Durable,
-		cfg.AutoDelete,
-		cfg.Internal,
-		cfg.NoWait,
-		cfg.Args,
+		config.Kind,
+		config.Durable,
+		config.AutoDelete,
+		config.Internal,
+		config.NoWait,
+		config.Args,
 	)
 }

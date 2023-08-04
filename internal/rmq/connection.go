@@ -1,6 +1,8 @@
 package rmq
 
-import amqp "github.com/rabbitmq/amqp091-go"
+import (
+	amqp "github.com/rabbitmq/amqp091-go"
+)
 
 func NewConnection(url string) (*amqp.Connection, error) {
 	connection, err := amqp.Dial(url)

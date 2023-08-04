@@ -13,15 +13,26 @@ type ConsumerConfig struct {
 	Args      amqp.Table
 }
 
-func Consume(channel *amqp.Channel, queue *amqp.Queue, cfg ConsumerConfig) (MessagesQueue, error) {
+func defaultConsumerConfig() ConsumerConfig {
+	return ConsumerConfig{}
+}
+
+func Consume(channel *amqp.Channel, queue *amqp.Queue, cfg ...ConsumerConfig) (MessagesQueue, error) {
+	var config ConsumerConfig
+	if len(cfg) > 0 {
+		config = cfg[0]
+	} else {
+		config = defaultConsumerConfig()
+	}
+
 	messages, err := channel.Consume(
 		queue.Name,
-		cfg.Consumer,
-		cfg.AutoAck,
-		cfg.Exclusive,
-		cfg.NoLocal,
-		cfg.NoWait,
-		cfg.Args,
+		config.Consumer,
+		config.AutoAck,
+		config.Exclusive,
+		config.NoLocal,
+		config.NoWait,
+		config.Args,
 	)
 	if err != nil {
 		return nil, err

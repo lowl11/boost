@@ -10,18 +10,29 @@ type QueueConfig struct {
 	Args       amqp.Table
 }
 
-func NewQueue(channel *amqp.Channel, queueName string, cfg QueueConfig) (*amqp.Queue, error) {
-	someQueue, err := channel.QueueDeclare(
+func defaultQueueConfig() QueueConfig {
+	return QueueConfig{}
+}
+
+func NewQueue(channel *amqp.Channel, queueName string, cfg ...QueueConfig) (*amqp.Queue, error) {
+	var config QueueConfig
+	if len(cfg) > 0 {
+		config = cfg[0]
+	} else {
+		config = defaultQueueConfig()
+	}
+
+	queue, err := channel.QueueDeclare(
 		queueName,
-		cfg.Durable,
-		cfg.AutoDelete,
-		cfg.Exclusive,
-		cfg.NoWait,
-		cfg.Args,
+		config.Durable,
+		config.AutoDelete,
+		config.Exclusive,
+		config.NoWait,
+		config.Args,
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	return &someQueue, nil
+	return &queue, nil
 }
