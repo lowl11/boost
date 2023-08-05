@@ -17,7 +17,7 @@ func defaultConsumerConfig() ConsumerConfig {
 	return ConsumerConfig{}
 }
 
-func Consume(channel *amqp.Channel, queue *amqp.Queue, cfg ...ConsumerConfig) (MessagesQueue, error) {
+func Consume(channel *amqp.Channel, queueName string, cfg ...ConsumerConfig) (MessagesQueue, error) {
 	var config ConsumerConfig
 	if len(cfg) > 0 {
 		config = cfg[0]
@@ -26,7 +26,7 @@ func Consume(channel *amqp.Channel, queue *amqp.Queue, cfg ...ConsumerConfig) (M
 	}
 
 	messages, err := channel.Consume(
-		queue.Name,
+		queueName,
 		config.Consumer,
 		config.AutoAck,
 		config.Exclusive,

@@ -3,7 +3,6 @@ package rmq
 import amqp "github.com/rabbitmq/amqp091-go"
 
 type ExchangeConfig struct {
-	Kind       string
 	Durable    bool
 	AutoDelete bool
 	Internal   bool
@@ -15,7 +14,7 @@ func defaultExchangeConfig() ExchangeConfig {
 	return ExchangeConfig{}
 }
 
-func NewExchange(channel *amqp.Channel, exchangeName string, cfg ...ExchangeConfig) error {
+func NewExchange(channel *amqp.Channel, exchangeName, exchangeType string, cfg ...ExchangeConfig) error {
 	var config ExchangeConfig
 	if len(cfg) > 0 {
 		config = cfg[0]
@@ -25,7 +24,7 @@ func NewExchange(channel *amqp.Channel, exchangeName string, cfg ...ExchangeConf
 
 	return channel.ExchangeDeclare(
 		exchangeName,
-		config.Kind,
+		exchangeType,
 		config.Durable,
 		config.AutoDelete,
 		config.Internal,

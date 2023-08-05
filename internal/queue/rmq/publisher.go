@@ -19,7 +19,7 @@ func defaultPublishConfig() PublishConfig {
 	}
 }
 
-func Publish(ctx context.Context, channel *amqp.Channel, queue *amqp.Queue, body []byte, cfg ...PublishConfig) error {
+func Publish(ctx context.Context, channel *amqp.Channel, queueName string, body []byte, cfg ...PublishConfig) error {
 	var config PublishConfig
 	if len(cfg) > 0 {
 		config = cfg[0]
@@ -29,7 +29,7 @@ func Publish(ctx context.Context, channel *amqp.Channel, queue *amqp.Queue, body
 
 	err := channel.PublishWithContext(ctx,
 		config.Exchange,
-		queue.Name,
+		queueName,
 		config.Mandatory,
 		config.Immediate,
 		amqp.Publishing{
