@@ -80,6 +80,11 @@ func main() {
             <td>:white_check_mark:</td>
         </tr>
         <tr>
+            <td>RabbitMQ / MessageBus</td>
+            <td>Message bus pattern + RMQ support</td>
+            <td>:white_check_mark:</td>
+        </tr>
+        <tr>
             <td>Cron (external)</td>
             <td>Cron Job actions support</td>
             <td>:white_check_mark:</td>
@@ -104,4 +109,3 @@ func main() {
 ### External TODO
 
 - gateway (proxy router)
-- RMQ support
