@@ -1,4 +1,4 @@
-package rmq_context
+package event_context
 
 import "encoding/json"
 

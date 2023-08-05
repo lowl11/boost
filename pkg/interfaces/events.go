@@ -10,5 +10,10 @@ type Dispatcher interface {
 
 type Listener interface {
 	Run() error
-	Bind(event any, action func(event []byte) error)
+	Bind(event any, action func(ctx EventContext) error)
+}
+
+type EventContext interface {
+	Body() []byte
+	Parse(object any) error
 }

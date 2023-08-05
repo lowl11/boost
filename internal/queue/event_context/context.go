@@ -1,4 +1,4 @@
-package rmq_context
+package event_context
 
 import amqp "github.com/rabbitmq/amqp091-go"
 

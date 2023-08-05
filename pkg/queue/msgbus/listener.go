@@ -2,6 +2,7 @@ package msgbus
 
 import (
 	"github.com/lowl11/boost/internal/helpers/event_helper"
+	"github.com/lowl11/boost/internal/queue/event_context"
 	"github.com/lowl11/boost/internal/queue/rmq_service"
 	"github.com/lowl11/boost/pkg/enums/exchanges"
 	"github.com/lowl11/boost/pkg/interfaces"
@@ -75,7 +76,7 @@ func (listener *Listener) Run() error {
 	return nil
 }
 
-func (listener *Listener) Bind(event any, action func(event []byte) error) {
+func (listener *Listener) Bind(event any, action func(ctx interfaces.EventContext) error) {
 	eventName, err := event_helper.NameOfEvent(event)
 	if err != nil {
 		return
@@ -120,8 +121,7 @@ func (listener *Listener) declareEvents() error {
 
 func (listener *Listener) listen(messages <-chan amqp.Delivery, event Event) {
 	for message := range messages {
-		//listenCtx := rmq_context.New(&message)
-		if err := event.Action(message.Body); err != nil {
+		if err := event.Action(event_context.New(&message)); err != nil {
 			log.Error(err, "Event action error")
 			continue
 		}

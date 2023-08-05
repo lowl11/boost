@@ -23,6 +23,10 @@ type (
 
 	// CacheRepository is interface for using cache
 	CacheRepository = interfaces.CacheRepository
+
+	Listener     = interfaces.Listener
+	Dispatcher   = interfaces.Dispatcher
+	EventContext = interfaces.EventContext
 )
 
 type routing interface {
