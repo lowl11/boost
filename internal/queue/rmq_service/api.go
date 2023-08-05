@@ -23,7 +23,7 @@ func (service *Service) Publish(ctx context.Context, exchangeName, eventName str
 }
 
 func (service *Service) Ack(deliveryTag uint64) error {
-	return rmq.Ack(service.channel, deliveryTag, true)
+	return rmq.Ack(service.channel, deliveryTag, false)
 }
 
 func (service *Service) NewExchange(exchangeName, exchangeType string) error {
