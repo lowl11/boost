@@ -5,6 +5,7 @@ import (
 	"github.com/lowl11/boost/internal/services/greeting"
 	"github.com/lowl11/boost/pkg/enums/colors"
 	"github.com/lowl11/boost/pkg/enums/modes"
+	"github.com/lowl11/boost/pkg/queue/msgbus"
 	"github.com/lowl11/boost/pkg/types"
 	"github.com/lowl11/boostcron"
 	"github.com/lowl11/boostrpc"
@@ -42,9 +43,6 @@ func (app *App) RunRPC(port string) {
 		panic("RPC server is NULL. Add one handler at least to initialize")
 	}
 
-	// register static endpoints
-	registerStaticEndpoints(app, app.healthcheck)
-
 	// print greeting text
 	greeting.
 		New(app.handler.GetCounter(), greeting.Context{
@@ -65,9 +63,6 @@ func (app *App) RunCron() {
 		panic("Cron App is NULL. Add at least one action to initialize")
 	}
 
-	// register static endpoints
-	registerStaticEndpoints(app, app.healthcheck)
-
 	// print greeting text
 	greeting.
 		New(app.handler.GetCounter(), greeting.Context{
@@ -79,6 +74,34 @@ func (app *App) RunCron() {
 
 	// run server app
 	app.cron.Run()
+}
+
+func (app *App) RunListener(amqpConnectionURL string) {
+	if app.listener == nil {
+		panic("Message bus Listener is NULL. Add at least one binding to initialize")
+	}
+
+	app.handler.GetCounter().ListenerBind(app.listener.EventsCount())
+
+	// print greeting text
+	greeting.
+		New(app.handler.GetCounter(), greeting.Context{
+			Mode: modes.Listener,
+		}).
+		MainColor(colors.Gray).
+		SpecificColor(colors.Green).
+		Print()
+
+	// run server
+	log.Fatal(app.listener.Run(amqpConnectionURL))
+}
+
+func (app *App) Listener() Listener {
+	if app.listener == nil {
+		app.listener = msgbus.NewListener()
+	}
+
+	return app.listener
 }
 
 // Destroy adds function which will be called in shutdown

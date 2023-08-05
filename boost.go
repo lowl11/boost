@@ -67,6 +67,7 @@ type App struct {
 	destroyer   *destroyer.Destroyer
 	cron        *boostcron.Cron
 	healthcheck *healthcheck.Healthcheck
+	listener    Listener
 }
 
 // New method creates new instance of Boost App

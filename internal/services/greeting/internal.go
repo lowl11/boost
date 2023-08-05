@@ -111,6 +111,8 @@ func (greeting *Greeting) getStatistic() string {
 		return greeting.getRPCStatistic()
 	case modes.Cron:
 		return greeting.getCronStatistic()
+	case modes.Listener:
+		return greeting.getListenerStatistic()
 	}
 
 	return ""

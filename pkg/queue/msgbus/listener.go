@@ -23,6 +23,7 @@ func defaultListenerConfig() ListenerConfig {
 }
 
 type Listener struct {
+	url        string
 	rmqService *rmq_service.Service
 
 	events []Event
@@ -31,7 +32,7 @@ type Listener struct {
 	messageBusErrorsExchangeName string
 }
 
-func NewListener(url string, cfg ...ListenerConfig) (interfaces.Listener, error) {
+func NewListener(cfg ...ListenerConfig) interfaces.Listener {
 	var config ListenerConfig
 	if len(cfg) > 0 {
 		config = cfg[0]
@@ -39,21 +40,17 @@ func NewListener(url string, cfg ...ListenerConfig) (interfaces.Listener, error)
 		config = defaultListenerConfig()
 	}
 
-	rmqService, err := rmq_service.New(url)
-	if err != nil {
-		return nil, err
-	}
-
 	return &Listener{
-		rmqService: rmqService,
-		events:     make([]Event, 0),
+		events: make([]Event, 0),
 
 		messageBusExchangeName:       config.MessageBusExchangeName,
 		messageBusErrorsExchangeName: config.MessageBusErrorsExchangeName,
-	}, nil
+	}
 }
 
-func (listener *Listener) Run() error {
+func (listener *Listener) Run(amqpConnectionURL string) error {
+	listener.url = amqpConnectionURL
+
 	if err := listener.declareExchanges(); err != nil {
 		return err
 	}
@@ -76,6 +73,10 @@ func (listener *Listener) Run() error {
 	return nil
 }
 
+func (listener *Listener) RegisterRoute(event Event) {
+	listener.events = append(listener.events, event)
+}
+
 func (listener *Listener) Bind(event any, action func(ctx interfaces.EventContext) error) {
 	eventName, err := event_helper.NameOfEvent(event)
 	if err != nil {
@@ -89,7 +90,15 @@ func (listener *Listener) Bind(event any, action func(ctx interfaces.EventContex
 	})
 }
 
+func (listener *Listener) EventsCount() int {
+	return len(listener.events)
+}
+
 func (listener *Listener) declareExchanges() error {
+	if err := listener.connect(); err != nil {
+		return err
+	}
+
 	// message.bus
 	if err := listener.rmqService.NewExchange(listener.messageBusExchangeName, exchanges.Direct); err != nil {
 		return err
@@ -104,6 +113,10 @@ func (listener *Listener) declareExchanges() error {
 }
 
 func (listener *Listener) declareEvents() error {
+	if err := listener.connect(); err != nil {
+		return err
+	}
+
 	for _, event := range listener.events {
 		// first, create queue
 		if _, err := listener.rmqService.NewQueue(event.Name); err != nil {
@@ -134,4 +147,18 @@ func (listener *Listener) async(event Event, message amqp.Delivery) {
 	if err := listener.rmqService.Ack(message.DeliveryTag); err != nil {
 		log.Error(err, "Acknowledge message error")
 	}
+}
+
+func (listener *Listener) connect() error {
+	if listener.rmqService != nil {
+		return nil
+	}
+
+	rmqService, err := rmq_service.New(listener.url)
+	if err != nil {
+		return err
+	}
+
+	listener.rmqService = rmqService
+	return nil
 }

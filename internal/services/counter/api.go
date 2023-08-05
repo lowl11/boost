@@ -28,6 +28,10 @@ func (counter *Counter) GetCronActions() int {
 	return int(counter.cronActions.Load())
 }
 
+func (counter *Counter) GetListenerBind() int {
+	return int(counter.listenerBind.Load())
+}
+
 func (counter *Counter) Route() {
 	counter.routes.Add(1)
 }
@@ -53,4 +57,8 @@ func (counter *Counter) RouteMiddleware() {
 
 func (counter *Counter) CronAction() {
 	counter.cronActions.Add(1)
+}
+
+func (counter *Counter) ListenerBind(value int) {
+	counter.listenerBind.Add(int32(value))
 }

@@ -102,3 +102,30 @@ func (greeting *Greeting) getCronStatistic() string {
 
 	return builder.String()
 }
+
+func (greeting *Greeting) getListenerStatistic() string {
+	const (
+		startLine = " │ "
+		endLine   = " │\n"
+
+		spaces = 19
+	)
+
+	builder := strings.Builder{}
+
+	// first line
+	binds := type_helper.ToString(greeting.counter.GetListenerBind(), false)
+	pid := type_helper.ToString(os.Getpid(), false)
+
+	builder.WriteString(printer.Color(startLine, greeting.getMainColor()))
+	builder.WriteString("Binds: ........")
+
+	builder.WriteString(printer.Color(binds, greeting.getSpecificColor()))
+
+	builder.WriteString(printer.Spaces(spaces - len(binds) - len(pid) - 1))
+	builder.WriteString("PID: ...........")
+	builder.WriteString(printer.Color(pid, greeting.getSpecificColor()))
+	builder.WriteString(printer.Color(endLine, greeting.getMainColor()))
+
+	return builder.String()
+}

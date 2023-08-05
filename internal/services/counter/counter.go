@@ -12,6 +12,8 @@ type Counter struct {
 	routeMiddlewares  atomic.Int32
 
 	cronActions atomic.Int32
+
+	listenerBind atomic.Int32
 }
 
 func New() *Counter {

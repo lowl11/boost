@@ -9,8 +9,9 @@ type Dispatcher interface {
 }
 
 type Listener interface {
-	Run() error
+	Run(amqpConnectionURL string) error
 	Bind(event any, action func(ctx EventContext) error)
+	EventsCount() int
 }
 
 type EventContext interface {
