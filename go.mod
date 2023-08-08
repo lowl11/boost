@@ -8,7 +8,8 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/lowl11/boostcron v0.0.4
 	github.com/lowl11/boostrpc v0.0.6
-	github.com/lowl11/lazyconfig v1.1.9
+	github.com/lowl11/lazyconfig v1.2.2
+	github.com/lowl11/lazyfile v0.1.6
 	github.com/lowl11/lazylog v1.2.9
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/rabbitmq/amqp091-go v1.8.1
@@ -28,7 +29,6 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/klauspost/compress v1.16.3 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
-	github.com/lowl11/lazyfile v0.1.6 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/net v0.9.0 // indirect
