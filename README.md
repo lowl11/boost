@@ -85,6 +85,11 @@ func main() {
             <td>:white_check_mark:</td>
         </tr>
         <tr>
+            <td>DI</td>
+            <td>Dependency Injection</td>
+            <td>:white_check_mark:</td>
+        </tr>
+        <tr>
             <td>Cron (external)</td>
             <td>Cron Job actions support</td>
             <td>:white_check_mark:</td>
