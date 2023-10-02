@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"github.com/lowl11/boost/pkg/interfaces"
+	"github.com/lowl11/boost/data/interfaces"
 )
 
 type RedisConfig struct {

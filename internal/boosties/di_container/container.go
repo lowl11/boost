@@ -1,9 +1,9 @@
 package di_container
 
 import (
+	"github.com/lowl11/boost/data/enums/di_modes"
+	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	"github.com/lowl11/boost/pkg/enums/di_modes"
-	"github.com/lowl11/boost/pkg/interfaces"
 	"reflect"
 )
 

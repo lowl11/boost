@@ -2,10 +2,10 @@ package errors
 
 import (
 	"encoding/json"
+	"github.com/lowl11/boost/data/enums/content_types"
+	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/helpers/error_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	"github.com/lowl11/boost/pkg/enums/content_types"
-	"github.com/lowl11/boost/pkg/interfaces"
 	"google.golang.org/grpc/codes"
 	"strings"
 )

@@ -1,11 +1,11 @@
 package fast_handler
 
 import (
+	"github.com/lowl11/boost/data/errors"
+	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/boosties/context"
 	"github.com/lowl11/boost/internal/boosties/panicer"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	"github.com/lowl11/boost/pkg/errors"
-	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/lazylog/log"
 	"github.com/valyala/fasthttp"

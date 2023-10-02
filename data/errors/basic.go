@@ -1,8 +1,8 @@
 package errors
 
 import (
+	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/boosties/errors"
-	"github.com/lowl11/boost/pkg/interfaces"
 	"net/http"
 )
 

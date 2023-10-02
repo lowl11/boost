@@ -2,11 +2,11 @@ package msgbus
 
 import (
 	"context"
+	"github.com/lowl11/boost/data/enums/exchanges"
+	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/helpers/event_helper"
 	"github.com/lowl11/boost/internal/queue/rmq_service"
 	"github.com/lowl11/boost/internal/services/validator"
-	"github.com/lowl11/boost/pkg/enums/exchanges"
-	"github.com/lowl11/boost/pkg/interfaces"
 )
 
 const (
@@ -76,7 +76,7 @@ func (dispatcher *Dispatcher) Dispatch(ctx context.Context, event any) error {
 	if err != nil {
 		return ErrorGetNameOfEvent(err)
 	}
-	
+
 	if err = dispatcher.validateEvent(event); err != nil {
 		return err
 	}

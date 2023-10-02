@@ -1,11 +1,11 @@
 package msgbus
 
 import (
+	"github.com/lowl11/boost/data/enums/exchanges"
+	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/helpers/event_helper"
 	"github.com/lowl11/boost/internal/queue/event_context"
 	"github.com/lowl11/boost/internal/queue/rmq_service"
-	"github.com/lowl11/boost/pkg/enums/exchanges"
-	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/lowl11/lazylog/log"
 	amqp "github.com/rabbitmq/amqp091-go"
 )

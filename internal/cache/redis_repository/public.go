@@ -2,7 +2,7 @@ package redis_repository
 
 import (
 	"context"
-	"github.com/lowl11/boost/pkg/enums/redis_types"
+	"github.com/lowl11/boost/data/enums/redis_types"
 	"github.com/lowl11/boost/pkg/system/types"
 	"time"
 )

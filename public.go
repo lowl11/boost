@@ -2,9 +2,9 @@ package boost
 
 import (
 	"github.com/google/uuid"
+	"github.com/lowl11/boost/data/enums/colors"
+	"github.com/lowl11/boost/data/enums/modes"
 	"github.com/lowl11/boost/internal/services/greeting"
-	"github.com/lowl11/boost/pkg/enums/colors"
-	"github.com/lowl11/boost/pkg/enums/modes"
 	types2 "github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/boost/pkg/web/queue/msgbus"
 	"github.com/lowl11/boostcron"

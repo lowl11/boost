@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"github.com/lowl11/boost/pkg/errors"
+	"github.com/lowl11/boost/data/errors"
 	"net/http"
 )
 

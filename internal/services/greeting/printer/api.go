@@ -2,8 +2,8 @@ package printer
 
 import (
 	"fmt"
+	"github.com/lowl11/boost/data/enums/colors"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	"github.com/lowl11/boost/pkg/enums/colors"
 	"os"
 	"strings"
 )

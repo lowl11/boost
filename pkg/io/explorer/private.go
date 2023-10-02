@@ -1,7 +1,7 @@
 package explorer
 
 import (
-	"github.com/lowl11/boost/pkg/interfaces"
+	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/pkg/io/folder"
 	"github.com/lowl11/boost/pkg/io/paths"
 )

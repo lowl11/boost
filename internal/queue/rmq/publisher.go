@@ -2,7 +2,7 @@ package rmq
 
 import (
 	"context"
-	"github.com/lowl11/boost/pkg/enums/content_types"
+	"github.com/lowl11/boost/data/enums/content_types"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 

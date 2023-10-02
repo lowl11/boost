@@ -2,9 +2,9 @@ package middlewares
 
 import (
 	"fmt"
+	"github.com/lowl11/boost/data/enums/headers"
+	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	"github.com/lowl11/boost/pkg/enums/headers"
-	"github.com/lowl11/boost/pkg/interfaces"
 	"github.com/lowl11/boost/pkg/system/types"
 )
 

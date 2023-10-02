@@ -2,8 +2,8 @@ package fast_handler
 
 import (
 	"github.com/google/uuid"
+	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/services/counter"
-	"github.com/lowl11/boost/pkg/interfaces"
 	types2 "github.com/lowl11/boost/pkg/system/types"
 	"net"
 )

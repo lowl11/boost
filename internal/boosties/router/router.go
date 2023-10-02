@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/lowl11/boost/pkg/interfaces"
+	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/pkg/system/types"
 	"sync"
 )
