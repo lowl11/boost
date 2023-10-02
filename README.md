@@ -90,12 +90,12 @@ func main() {
             <td>:white_check_mark:</td>
         </tr>
         <tr>
-            <td>Cron (external)</td>
+            <td>Cron</td>
             <td>Cron Job actions support</td>
             <td>:white_check_mark:</td>
         </tr>
         <tr>
-            <td>gRPC (external)</td>
+            <td>gRPC</td>
             <td>gRPC server & client support</td>
             <td>:white_check_mark:</td>
         </tr>
@@ -110,7 +110,6 @@ func main() {
 ### TODO
 
 - Swagger support
-
-### External TODO
-
 - gateway (proxy router)
+- Rate limiter
+- DB ORM
