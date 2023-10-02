@@ -2,15 +2,13 @@ package boost
 
 import (
 	"github.com/lowl11/boost/internal/fast_handler"
-	"github.com/lowl11/boost/internal/services/healthcheck"
-	"github.com/lowl11/boost/internal/services/validator"
+	"github.com/lowl11/boost/internal/services/boost/healthcheck"
+	"github.com/lowl11/boost/internal/services/system/validator"
+	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/system/cron"
 	"github.com/lowl11/boost/pkg/web/destroyer"
 	middlewares2 "github.com/lowl11/boost/pkg/web/middlewares"
-	"github.com/lowl11/boostcron"
-	"github.com/lowl11/boostrpc"
-	"github.com/lowl11/lazylog/log"
-	"github.com/lowl11/lazylog/logapi"
-
+	"github.com/lowl11/boost/pkg/web/rpc"
 	"os"
 	"os/signal"
 	"syscall"
@@ -26,7 +24,7 @@ type Config struct {
 	ValidationOff bool
 
 	// CustomLoggers is container with custom loggers inherited by interface logapi.ILogger
-	CustomLoggers []logapi.ILogger
+	CustomLoggers []ILogger
 
 	// LogJSON turns on JSON mode. Logs will be printed in JSON format
 	LogJSON bool
@@ -47,10 +45,10 @@ type Config struct {
 	ConfigBaseFolder string
 
 	// CronConfig config of Cron Application
-	CronConfig boostcron.Config
+	CronConfig cron.Config
 
 	// RpcConfig config of gRPC Application
-	RpcConfig boostrpc.Config
+	RpcConfig rpc.Config
 }
 
 func defaultConfig() Config {
@@ -63,9 +61,9 @@ func defaultConfig() Config {
 type App struct {
 	config      Config
 	handler     *fast_handler.Handler
-	rpcServer   *boostrpc.App
+	rpcServer   *rpc.App
 	destroyer   *destroyer.Destroyer
-	cron        *boostcron.Cron
+	cron        *cron.Cron
 	healthcheck *healthcheck.Healthcheck
 	listener    Listener
 }

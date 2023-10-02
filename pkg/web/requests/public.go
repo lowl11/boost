@@ -2,16 +2,15 @@ package requests
 
 import (
 	"crypto/tls"
-	"github.com/lowl11/boost/internal/services/reqy"
-	"github.com/lowl11/lazylog/log"
+	"github.com/lowl11/boost/internal/services/web/reqy"
+	"github.com/lowl11/boost/log"
 	"net/http"
 	"net/url"
 	"time"
 )
 
 func (service *Service) R() *reqy.Request {
-	request := reqy.
-		NewRequest(service.baseURL, service.client).
+	request := reqy.NewRequest(service.baseURL, service.client).
 		SetHeaders(service.headers).
 		SetCookies(service.cookies).
 		SetRetryCount(service.retryCount).

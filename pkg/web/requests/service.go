@@ -1,7 +1,7 @@
 package requests
 
 import (
-	"github.com/lowl11/boost/internal/services/reqy"
+	"github.com/lowl11/boost/internal/services/web/reqy"
 	"net/http"
 	"time"
 )

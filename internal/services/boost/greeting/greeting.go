@@ -2,7 +2,7 @@ package greeting
 
 import (
 	"github.com/lowl11/boost/data/enums/colors"
-	"github.com/lowl11/boost/internal/services/counter"
+	"github.com/lowl11/boost/internal/services/boost/counter"
 )
 
 type Context struct {

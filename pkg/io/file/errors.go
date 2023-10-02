@@ -8,11 +8,20 @@ import (
 
 func ErrorAlreadyDestroyed() interfaces.Error {
 	return errors.
-		New("File already destroyed")
+		New("File already destroyed").
+		SetType("FileAlreadyDestroyed")
 }
 
-func ErrorNotFound() interfaces.Error {
+func ErrorNotFound(names ...string) interfaces.Error {
 	return errors.
 		New("File not exist").
-		SetHttpCode(http.StatusNotFound)
+		SetHttpCode(http.StatusNotFound).
+		SetType("FileNotFound").
+		AddContext("names", names)
+}
+
+func ErrorFileIsFolder() interfaces.Error {
+	return errors.
+		New("File is folder").
+		SetType("FileIsFolder")
 }

@@ -1,22 +1,22 @@
 package boost
 
 import (
+	"github.com/lowl11/boost/internal/boosties/configuration"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	lazyConfig "github.com/lowl11/lazyconfig/config"
-	"github.com/lowl11/lazyconfig/config/config_internal"
+	"github.com/lowl11/boost/pkg/system/config"
 )
 
-func initConfig(config Config) {
-	configData := config_internal.Config{}
+func initConfig(cfg Config) {
+	configData := configuration.Config{}
 
-	configData.EnvironmentVariableName = type_helper.GetString(config.EnvironmentVariableName)
-	configData.EnvironmentFileName = type_helper.GetString(config.EnvironmentFileName)
-	configData.Environment = type_helper.GetString(config.Environment)
-	configData.BaseFolder = type_helper.GetString(config.ConfigBaseFolder)
+	configData.EnvironmentVariableName = type_helper.GetString(cfg.EnvironmentVariableName)
+	configData.EnvironmentFileName = type_helper.GetString(cfg.EnvironmentFileName)
+	configData.Environment = type_helper.GetString(cfg.Environment)
+	configData.BaseFolder = type_helper.GetString(cfg.ConfigBaseFolder)
 
 	if configData.Environment == "" {
-		configData.Environment = lazyConfig.Env()
+		configData.Environment = config.Env()
 	}
 
-	config_internal.Init(configData)
+	configuration.Init(configData)
 }

@@ -1,12 +1,12 @@
 package boost
 
 import (
+	"github.com/lowl11/boost/internal/boosties/logging"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	"github.com/lowl11/lazylog/log/log_internal"
 )
 
 func initLogger(config Config) {
-	logConfig := log_internal.LogConfig{
+	logConfig := logging.LogConfig{
 		JsonMode: config.LogJSON,
 		LogLevel: uint(config.LogLevel),
 	}
@@ -18,5 +18,5 @@ func initLogger(config Config) {
 		logConfig.CustomLoggers = config.CustomLoggers
 	}
 
-	log_internal.Init(logConfig)
+	logging.Init(logConfig)
 }

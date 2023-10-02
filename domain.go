@@ -21,6 +21,8 @@ type (
 	// Route is interface which will return after adding new route
 	Route = interfaces.Route
 
+	ILogger = interfaces.ILogger
+
 	// CacheRepository is interface for using cache
 	CacheRepository = interfaces.CacheRepository
 

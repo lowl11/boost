@@ -7,7 +7,7 @@ import (
 	"encoding/xml"
 	"github.com/lowl11/boost/internal/helpers/request_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	"github.com/lowl11/lazylog/log"
+	"github.com/lowl11/boost/log"
 	"io"
 	"net/http"
 	"strings"

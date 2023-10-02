@@ -2,7 +2,6 @@ package file
 
 import (
 	"bytes"
-	"github.com/lowl11/lazyfile/data/errors"
 	"io/ioutil"
 	"log"
 	"os"
@@ -14,16 +13,16 @@ import (
 // If file already exist does nothing
 func New(path string, body []byte) error {
 	if Exist(path) {
-		return errors.FileAlreadyExist
+		return ErrorNotFound()
 	}
 
-	return ioutil.WriteFile(path, body, os.ModePerm)
+	return os.WriteFile(path, body, os.ModePerm)
 }
 
 // Update updates file content
 func Update(path string, body []byte) error {
 	if !Exist(path) {
-		return errors.FileNotFound
+		return ErrorNotFound()
 	}
 
 	if err := os.Truncate(path, 0); err != nil {
@@ -86,7 +85,7 @@ func Replace(path string, newContent []byte) error {
 // If destination path already exist does nothing.
 func CreateFromFile(source, destination string) error {
 	if NotExist(source) {
-		return errors.FileSourceNotFound
+		return ErrorNotFound("source")
 	}
 
 	if Exist(destination) {
@@ -139,12 +138,12 @@ func NotExist(filePath string) bool {
 // Read get content of file
 func Read(path string) ([]byte, error) {
 	if !Exist(path) {
-		return nil, errors.FileNotFound
+		return nil, ErrorNotFound(path)
 	}
 
 	stat, err := os.Stat(path)
 	if err == nil && stat.IsDir() {
-		return nil, errors.FileIsFolder
+		return nil, ErrorFileIsFolder()
 	}
 
 	content, err := ioutil.ReadFile(path)

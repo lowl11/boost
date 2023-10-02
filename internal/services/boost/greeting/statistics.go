@@ -3,7 +3,7 @@ package greeting
 import (
 	"github.com/lowl11/boost/internal/boosties/static_controller"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	"github.com/lowl11/boost/internal/services/greeting/printer"
+	"github.com/lowl11/boost/internal/services/boost/greeting/printer"
 	"os"
 	"strings"
 )

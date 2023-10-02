@@ -2,7 +2,7 @@ package greeting
 
 import (
 	"github.com/lowl11/boost/data/enums/modes"
-	"github.com/lowl11/boost/internal/services/greeting/printer"
+	"github.com/lowl11/boost/internal/services/boost/greeting/printer"
 	"strings"
 )
 

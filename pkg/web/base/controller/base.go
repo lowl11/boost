@@ -4,7 +4,7 @@ import (
 	"github.com/lowl11/boost"
 	"github.com/lowl11/boost/internal/controller/domain"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	"github.com/lowl11/lazylog/log"
+	"github.com/lowl11/boost/log"
 	"net/http"
 )
 

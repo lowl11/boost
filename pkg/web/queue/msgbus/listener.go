@@ -6,7 +6,7 @@ import (
 	"github.com/lowl11/boost/internal/helpers/event_helper"
 	"github.com/lowl11/boost/internal/queue/event_context"
 	"github.com/lowl11/boost/internal/queue/rmq_service"
-	"github.com/lowl11/lazylog/log"
+	"github.com/lowl11/boost/log"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 

@@ -4,12 +4,12 @@ import (
 	"github.com/google/uuid"
 	"github.com/lowl11/boost/data/enums/colors"
 	"github.com/lowl11/boost/data/enums/modes"
-	"github.com/lowl11/boost/internal/services/greeting"
+	"github.com/lowl11/boost/internal/services/boost/greeting"
+	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/system/cron"
 	types2 "github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/boost/pkg/web/queue/msgbus"
-	"github.com/lowl11/boostcron"
-	"github.com/lowl11/boostrpc"
-	"github.com/lowl11/lazylog/log"
+	"github.com/lowl11/boost/pkg/web/rpc"
 	"net/http"
 )
 
@@ -24,11 +24,10 @@ func (app *App) Run(port string) {
 	registerStaticEndpoints(app, app.healthcheck)
 
 	// print greeting text
-	greeting.
-		New(app.handler.GetCounter(), greeting.Context{
-			Mode: modes.Http,
-			Port: port,
-		}).
+	greeting.New(app.handler.GetCounter(), greeting.Context{
+		Mode: modes.Http,
+		Port: port,
+	}).
 		MainColor(colors.Gray).
 		SpecificColor(colors.Green).
 		Print()
@@ -44,11 +43,10 @@ func (app *App) RunRPC(port string) {
 	}
 
 	// print greeting text
-	greeting.
-		New(app.handler.GetCounter(), greeting.Context{
-			Mode: modes.RPC,
-			Port: port,
-		}).
+	greeting.New(app.handler.GetCounter(), greeting.Context{
+		Mode: modes.RPC,
+		Port: port,
+	}).
 		MainColor(colors.Gray).
 		SpecificColor(colors.Green).
 		Print()
@@ -64,10 +62,9 @@ func (app *App) RunCron() {
 	}
 
 	// print greeting text
-	greeting.
-		New(app.handler.GetCounter(), greeting.Context{
-			Mode: modes.Cron,
-		}).
+	greeting.New(app.handler.GetCounter(), greeting.Context{
+		Mode: modes.Cron,
+	}).
 		MainColor(colors.Gray).
 		SpecificColor(colors.Green).
 		Print()
@@ -84,10 +81,9 @@ func (app *App) RunListener(amqpConnectionURL string) {
 	app.handler.GetCounter().ListenerBind(app.listener.EventsCount())
 
 	// print greeting text
-	greeting.
-		New(app.handler.GetCounter(), greeting.Context{
-			Mode: modes.Listener,
-		}).
+	greeting.New(app.handler.GetCounter(), greeting.Context{
+		Mode: modes.Listener,
+	}).
 		MainColor(colors.Gray).
 		SpecificColor(colors.Green).
 		Print()
@@ -171,17 +167,17 @@ func (app *App) Group(base string) Group {
 }
 
 // CronApp returns boost cron application
-func (app *App) CronApp() boostcron.CronRouter {
+func (app *App) CronApp() cron.CronRouter {
 	if app.cron == nil {
-		app.cron = boostcron.New(app.config.CronConfig)
+		app.cron = cron.New(app.config.CronConfig)
 	}
 
 	return app.cron
 }
 
-func (app *App) RpcApp() *boostrpc.App {
+func (app *App) RpcApp() *rpc.App {
 	if app.rpcServer == nil {
-		app.rpcServer = boostrpc.New(app.config.RpcConfig)
+		app.rpcServer = rpc.New(app.config.RpcConfig)
 	}
 
 	return app.rpcServer

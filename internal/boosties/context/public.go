@@ -8,7 +8,7 @@ import (
 	"github.com/lowl11/boost/data/enums/headers"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	"github.com/lowl11/lazylog/log"
+	"github.com/lowl11/boost/log"
 	"github.com/valyala/fasthttp"
 	"io"
 	"reflect"

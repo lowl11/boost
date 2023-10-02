@@ -55,6 +55,16 @@ func (err *Error) SetContext(context map[string]any) interfaces.Error {
 }
 
 func (err *Error) AddContext(key string, value any) interfaces.Error {
+	if value == nil {
+		return err
+	}
+
+	if arr, ok := value.([]string); ok {
+		if len(arr) == 0 {
+			return err
+		}
+	}
+
 	err.context[key] = value
 
 	return err

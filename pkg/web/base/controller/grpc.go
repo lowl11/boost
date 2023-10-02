@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/lazylog/log"
+	"github.com/lowl11/boost/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

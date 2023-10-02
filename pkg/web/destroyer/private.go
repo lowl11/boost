@@ -2,8 +2,8 @@ package destroyer
 
 import (
 	"errors"
+	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/types"
-	"github.com/lowl11/lazylog/log"
 )
 
 func (destroyer *Destroyer) runFunc(action types.DestroyFunc) {
