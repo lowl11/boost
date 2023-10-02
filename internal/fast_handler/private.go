@@ -6,7 +6,7 @@ import (
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/errors"
 	"github.com/lowl11/boost/pkg/interfaces"
-	"github.com/lowl11/boost/pkg/types"
+	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/lazylog/log"
 	"github.com/valyala/fasthttp"
 )

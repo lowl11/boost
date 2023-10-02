@@ -1,6 +1,8 @@
 package destroyer
 
-import "github.com/lowl11/boost/pkg/types"
+import (
+	"github.com/lowl11/boost/pkg/system/types"
+)
 
 func (destroyer *Destroyer) AddFunction(destroyFunc types.DestroyFunc) *Destroyer {
 	destroyer.mutex.Lock()

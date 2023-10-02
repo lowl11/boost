@@ -14,38 +14,33 @@ const (
 )
 
 func ErrorPasswordsNotEqual() error {
-	return errors.
-		New("Passwords are not equal").
+	return errors.New("Passwords are not equal").
 		SetType(typeErrorPasswordsNotEqual).
 		SetHttpCode(http.StatusUnprocessableEntity)
 }
 
 func ErrorEncryptPassword(err error) error {
-	return errors.
-		New("Encrypt password error").
+	return errors.New("Encrypt password error").
 		SetType(typeErrorEncryptPassword).
 		SetHttpCode(http.StatusInternalServerError).
 		SetError(err)
 }
 
 func ErrorDecryptPassword(err error) error {
-	return errors.
-		New("Decrypt password error").
+	return errors.New("Decrypt password error").
 		SetType(typeErrorDecryptPassword).
 		SetHttpCode(http.StatusInternalServerError).
 		SetError(err)
 }
 
 func ErrorEncryptedPasswordEmpty() error {
-	return errors.
-		New("Encrypted password is empty").
+	return errors.New("Encrypted password is empty").
 		SetType(typeErrorEncryptedPasswordEmpty).
 		SetHttpCode(http.StatusInternalServerError)
 }
 
 func ErrorDecryptedPasswordEmpty() error {
-	return errors.
-		New("Decrypted password is empty").
+	return errors.New("Decrypted password is empty").
 		SetType(typeErrorDecryptedPasswordEmpty).
 		SetHttpCode(http.StatusInternalServerError)
 }

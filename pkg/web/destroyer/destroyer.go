@@ -1,7 +1,7 @@
 package destroyer
 
 import (
-	"github.com/lowl11/boost/pkg/types"
+	"github.com/lowl11/boost/pkg/system/types"
 	"sync"
 )
 

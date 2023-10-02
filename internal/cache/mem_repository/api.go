@@ -2,7 +2,7 @@ package mem_repository
 
 import (
 	"context"
-	"github.com/lowl11/boost/pkg/types"
+	"github.com/lowl11/boost/pkg/system/types"
 	"regexp"
 	"strings"
 	"time"

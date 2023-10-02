@@ -1,6 +1,8 @@
 package jwt_service
 
-import "github.com/lowl11/boost/pkg/types"
+import (
+	"github.com/lowl11/boost/pkg/system/types"
+)
 
 type JWT struct {
 	key []byte

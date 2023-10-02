@@ -3,7 +3,6 @@ package boost
 import (
 	"github.com/google/uuid"
 	"github.com/lowl11/boost/pkg/interfaces"
-	fileInterfaces "github.com/lowl11/lazyfile/data/interfaces"
 )
 
 type (
@@ -29,7 +28,7 @@ type (
 	Dispatcher   = interfaces.Dispatcher
 	EventContext = interfaces.EventContext
 
-	FileManager = fileInterfaces.IManager
+	Explorer = interfaces.IExplorer
 )
 
 type routing interface {

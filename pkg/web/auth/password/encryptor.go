@@ -5,7 +5,7 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/base64"
-	"github.com/lowl11/boost/pkg/types"
+	"github.com/lowl11/boost/pkg/system/types"
 	"io"
 )
 

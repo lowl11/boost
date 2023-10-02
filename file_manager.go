@@ -1,7 +1,9 @@
 package boost
 
-import "github.com/lowl11/lazyfile/fmanager"
+import (
+	"github.com/lowl11/boost/pkg/io/explorer"
+)
 
-func NewFileManager(root string) FileManager {
-	return fmanager.New(root)
+func NewExplorer(root string) Explorer {
+	return explorer.New(root)
 }

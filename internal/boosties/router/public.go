@@ -4,7 +4,7 @@ import (
 	"github.com/lowl11/boost/internal/helpers/path_helper"
 	"github.com/lowl11/boost/internal/services/route_searcher"
 	"github.com/lowl11/boost/pkg/interfaces"
-	"github.com/lowl11/boost/pkg/types"
+	"github.com/lowl11/boost/pkg/system/types"
 	"strings"
 )
 

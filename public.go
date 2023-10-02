@@ -5,8 +5,8 @@ import (
 	"github.com/lowl11/boost/internal/services/greeting"
 	"github.com/lowl11/boost/pkg/enums/colors"
 	"github.com/lowl11/boost/pkg/enums/modes"
-	"github.com/lowl11/boost/pkg/queue/msgbus"
-	"github.com/lowl11/boost/pkg/types"
+	types2 "github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/web/queue/msgbus"
 	"github.com/lowl11/boostcron"
 	"github.com/lowl11/boostrpc"
 	"github.com/lowl11/lazylog/log"
@@ -105,7 +105,7 @@ func (app *App) Listener() Listener {
 }
 
 // Destroy adds function which will be called in shutdown
-func (app *App) Destroy(destroyFunc types.DestroyFunc) {
+func (app *App) Destroy(destroyFunc types2.DestroyFunc) {
 	if destroyFunc == nil {
 		return
 	}
@@ -194,7 +194,7 @@ func (app *App) Use(middlewareFunc ...MiddlewareFunc) {
 		return
 	}
 
-	middlewares := make([]types.MiddlewareFunc, 0, len(middlewareFunc))
+	middlewares := make([]types2.MiddlewareFunc, 0, len(middlewareFunc))
 
 	for _, mFunc := range middlewareFunc {
 		if mFunc == nil {
@@ -212,7 +212,7 @@ func (app *App) useGroup(groupID uuid.UUID, middlewareFunc ...MiddlewareFunc) {
 		return
 	}
 
-	middlewares := make([]types.MiddlewareFunc, 0, len(middlewareFunc))
+	middlewares := make([]types2.MiddlewareFunc, 0, len(middlewareFunc))
 
 	for _, mFunc := range middlewareFunc {
 		if mFunc == nil {

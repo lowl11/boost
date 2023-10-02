@@ -3,7 +3,7 @@ package static_controller
 import (
 	"github.com/lowl11/boost/internal/services/healthcheck"
 	"github.com/lowl11/boost/pkg/interfaces"
-	"github.com/lowl11/boost/pkg/types"
+	"github.com/lowl11/boost/pkg/system/types"
 )
 
 const (

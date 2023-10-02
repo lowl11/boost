@@ -1,6 +1,8 @@
 package boost
 
-import "github.com/lowl11/boost/pkg/queue/msgbus"
+import (
+	"github.com/lowl11/boost/pkg/web/queue/msgbus"
+)
 
 func NewDispatcher(amqpConnectionURL string) (Dispatcher, error) {
 	dispatcher, err := msgbus.NewDispatcher(amqpConnectionURL)

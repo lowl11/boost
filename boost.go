@@ -4,8 +4,8 @@ import (
 	"github.com/lowl11/boost/internal/fast_handler"
 	"github.com/lowl11/boost/internal/services/healthcheck"
 	"github.com/lowl11/boost/internal/services/validator"
-	"github.com/lowl11/boost/pkg/destroyer"
-	"github.com/lowl11/boost/pkg/middlewares"
+	"github.com/lowl11/boost/pkg/web/destroyer"
+	middlewares2 "github.com/lowl11/boost/pkg/web/middlewares"
 	"github.com/lowl11/boostcron"
 	"github.com/lowl11/boostrpc"
 	"github.com/lowl11/lazylog/log"
@@ -108,13 +108,13 @@ func New(configs ...Config) *App {
 
 	// default middlewares
 	app.Use(
-		middlewares.CORS(),
-		middlewares.Secure(),
+		middlewares2.CORS(),
+		middlewares2.Secure(),
 	)
 
 	// if timeout was set in config
 	if config.Timeout != 0 {
-		app.Use(middlewares.Timeout(config.Timeout))
+		app.Use(middlewares2.Timeout(config.Timeout))
 	}
 
 	return app
