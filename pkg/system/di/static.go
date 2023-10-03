@@ -23,6 +23,5 @@ func AddSingleton[T any](constructor any, dependencies ...any) {
 }
 
 func MapControllers(constructors ...any) {
-	// todo
-	panic("not implemented")
+	di_container.Get().MapControllers(constructors...)
 }

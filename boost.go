@@ -1,6 +1,7 @@
 package boost
 
 import (
+	"github.com/lowl11/boost/internal/boosties/di_container"
 	"github.com/lowl11/boost/internal/fast_handler"
 	"github.com/lowl11/boost/internal/services/boost/healthcheck"
 	"github.com/lowl11/boost/internal/services/system/validator"
@@ -11,6 +12,7 @@ import (
 	"github.com/lowl11/boost/pkg/web/rpc"
 	"os"
 	"os/signal"
+	"reflect"
 	"syscall"
 	"time"
 )
@@ -70,6 +72,8 @@ type App struct {
 
 // New method creates new instance of Boost App
 func New(configs ...Config) *App {
+	di_container.Get().SetControllerInterface(reflect.TypeOf(new(Controller)))
+
 	// init config
 	var config Config
 	if len(configs) > 0 {
@@ -115,6 +119,8 @@ func New(configs ...Config) *App {
 		app.Use(middlewares2.Timeout(config.Timeout))
 	}
 
+	di_container.Get().RegisterImplementation(app)
+	di_container.Get().SetAppType(reflect.TypeOf(app))
 	return app
 }
 

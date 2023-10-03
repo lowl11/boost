@@ -6,6 +6,7 @@ import (
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/log"
 	"reflect"
+	"strings"
 )
 
 func callValues(tq *tqueue.Queue, constructor any, services map[reflect.Type]*serviceInfo) []reflect.Value {
@@ -97,39 +98,40 @@ type constructor struct {
 	// value & type
 	f any
 	t reflect.Type
-
-	// checks
-	kindCheck   bool
-	returnCheck bool
 }
 
 func newConstructor(f any) *constructor {
 	return &constructor{
 		f: f,
 		t: reflect.TypeOf(f),
-
-		kindCheck:   true,
-		returnCheck: true,
 	}
 }
 
 func (c *constructor) IsFunc() *constructor {
-	c.kindCheck = c.t.Kind() == reflect.Func
 	if c.t.Kind() != reflect.Func {
 		panic("Given constructor is not the func type")
 	}
 	return c
 }
 
+func (c *constructor) HasOneReturn() *constructor {
+	if c.t.NumOut() == 0 {
+		panic("Controller Constructor has no return value: " + c.t.String())
+	}
+
+	if !strings.Contains(c.t.Out(0).String(), "Controller") {
+		panic("Controller constructor does not return Controller struct: " + c.t.String())
+	}
+	return c
+}
+
 func (c *constructor) IsReturnMatch(returnType reflect.Type) *constructor {
 	if c.t.NumOut() == 0 {
-		c.returnCheck = false
 		panic("Constructor returns anything")
 	}
 
 	realReturnType := type_helper.UnwrapType(c.t.Out(0))
 	if realReturnType != returnType {
-		c.returnCheck = false
 		panic("Constructor return value type is not correct")
 	}
 
@@ -143,4 +145,8 @@ func (c *constructor) GetDependencies() []reflect.Type {
 		deps = append(deps, dep)
 	}
 	return deps
+}
+
+func (c *constructor) GetReturnType() reflect.Type {
+	return c.t.Out(0)
 }

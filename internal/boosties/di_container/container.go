@@ -17,7 +17,10 @@ type serviceInfo struct {
 }
 
 type container struct {
-	services map[reflect.Type]*serviceInfo
+	services                    map[reflect.Type]*serviceInfo
+	controllerInterfaceType     reflect.Type
+	registerEndpointsMethodName string
+	appType                     reflect.Type
 
 	mutex sync.Mutex
 }
@@ -37,6 +40,15 @@ func Get() interfaces.DependencyContainer {
 
 	instance = newContainer()
 	return instance
+}
+
+func (c *container) SetControllerInterface(controllerInterfaceType reflect.Type) {
+	c.controllerInterfaceType = type_helper.UnwrapType(controllerInterfaceType)
+	c.registerEndpointsMethodName = c.controllerInterfaceType.Method(0).Name
+}
+
+func (c *container) SetAppType(appType reflect.Type) {
+	c.appType = type_helper.UnwrapType(appType)
 }
 
 func (c *container) Register(t reflect.Type, constructor any, mode int, dependencies ...any) {
@@ -65,6 +77,39 @@ func (c *container) Register(t reflect.Type, constructor any, mode int, dependen
 		constructor: constructor,
 		mode:        mode,
 		tq:          tq,
+	}
+}
+
+func (c *container) RegisterImplementation(impl any) {
+	c.services[type_helper.UnwrapType(reflect.TypeOf(impl))] = &serviceInfo{
+		mode:     di_modes.Singleton,
+		instance: impl,
+	}
+}
+
+func (c *container) MapControllers(constructors ...any) {
+	controllerTypes := make([]reflect.Type, 0, len(constructors))
+	for _, controllerConstructor := range constructors {
+		controllerType := newConstructor(controllerConstructor).
+			IsFunc().
+			HasOneReturn().
+			GetReturnType()
+
+		if !controllerType.Implements(c.controllerInterfaceType) {
+			panic("Given controller does not implements boost.Controller interface: " + controllerType.String())
+		}
+
+		c.Register(controllerType, controllerConstructor, di_modes.Singleton)
+		controllerTypes = append(controllerTypes, controllerType)
+	}
+
+	for _, controllerType := range controllerTypes {
+		controllerObject := c.Get(controllerType)
+		registerMethod, _ := controllerType.MethodByName(c.registerEndpointsMethodName)
+		registerMethod.Func.Call([]reflect.Value{
+			reflect.ValueOf(controllerObject),
+			reflect.ValueOf(c.Get(c.appType)),
+		})
 	}
 }
 
@@ -106,6 +151,10 @@ func (c *container) Check() error {
 	defer c.mutex.Unlock()
 
 	for sType, sInfo := range c.services {
+		if sInfo.instance != nil {
+			continue
+		}
+
 		deps := newConstructor(sInfo.constructor).GetDependencies()
 		if len(deps) == 0 {
 			continue
@@ -120,7 +169,7 @@ func (c *container) Check() error {
 			} else {
 				primitiveValue := tq.Dequeue(dep)
 				if primitiveValue == nil {
-					panic("No set primitive dependency at registry: " + dep.String())
+					panic("No set primitive dependency at registry: " + dep.String() + " for " + sType.String())
 				}
 			}
 		}
