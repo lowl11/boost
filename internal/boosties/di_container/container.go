@@ -3,25 +3,28 @@ package di_container
 import (
 	"github.com/lowl11/boost/data/enums/di_modes"
 	"github.com/lowl11/boost/data/interfaces"
+	"github.com/lowl11/boost/internal/containers/tqueue"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"reflect"
+	"sync"
 )
 
 type serviceInfo struct {
 	constructor any
 	mode        int
 	instance    any
+	tq          *tqueue.Queue
 }
 
 type container struct {
-	services         map[reflect.Type]*serviceInfo
-	sessionInstances map[string][]*serviceInfo
+	services map[reflect.Type]*serviceInfo
+
+	mutex sync.Mutex
 }
 
 func newContainer() *container {
 	return &container{
-		services:         make(map[reflect.Type]*serviceInfo, 10),
-		sessionInstances: make(map[string][]*serviceInfo),
+		services: make(map[reflect.Type]*serviceInfo, 10),
 	}
 }
 
@@ -36,7 +39,10 @@ func Get() interfaces.DependencyContainer {
 	return instance
 }
 
-func (c *container) Register(t reflect.Type, constructor any, mode int) {
+func (c *container) Register(t reflect.Type, constructor any, mode int, dependencies ...any) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
 	t = type_helper.UnwrapType(t)
 
 	// check mode
@@ -45,21 +51,27 @@ func (c *container) Register(t reflect.Type, constructor any, mode int) {
 	}
 
 	// check constructor
-	if !newConstructor(constructor).
+	newConstructor(constructor).
 		IsFunc().
-		IsReturnMatch(t).
-		Check() {
-		return
+		IsReturnMatch(t)
+
+	tq := tqueue.New()
+	for _, dep := range dependencies {
+		tq.Enqueue(dep)
 	}
 
 	// add service
 	c.services[t] = &serviceInfo{
 		constructor: constructor,
 		mode:        mode,
+		tq:          tq,
 	}
 }
 
 func (c *container) Get(t reflect.Type, params ...any) any {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
 	t = type_helper.UnwrapType(t)
 
 	service, ok := c.services[t]
@@ -70,7 +82,7 @@ func (c *container) Get(t reflect.Type, params ...any) any {
 	switch service.mode {
 	case di_modes.Transient:
 		// call every time new instance
-		return call(service.constructor, c.services)
+		return call(service.tq, service.constructor, c.services)
 	case di_modes.Scoped:
 		// call one instance for request
 		panic("not implemented")
@@ -81,9 +93,37 @@ func (c *container) Get(t reflect.Type, params ...any) any {
 		}
 
 		// return the instance & cache it
-		inst := call(service.constructor, c.services)
+		inst := call(service.tq, service.constructor, c.services)
 		service.instance = inst
 		return inst
+	}
+
+	return nil
+}
+
+func (c *container) Check() error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	for sType, sInfo := range c.services {
+		deps := newConstructor(sInfo.constructor).GetDependencies()
+		if len(deps) == 0 {
+			continue
+		}
+
+		tq := sInfo.tq.Copy()
+		for _, dep := range deps {
+			if dep.Kind() == reflect.Pointer || dep.Kind() == reflect.Struct {
+				if _, depOk := c.services[dep]; !depOk {
+					panic("The dependency " + dep.String() + " is not registered for " + sType.String())
+				}
+			} else {
+				primitiveValue := tq.Dequeue(dep)
+				if primitiveValue == nil {
+					panic("No set primitive dependency at registry: " + dep.String())
+				}
+			}
+		}
 	}
 
 	return nil

@@ -10,14 +10,19 @@ func Get[T any](params ...any) *T {
 	return di_container.Get().Get(reflect.TypeOf(new(T)), params...).(*T)
 }
 
-func AddTransient[T any](constructor any) {
-	di_container.Get().Register(reflect.TypeOf(new(T)), constructor, di_modes.Transient)
+func AddTransient[T any](constructor any, dependencies ...any) {
+	di_container.Get().Register(reflect.TypeOf(new(T)), constructor, di_modes.Transient, dependencies...)
 }
 
-func AddScoped[T any](constructor any) {
-	di_container.Get().Register(reflect.TypeOf(new(T)), constructor, di_modes.Scoped)
+func AddScoped[T any](constructor any, dependencies ...any) {
+	di_container.Get().Register(reflect.TypeOf(new(T)), constructor, di_modes.Scoped, dependencies...)
 }
 
-func AddSingleton[T any](constructor any) {
-	di_container.Get().Register(reflect.TypeOf(new(T)), constructor, di_modes.Singleton)
+func AddSingleton[T any](constructor any, dependencies ...any) {
+	di_container.Get().Register(reflect.TypeOf(new(T)), constructor, di_modes.Singleton, dependencies...)
+}
+
+func MapControllers(constructors ...any) {
+	// todo
+	panic("not implemented")
 }

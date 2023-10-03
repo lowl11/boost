@@ -4,10 +4,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/lowl11/boost/data/enums/colors"
 	"github.com/lowl11/boost/data/enums/modes"
+	"github.com/lowl11/boost/internal/boosties/di_container"
 	"github.com/lowl11/boost/internal/services/boost/greeting"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/cron"
-	types2 "github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/boost/pkg/web/queue/msgbus"
 	"github.com/lowl11/boost/pkg/web/rpc"
 	"net/http"
@@ -20,6 +21,11 @@ const (
 
 // Run starts listening TCP with given port
 func (app *App) Run(port string) {
+	// check DI registers
+	if err := di_container.Get().Check(); err != nil {
+		log.Fatal(err, "Dependency Injection error")
+	}
+
 	// register static endpoints
 	registerStaticEndpoints(app, app.healthcheck)
 
@@ -42,6 +48,11 @@ func (app *App) RunRPC(port string) {
 		panic("RPC server is NULL. Add one handler at least to initialize")
 	}
 
+	// check DI registers
+	if err := di_container.Get().Check(); err != nil {
+		log.Fatal(err, "Dependency Injection error")
+	}
+
 	// print greeting text
 	greeting.New(app.handler.GetCounter(), greeting.Context{
 		Mode: modes.RPC,
@@ -61,6 +72,11 @@ func (app *App) RunCron() {
 		panic("Cron App is NULL. Add at least one action to initialize")
 	}
 
+	// check DI registers
+	if err := di_container.Get().Check(); err != nil {
+		log.Fatal(err, "Dependency Injection error")
+	}
+
 	// print greeting text
 	greeting.New(app.handler.GetCounter(), greeting.Context{
 		Mode: modes.Cron,
@@ -76,6 +92,11 @@ func (app *App) RunCron() {
 func (app *App) RunListener(amqpConnectionURL string) {
 	if app.listener == nil {
 		panic("Message bus Listener is NULL. Add at least one binding to initialize")
+	}
+
+	// check DI registers
+	if err := di_container.Get().Check(); err != nil {
+		log.Fatal(err, "Dependency Injection error")
 	}
 
 	app.handler.GetCounter().ListenerBind(app.listener.EventsCount())
@@ -101,7 +122,7 @@ func (app *App) Listener() Listener {
 }
 
 // Destroy adds function which will be called in shutdown
-func (app *App) Destroy(destroyFunc types2.DestroyFunc) {
+func (app *App) Destroy(destroyFunc types.DestroyFunc) {
 	if destroyFunc == nil {
 		return
 	}
@@ -190,7 +211,7 @@ func (app *App) Use(middlewareFunc ...MiddlewareFunc) {
 		return
 	}
 
-	middlewares := make([]types2.MiddlewareFunc, 0, len(middlewareFunc))
+	middlewares := make([]types.MiddlewareFunc, 0, len(middlewareFunc))
 
 	for _, mFunc := range middlewareFunc {
 		if mFunc == nil {
@@ -208,7 +229,7 @@ func (app *App) useGroup(groupID uuid.UUID, middlewareFunc ...MiddlewareFunc) {
 		return
 	}
 
-	middlewares := make([]types2.MiddlewareFunc, 0, len(middlewareFunc))
+	middlewares := make([]types.MiddlewareFunc, 0, len(middlewareFunc))
 
 	for _, mFunc := range middlewareFunc {
 		if mFunc == nil {

@@ -68,3 +68,7 @@ type Group interface {
 
 	Use(middlewares ...MiddlewareFunc)
 }
+
+type Controller interface {
+	RegisterEndpoints(Router)
+}
