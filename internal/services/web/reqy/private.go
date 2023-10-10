@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"encoding/xml"
+	"github.com/lowl11/boost/data/enums/content_types"
 	"github.com/lowl11/boost/internal/helpers/request_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/log"
@@ -77,8 +78,7 @@ func (req *Request) execute(method, url string, ctx context.Context) error {
 
 	// try to unmarshal response body if response code is success
 	if response.StatusCode < http.StatusBadRequest &&
-		!strings.Contains(type_helper.ToString(responseBody, false), "<!DOCTYPE html>") &&
-		!strings.Contains(type_helper.ToString(responseBody, false), "ERROR = ") {
+		!strings.Contains(type_helper.ToString(responseBody, false), "<!DOCTYPE html>") {
 		if err = req.unmarshal(responseBody, &req.result); err != nil {
 			log.Error(err, "Unmarshal result error")
 		}
@@ -140,6 +140,10 @@ func (req *Request) getContext() context.Context {
 func (req *Request) unmarshal(body []byte, result any) error {
 	if req.isXML {
 		return xml.Unmarshal(body, &result)
+	}
+
+	if req.response.raw.Header.Get("Content-Type") != content_types.JSON {
+		req.result = type_helper.ToString(body, false)
 	}
 
 	return json.Unmarshal(body, &result)
