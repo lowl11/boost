@@ -21,6 +21,10 @@ const (
 
 // Run starts listening TCP with given port
 func (app *App) Run(port string) {
+	if len(port) == 0 {
+		panic("Port is empty")
+	}
+
 	// check DI registers
 	if err := di_container.Get().Check(); err != nil {
 		log.Fatal(err, "Dependency Injection error")

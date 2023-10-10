@@ -22,6 +22,8 @@ type container struct {
 	registerEndpointsMethodName string
 	appType                     reflect.Type
 
+	isChecked bool
+
 	mutex sync.Mutex
 }
 
@@ -150,6 +152,10 @@ func (c *container) Check() error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
+	if c.isChecked {
+		return nil
+	}
+
 	for sType, sInfo := range c.services {
 		if sInfo.instance != nil {
 			continue
@@ -174,6 +180,8 @@ func (c *container) Check() error {
 			}
 		}
 	}
+
+	c.isChecked = true
 
 	return nil
 }
