@@ -46,6 +46,15 @@ func (app *App) Run(port string) {
 	log.Fatal(app.handler.Run(port))
 }
 
+func (app *App) RunFlag() {
+	flagPort := Flag("port")
+	if flagPort == "" {
+		panic("Not given flag 'port=<PORT>'")
+	}
+
+	app.Run(flagPort)
+}
+
 // RunRPC starts listening TCP with given port
 func (app *App) RunRPC(port string) {
 	if app.rpcServer == nil {
