@@ -77,7 +77,7 @@ func (req *Request) execute(method, url string, ctx context.Context) error {
 	req.response.setBody(responseBody)
 
 	// try to unmarshal response body if response code is success
-	if response.StatusCode < http.StatusBadRequest &&
+	if req.waitForResult && response.StatusCode < http.StatusBadRequest &&
 		!strings.Contains(type_helper.ToString(responseBody, false), "<!DOCTYPE html>") &&
 		!strings.Contains(type_helper.ToString(responseBody, false), "ERROR = ") {
 		if err = req.unmarshal(responseBody, &req.result); err != nil {

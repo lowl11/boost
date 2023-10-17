@@ -99,6 +99,7 @@ func (req *Request) SetBasicAuth(basicAuth *BasicAuth) *Request {
 
 func (req *Request) SetResult(result any) *Request {
 	req.result = result
+	req.waitForResult = true
 	return req
 }
 

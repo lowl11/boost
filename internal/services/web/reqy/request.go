@@ -31,9 +31,10 @@ type Request struct {
 	cache *http.Request
 
 	// result data
-	response  *Response
-	result    any
-	sendError error
+	response      *Response
+	result        any
+	sendError     error
+	waitForResult bool
 }
 
 func NewRequest(baseURL string, client http.Client) *Request {
