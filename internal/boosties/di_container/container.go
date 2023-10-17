@@ -5,6 +5,7 @@ import (
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/containers/tqueue"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
+	"github.com/lowl11/flex"
 	"reflect"
 	"sync"
 )
@@ -90,12 +91,51 @@ func (c *container) RegisterImplementation(impl any) {
 }
 
 func (c *container) MapControllers(constructors ...any) {
+	// create singleton no dep service instances
+	for serviceType, service := range c.services {
+		// instance already exist or service mode is not singleton
+		if service.instance != nil || service.mode != di_modes.Singleton {
+			continue
+		}
+
+		// skip, because there is non-empty arguments
+		if flex.Func(service.constructor).ArgumentsCount() > 0 {
+			continue
+		}
+
+		// create instance
+		serviceInstance := call(service.tq, service.constructor, c.services)
+		if serviceInstance == nil {
+			continue // todo: check
+		}
+
+		// store instance
+		c.services[serviceType].instance = serviceInstance
+	}
+
+	// create singleton services more than 0 arguments
+	for serviceType, service := range c.services {
+		if service.instance != nil || service.mode != di_modes.Singleton {
+			continue
+		}
+
+		serviceInstance := call(service.tq, service.constructor, c.services)
+		if serviceInstance == nil {
+			continue // todo: check
+		}
+
+		c.services[serviceType].instance = serviceInstance
+	}
+
+	// register controller types
 	controllerTypes := make([]reflect.Type, 0, len(constructors))
 	for _, controllerConstructor := range constructors {
-		controllerType := newConstructor(controllerConstructor).
-			IsFunc().
-			HasOneReturn().
-			GetReturnType()
+		flexConstructor := flex.Func(controllerConstructor)
+		if flexConstructor.ReturnCount() != 1 {
+			panic("Controller Constructor has no return value or too much values: " + reflect.TypeOf(controllerConstructor).String())
+		}
+
+		controllerType := flexConstructor.Returns()[0]
 
 		if !controllerType.Implements(c.controllerInterfaceType) {
 			panic("Given controller does not implements boost.Controller interface: " + controllerType.String())
@@ -105,6 +145,7 @@ func (c *container) MapControllers(constructors ...any) {
 		controllerTypes = append(controllerTypes, controllerType)
 	}
 
+	// init controllers
 	for _, controllerType := range controllerTypes {
 		controllerObject := c.Get(controllerType)
 		registerMethod, _ := controllerType.MethodByName(c.registerEndpointsMethodName)
