@@ -42,13 +42,13 @@ func callValues(tq *tqueue.Queue, constructor any, services map[reflect.Type]*se
 		case di_modes.Singleton:
 			// singleton arg
 			if argService.instance != nil {
-				arguments = append(arguments, reflect.ValueOf(argService.instance))
-			} else {
-				values := callValues(argService.tq, argService.constructor, services)
-				if len(values) > 0 {
-					argService.instance = values[0].Interface()
-					arguments = append(arguments, values[0])
-				}
+				return []reflect.Value{reflect.ValueOf(argService.instance)}
+			}
+
+			values := callValues(argService.tq, argService.constructor, services)
+			if len(values) > 0 {
+				argService.instance = values[0].Interface()
+				arguments = append(arguments, values[0])
 			}
 		case di_modes.Scoped:
 			// scoped arg (check for current request)
