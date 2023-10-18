@@ -31,7 +31,8 @@ func callValues(tq *tqueue.Queue, constructor any, services map[reflect.Type]*se
 			// check for primitives
 			primitiveValue := tq.Dequeue(unwrappedArgType.Type())
 			if primitiveValue == nil {
-				panic("Required argument for constructor not found")
+				panic("Required argument for constructor not found: " + constructorType.String() +
+					" with type: " + unwrappedArgType.String())
 			}
 
 			arguments = append(arguments, reflect.ValueOf(primitiveValue))
