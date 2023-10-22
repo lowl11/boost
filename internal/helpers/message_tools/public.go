@@ -2,6 +2,7 @@ package message_tools
 
 import (
 	"encoding/json"
+	"github.com/lowl11/boost/data/interfaces"
 	"strings"
 )
 
@@ -33,7 +34,12 @@ func BuildError(err error, args ...any) string {
 
 	var errorMessage string
 	if err != nil {
-		errorMessage = err.Error()
+		if boostError, ok := err.(interfaces.Error); ok {
+			errorMessage = boostError.String()
+		} else {
+			errorMessage = err.Error()
+		}
+
 		if stringArgs.Len() > 0 {
 			errorMessage += " | "
 		}

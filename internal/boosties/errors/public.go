@@ -125,6 +125,16 @@ func (err *Error) String() string {
 	if err.context != nil {
 		builder.WriteString("Context: ")
 		for key, value := range err.context {
+			if key == "trace" {
+				trace := value.([]string)
+
+				for _, traceLine := range trace {
+					builder.WriteString("\n\t")
+					builder.WriteString(traceLine)
+				}
+				continue
+			}
+
 			builder.WriteString(key)
 			builder.WriteString("=")
 			builder.WriteString(type_helper.ToString(value, false))

@@ -1,18 +1,16 @@
 package panicer
 
-import "errors"
-
-func fromAny(err any) error {
+func fromAny(err any) string {
 	if err == nil {
-		return nil
+		return ""
 	}
 
 	switch err.(type) {
 	case string:
-		return errors.New(err.(string))
+		return err.(string)
 	case error:
-		return errors.New(err.(error).Error())
+		return err.(error).Error()
 	}
 
-	return nil
+	return ""
 }

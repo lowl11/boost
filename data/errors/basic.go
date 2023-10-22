@@ -23,6 +23,10 @@ func ErrorUnknown(err error) interfaces.Error {
 
 // ErrorPanic returns Boost Error for panics
 func ErrorPanic(err error) interfaces.Error {
+	if boostError, ok := err.(interfaces.Error); ok {
+		return boostError
+	}
+
 	return errors.
 		New("PANIC RECOVER: " + err.Error()).
 		SetType(TypeErrorPanic).

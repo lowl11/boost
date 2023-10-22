@@ -160,7 +160,7 @@ func (logger *Logger) Warn(args ...any) {
 }
 
 func (logger *Logger) Error(err error, args ...any) {
-	if len(args) == 0 {
+	if err == nil {
 		return
 	}
 
@@ -182,7 +182,7 @@ func (logger *Logger) Error(err error, args ...any) {
 }
 
 func (logger *Logger) Fatal(err error, args ...any) {
-	if len(args) == 0 {
+	if err == nil {
 		return
 	}
 
