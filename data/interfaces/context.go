@@ -55,6 +55,9 @@ type Context interface {
 	// Set creates new context container key-value pair
 	Set(key string, value any)
 
+	SetCookie(key, value string) Context
+	SetHeader(key, value string) Context
+
 	// Status sets HTTP status code to response
 	Status(status int) Context
 

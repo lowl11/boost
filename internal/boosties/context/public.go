@@ -206,6 +206,19 @@ func (ctx *Context) Get(key string) any {
 	return value
 }
 
+func (ctx *Context) SetHeader(key, value string) interfaces.Context {
+	ctx.Response().Header.Set(key, value)
+	return ctx
+}
+
+func (ctx *Context) SetCookie(key, value string) interfaces.Context {
+	newCookie := &fasthttp.Cookie{}
+	newCookie.SetKey(key)
+	newCookie.SetValue(value)
+	ctx.Response().Header.SetCookie(newCookie)
+	return ctx
+}
+
 func (ctx *Context) Status(status int) interfaces.Context {
 	ctx.status = status
 	return ctx
