@@ -46,6 +46,10 @@ func Env() string {
 	return envValue
 }
 
+func Load() {
+	configuration.Load()
+}
+
 func IsProduction() bool {
 	return Env() == "production"
 }

@@ -10,6 +10,16 @@ import (
 	"strings"
 )
 
+func (service *Service) Load() {
+	if service.envVariables == nil {
+		return
+	}
+
+	for key, value := range service.envVariables {
+		_ = os.Setenv(key, value)
+	}
+}
+
 func (service *Service) Read() error {
 	if !folder.Exist(service.baseFolder) {
 		return errors.New("base folder does not exist: " + service.baseFolder)
@@ -20,6 +30,8 @@ func (service *Service) Read() error {
 	if err != nil {
 		return err
 	}
+
+	service.envVariables = envFileContent
 
 	baseVariables := make(map[string]string)
 

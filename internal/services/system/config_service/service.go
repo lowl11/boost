@@ -1,7 +1,8 @@
 package config_service
 
 type Service struct {
-	variables map[string]string
+	variables    map[string]string
+	envVariables map[string]string
 
 	baseFolder              string
 	environment             string // dev, test, production or any other

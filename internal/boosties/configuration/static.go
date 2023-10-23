@@ -63,3 +63,7 @@ func Get(key string) string {
 
 	return configPtr.Get(key)
 }
+
+func Load() {
+	_configServicePool.Get().(*config_service.Service).Load()
+}
