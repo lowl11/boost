@@ -120,7 +120,11 @@ func (err *Error) String() string {
 	builder.Grow(500)
 	builder.WriteString(err.message)
 	builder.WriteString(". ")
-	builder.WriteString("")
+
+	if err.innerError != nil {
+		builder.WriteString(err.innerError.Error())
+		builder.WriteString(". ")
+	}
 
 	if err.context != nil {
 		builder.WriteString("Context: ")
