@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"io"
 )
 
 func (service *Service) MaxRetries(retries int) *Service {
@@ -93,4 +94,16 @@ func (service *Service) GetAll(ctx context.Context) ([]*s3.Object, error) {
 
 func (service *Service) GetPath(ctx context.Context, path string) ([]*s3.Object, error) {
 	return service.get(ctx, path)
+}
+
+func (service *Service) GetFile(ctx context.Context, path string) ([]byte, error) {
+	result, err := service.client.GetObjectWithContext(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(service.bucket),
+		Key:    aws.String(path),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return io.ReadAll(result.Body)
 }

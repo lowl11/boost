@@ -50,6 +50,10 @@ func GetPath(ctx context.Context, path string) ([]Object, error) {
 	return entityToModel(objects), nil
 }
 
+func GetFile(ctx context.Context, path string) ([]byte, error) {
+	return service().GetFile(ctx, path)
+}
+
 func service() *s3_service.Service {
 	return s3_service.Get()
 }
