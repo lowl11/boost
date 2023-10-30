@@ -1,6 +1,7 @@
 package context
 
 import (
+	"github.com/google/uuid"
 	"strconv"
 	"strings"
 )
@@ -19,7 +20,16 @@ func (param Param) String() string {
 	return param.value
 }
 
-func (param Param) Int() int {
+func (param Param) Int() (int, error) {
+	intValue, err := strconv.Atoi(param.value)
+	if err != nil {
+		return 0, ErrorParseIntParam(err, param.value)
+	}
+
+	return intValue, nil
+}
+
+func (param Param) MustInt() int {
 	intValue, err := strconv.Atoi(param.value)
 	if err != nil {
 		return 0
@@ -27,6 +37,25 @@ func (param Param) Int() int {
 
 	return intValue
 }
+
 func (param Param) Bool() bool {
 	return strings.ToLower(param.value) == "true"
+}
+
+func (param Param) UUID() (uuid.UUID, error) {
+	uuidValue, err := uuid.Parse(param.value)
+	if err != nil {
+		return uuid.UUID{}, ErrorParseUUIDParam(err, param.value)
+	}
+
+	return uuidValue, nil
+}
+
+func (param Param) MustUUID() uuid.UUID {
+	uuidValue, err := uuid.Parse(param.value)
+	if err != nil {
+		return uuid.UUID{}
+	}
+
+	return uuidValue
 }

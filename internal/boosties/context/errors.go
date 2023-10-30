@@ -13,6 +13,24 @@ const (
 	typeErrorPointerRequired    = "PointerRequired"
 )
 
+func ErrorParseIntParam(err error, value string) error {
+	return errors.
+		New("Parse int param error").
+		SetType("ParseIntParamError").
+		SetHttpCode(http.StatusUnprocessableEntity).
+		SetError(err).
+		AddContext("value", value)
+}
+
+func ErrorParseUUIDParam(err error, value string) error {
+	return errors.
+		New("Parse UUID param error").
+		SetType("ParseUUIDParamError").
+		SetHttpCode(http.StatusUnprocessableEntity).
+		SetError(err).
+		AddContext("value", value)
+}
+
 func ErrorUnknownType(err error) interfaces.Error {
 	return errors.
 		New("Unknown error: " + err.Error()).
