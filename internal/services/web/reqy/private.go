@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"encoding/xml"
-	"github.com/lowl11/boost/data/enums/content_types"
 	"github.com/lowl11/boost/internal/helpers/request_helper"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/log"
@@ -145,9 +144,9 @@ func (req *Request) unmarshal(body []byte, result any) error {
 		return xml.Unmarshal(body, &result)
 	}
 
-	if req.response.raw.Header.Get("Content-Type") != content_types.JSON {
-		req.result = type_helper.ToString(body, false)
-	}
+	//if req.response.raw.Header.Get("Content-Type") != content_types.JSON {
+	//req.result = type_helper.ToString(body, false)
+	//}
 
 	return json.Unmarshal(body, &result)
 }
