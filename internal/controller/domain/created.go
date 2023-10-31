@@ -1,5 +1,9 @@
 package domain
 
+import (
+	"github.com/lowl11/boost/pkg/system/types"
+)
+
 type createdWithIDNumber struct {
 	ID int `json:"id"`
 }
@@ -16,7 +20,14 @@ func NewCreatedWithID(id any) any {
 		}
 	}
 
+	stringID, ok := id.(string)
+	if ok {
+		return createdWithIDString{
+			ID: stringID,
+		}
+	}
+
 	return createdWithIDString{
-		ID: id.(string),
+		ID: types.ToString(id),
 	}
 }

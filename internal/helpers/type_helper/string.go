@@ -3,6 +3,8 @@ package type_helper
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
+	"github.com/lowl11/flex"
 	"reflect"
 	"strconv"
 	"unsafe"
@@ -13,12 +15,27 @@ func ToString(anyValue any, memory bool) string {
 		return ""
 	}
 
+	// try cast to error
 	if _, ok := anyValue.(error); ok {
 		return anyValue.(error).Error()
 	}
 
+	// try cast to bytes
 	if bytesBuffer, ok := anyValue.([]byte); ok {
 		return BytesToString(bytesBuffer)
+	}
+
+	// try cast uuid
+	if flex.Type(reflect.TypeOf(anyValue)).IsUUID() {
+		uuidValue, ok := anyValue.(uuid.UUID)
+		if ok {
+			return uuidValue.String()
+		}
+
+		uuidPtrValue, ok := anyValue.(*uuid.UUID)
+		if ok {
+			return uuidPtrValue.String()
+		}
 	}
 
 	value := reflect.ValueOf(anyValue)
