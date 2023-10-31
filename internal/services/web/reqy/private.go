@@ -16,7 +16,7 @@ import (
 )
 
 func (req *Request) do(method, url string, ctx context.Context) error {
-	if req.retryCount > 0 {
+	if req.retryCount > 0 { // call retry times
 		if req.retryWaitTime == 0 {
 			req.retryWaitTime = time.Millisecond * 100
 		}
@@ -30,6 +30,8 @@ func (req *Request) do(method, url string, ctx context.Context) error {
 			req.sendError = err
 			time.Sleep(req.retryWaitTime)
 		}
+	} else { // call once
+		req.sendError = req.execute(method, url, ctx)
 	}
 
 	return req.sendError
