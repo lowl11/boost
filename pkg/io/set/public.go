@@ -7,6 +7,12 @@ func (set *Set[T]) ThreadSafe() *Set[T] {
 	return set
 }
 
+func (set *Set[T]) Clear() *Set[T] {
+	set.mx.Lock()
+	defer set.mx.Unlock()
+	return set._clear()
+}
+
 func (set *Set[T]) Pop() T {
 	set._lock()
 	defer set._unlock()

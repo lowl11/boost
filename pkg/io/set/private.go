@@ -37,6 +37,11 @@ func (set *Set[T]) _remove(index int) *Set[T] {
 	return set
 }
 
+func (set *Set[T]) _clear() *Set[T] {
+	set.data = make([]T, 0, set.memoryLength)
+	return set
+}
+
 func remove[T any](slice []T, s int) []T {
 	return append(slice[:s], slice[s+1:]...)
 }
