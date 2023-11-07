@@ -47,3 +47,7 @@ func Delete(ctx context.Context, indexName string, id string) error {
 func GetAll(ctx context.Context, indexName string, export any) error {
 	return elk_service.Get().GetAll(ctx, indexName, export)
 }
+
+func Exist(ctx context.Context, indexName string) (bool, error) {
+	return elk_service.Get().Exist(ctx, indexName)
+}

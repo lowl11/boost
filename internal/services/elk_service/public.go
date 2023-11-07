@@ -64,6 +64,16 @@ func (service *Service) GetIndices(ctx context.Context) ([]entity.ElasticIndex, 
 }
 
 func (service *Service) CreateIndex(ctx context.Context, indexName string, object any, config ...entity.ElasticIndexConfig) error {
+	// check for index exist
+	exist, err := service.Exist(ctx, indexName)
+	if err != nil {
+		return err
+	}
+
+	if exist {
+		return nil
+	}
+
 	// check for given type
 	mappings, err := elk_parser.ParseObject(object)
 	if err != nil {
@@ -107,6 +117,15 @@ func (service *Service) CreateIndex(ctx context.Context, indexName string, objec
 }
 
 func (service *Service) DeleteIndex(ctx context.Context, indexName string) error {
+	exist, err := service.Exist(ctx, indexName)
+	if err != nil {
+		return err
+	}
+
+	if !exist {
+		return nil
+	}
+
 	response, err := service.client.
 		R().
 		SetContext(ctx).
@@ -241,4 +260,16 @@ func (service *Service) GetAll(ctx context.Context, indexName string, export any
 	}
 
 	return nil
+}
+
+func (service *Service) Exist(ctx context.Context, indexName string) (bool, error) {
+	response, err := service.client.
+		R().
+		SetContext(ctx).
+		GET("/" + indexName)
+	if err != nil {
+		return false, err
+	}
+
+	return response.StatusCode() == http.StatusOK, nil
 }
