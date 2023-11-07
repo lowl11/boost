@@ -1,0 +1,5 @@
+package elastic
+
+func Init() {
+	//
+}

@@ -1,6 +1,7 @@
 package elk_service
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/lowl11/boost/data/entity"
 	"github.com/lowl11/boost/internal/boosties/errors"
@@ -13,11 +14,16 @@ func (service *Service) SetAuth(username, password string) *Service {
 	return service
 }
 
-func (service *Service) GetIndices() ([]entity.ElasticIndex, error) {
+func (service *Service) Ping(ctx context.Context) error {
+	return nil
+}
+
+func (service *Service) GetIndices(ctx context.Context) ([]entity.ElasticIndex, error) {
 	var indices []entity.ElasticIndex
 
 	response, err := service.client.
 		R().
+		SetContext(ctx).
 		SetResult(&indices).
 		GET("/_cat/indices?format=json")
 	if err != nil {
@@ -42,7 +48,7 @@ func (service *Service) GetIndices() ([]entity.ElasticIndex, error) {
 	return filtered, nil
 }
 
-func (service *Service) CreateIndex(indexName string, object any, config ...entity.ElasticIndexConfig) error {
+func (service *Service) CreateIndex(ctx context.Context, indexName string, object any, config ...entity.ElasticIndexConfig) error {
 	// check for given type
 	mappings, err := elk_parser.ParseObject(object)
 	if err != nil {
@@ -67,6 +73,7 @@ func (service *Service) CreateIndex(indexName string, object any, config ...enti
 	// send request
 	response, err := service.client.
 		R().
+		SetContext(ctx).
 		SetBody(request).
 		PUT("/" + indexName)
 	if err != nil {
@@ -84,9 +91,10 @@ func (service *Service) CreateIndex(indexName string, object any, config ...enti
 	return nil
 }
 
-func (service *Service) DeleteIndex(indexName string) error {
+func (service *Service) DeleteIndex(ctx context.Context, indexName string) error {
 	response, err := service.client.
 		R().
+		SetContext(ctx).
 		DELETE("/" + indexName)
 	if err != nil {
 		return ErrorDeleteIndex(err)
@@ -105,7 +113,11 @@ func (service *Service) DeleteIndex(indexName string) error {
 	return nil
 }
 
-func (service *Service) BindAlias(pairs ...entity.ElasticAliasPair) error {
+func (service *Service) BindAlias(ctx context.Context, pairs ...entity.ElasticAliasPair) error {
+	if len(pairs) == 0 {
+		return nil
+	}
+
 	request := bindAliasRequest{
 		Actions: make([]entity.ElasticAliasAdd, 0, len(pairs)),
 	}
@@ -118,6 +130,7 @@ func (service *Service) BindAlias(pairs ...entity.ElasticAliasPair) error {
 
 	response, err := service.client.
 		R().
+		SetContext(ctx).
 		SetBody(request).
 		POST("/_aliases")
 	if err != nil {
@@ -133,7 +146,7 @@ func (service *Service) BindAlias(pairs ...entity.ElasticAliasPair) error {
 	return nil
 }
 
-func (service *Service) Insert(indexName string, object any) error {
+func (service *Service) Insert(ctx context.Context, indexName string, object any) error {
 	id, err := elk_parser.GetID(object)
 	if err != nil {
 		return err
@@ -141,6 +154,7 @@ func (service *Service) Insert(indexName string, object any) error {
 
 	response, err := service.client.
 		R().
+		SetContext(ctx).
 		SetBody(object).
 		POST("/" + indexName + "/_doc/" + id)
 	if err != nil {
@@ -156,9 +170,10 @@ func (service *Service) Insert(indexName string, object any) error {
 	return nil
 }
 
-func (service *Service) Delete(indexName string, id string) error {
+func (service *Service) Delete(ctx context.Context, indexName string, id string) error {
 	response, err := service.client.
 		R().
+		SetContext(ctx).
 		DELETE("/" + indexName + "/_doc/" + id)
 	if err != nil {
 		return ErrorInsertData(err)
@@ -173,11 +188,12 @@ func (service *Service) Delete(indexName string, id string) error {
 	return nil
 }
 
-func (service *Service) GetAll(indexName string, export any) error {
+func (service *Service) GetAll(ctx context.Context, indexName string, export any) error {
 	result := searchResult{}
 
 	response, err := service.client.
 		R().
+		SetContext(ctx).
 		SetBody(map[string]any{
 			"query": map[string]any{
 				"match_all": map[string]string{},
