@@ -10,13 +10,25 @@ type Service struct {
 	client *requests.Service
 }
 
-func New(host string) *Service {
-	return &Service{
+var instance *Service
+
+func Get(host ...string) *Service {
+	if instance != nil {
+		return instance
+	}
+
+	var hostValue string
+	if len(host) > 0 {
+		hostValue = host[0]
+	}
+
+	instance = &Service{
 		client: requests.
 			New().
-			SetBaseURL(host).
+			SetBaseURL(hostValue).
 			SetHeader("Content-Type", content_types.JSON).
 			SetRetryCount(3).
 			SetRetryWaitTime(time.Millisecond * 100),
 	}
+	return instance
 }

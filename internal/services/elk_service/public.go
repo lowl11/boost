@@ -15,6 +15,21 @@ func (service *Service) SetAuth(username, password string) *Service {
 }
 
 func (service *Service) Ping(ctx context.Context) error {
+	response, err := service.client.
+		R().
+		SetContext(ctx).
+		GET("")
+	if err != nil {
+		return err
+	}
+
+	if response.StatusCode() != http.StatusOK {
+		return errors.
+			New("Ping Elasticsearch error").
+			SetType("ELK_PingError").
+			AddContext("status", response.StatusCode())
+	}
+
 	return nil
 }
 
@@ -113,7 +128,7 @@ func (service *Service) DeleteIndex(ctx context.Context, indexName string) error
 	return nil
 }
 
-func (service *Service) BindAlias(ctx context.Context, pairs ...entity.ElasticAliasPair) error {
+func (service *Service) BindAlias(ctx context.Context, pairs []entity.ElasticAliasPair) error {
 	if len(pairs) == 0 {
 		return nil
 	}
