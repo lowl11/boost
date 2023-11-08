@@ -10,9 +10,14 @@ type Document struct {
 	CreatedAt time.Time `json:"created_at" elk:"created_at"`
 }
 
-func NewDocument() Document {
-	return Document{
-		ID:        uuid.New(),
+func NewDocument(customID ...uuid.UUID) Document {
+	document := Document{
 		CreatedAt: time.Now(),
 	}
+	if len(customID) > 0 {
+		document.ID = customID[0]
+	} else {
+		document.ID = uuid.New()
+	}
+	return document
 }
