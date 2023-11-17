@@ -8,7 +8,7 @@ import (
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/cron"
 	"github.com/lowl11/boost/pkg/web/destroyer"
-	middlewares2 "github.com/lowl11/boost/pkg/web/middlewares"
+	"github.com/lowl11/boost/pkg/web/middlewares"
 	"github.com/lowl11/boost/pkg/web/rpc"
 	"os"
 	"os/signal"
@@ -116,13 +116,12 @@ func New(configs ...Config) *App {
 
 	// default middlewares
 	app.Use(
-		middlewares2.CORS(),
-		middlewares2.Secure(),
+		middlewares.Secure(),
 	)
 
 	// if timeout was set in config
 	if config.Timeout != 0 {
-		app.Use(middlewares2.Timeout(config.Timeout))
+		app.Use(middlewares.Timeout(config.Timeout))
 	}
 
 	di_container.Get().RegisterImplementation(app)

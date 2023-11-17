@@ -119,18 +119,13 @@ func writeError(ctx *fasthttp.RequestCtx, err interfaces.Error) {
 }
 
 func (handler *Handler) getOrigin(ctx *fasthttp.RequestCtx) string {
-	origins := make([]string, 0, 3)
+	if handler.corsConfig.Origin != "" {
+		return handler.corsConfig.Origin
+	}
+
 	requestOrigin := types.ToString(ctx.Request.Header.Peek("Origin"))
 	if requestOrigin != "" {
-		origins = append(origins, requestOrigin)
-	}
-
-	if handler.corsConfig.Origin != "" {
-		origins = append(origins, handler.corsConfig.Origin)
-	}
-
-	if len(origins) > 0 {
-		return strings.Join(origins, ",")
+		return requestOrigin
 	}
 
 	return "*"
