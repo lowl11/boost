@@ -39,12 +39,7 @@ func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
 
 	if handler.corsConfig.Enabled {
 		// fill CORS headers
-		origin := types.ToString(ctx.Request.Header.Peek("Origin"))
-		if len(origin) == 0 {
-			origin = handler.corsConfig.Origin
-		}
-
-		ctx.Response.Header.Set("Access-Control-Allow-Origin", origin)
+		ctx.Response.Header.Set("Access-Control-Allow-Origin", handler.getOrigin(ctx))
 		ctx.Response.Header.Set("Access-Control-Allow-Credentials", "true")
 		ctx.Response.Header.Set("Access-Control-Allow-Headers", handler.getHeaders(ctx))
 		ctx.Response.Header.Set("Access-Control-Allow-Methods", handler.getMethods())
@@ -123,6 +118,24 @@ func writeError(ctx *fasthttp.RequestCtx, err interfaces.Error) {
 	ctx.SetBody(type_helper.StringToBytes(err.Error()))
 }
 
+func (handler *Handler) getOrigin(ctx *fasthttp.RequestCtx) string {
+	origins := make([]string, 0, 3)
+	requestOrigin := types.ToString(ctx.Request.Header.Peek("Origin"))
+	if requestOrigin != "" {
+		origins = append(origins, requestOrigin)
+	}
+
+	if handler.corsConfig.Origin != "" {
+		origins = append(origins, handler.corsConfig.Origin)
+	}
+
+	if len(origins) > 0 {
+		return strings.Join(origins, ",")
+	}
+
+	return "*"
+}
+
 func (handler *Handler) getHeaders(ctx *fasthttp.RequestCtx) string {
 	accessHeaders := make([]string, 0, 10)
 	for _, header := range ctx.Request.Header.PeekKeys() {
@@ -172,11 +185,8 @@ func (handler *Handler) tryUpdateCORS() {
 		handler.corsConfig.Enabled = strings.ToLower(config.Get("CORS_ENABLED")) == "true"
 	}
 
-	if len(handler.corsConfig.Origin) == 0 {
+	if handler.corsConfig.Origin == "" {
 		handler.corsConfig.Origin = config.Get("CORS_ORIGIN")
-		if handler.corsConfig.Origin == "" {
-			handler.corsConfig.Origin = "*"
-		}
 	}
 
 	if len(handler.corsConfig.Headers) == 0 {
