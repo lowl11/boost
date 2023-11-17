@@ -51,6 +51,12 @@ type Config struct {
 
 	// RpcConfig config of gRPC Application
 	RpcConfig rpc.Config
+
+	// Cors config params
+	CorsEnabled bool
+	CorsOrigin  string
+	CorsHeaders []string
+	CorsMethods []string
 }
 
 func defaultConfig() Config {

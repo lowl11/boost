@@ -18,6 +18,9 @@ func (handler *Handler) Run(port string) error {
 		return err
 	}
 
+	// check & update CORS
+	handler.tryUpdateCORS()
+
 	// run server
 	return handler.server.Serve(listener)
 }
@@ -65,4 +68,8 @@ func (handler *Handler) RegisterGroupMiddlewares(groupID uuid.UUID, middlewareFu
 
 func (handler *Handler) GetCounter() *counter.Counter {
 	return handler.counter
+}
+
+func (handler *Handler) SetCorsConfig(config CorsConfig) {
+	handler.corsConfig = config
 }

@@ -8,6 +8,13 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+type CorsConfig struct {
+	Enabled bool
+	Origin  string
+	Headers []string
+	Methods []string
+}
+
 type Handler struct {
 	server            *fasthttp.Server
 	router            *router.Router
@@ -15,6 +22,7 @@ type Handler struct {
 	groupMiddlewares  map[string][]types.HandlerFunc
 	counter           *counter.Counter
 	validate          *validator.Validator
+	corsConfig        CorsConfig
 }
 
 func New(validate *validator.Validator) *Handler {

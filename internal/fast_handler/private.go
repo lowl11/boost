@@ -7,12 +7,16 @@ import (
 	"github.com/lowl11/boost/internal/boosties/panicer"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/system/config"
 	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/valyala/fasthttp"
+	"net/http"
+	"strings"
 )
 
 const (
-	methodAny = "ANY"
+	methodAny      = "ANY"
+	defaultMethods = "GET,POST,PUT,DELETE,OPTIONS,HEAD"
 )
 
 func getServer() *fasthttp.Server {
@@ -32,6 +36,25 @@ func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
 		log.Error(err, "PANIC RECOVERED")
 		writePanicError(ctx, err)
 	}()
+
+	if handler.corsConfig.Enabled {
+		// fill CORS headers
+		origin := types.ToString(ctx.Request.Header.Peek("Origin"))
+		if len(origin) == 0 {
+			origin = handler.corsConfig.Origin
+		}
+
+		ctx.Response.Header.Set("Access-Control-Allow-Origin", origin)
+		ctx.Response.Header.Set("Access-Control-Allow-Credentials", "true")
+		ctx.Response.Header.Set("Access-Control-Allow-Headers", handler.getHeaders(ctx))
+		ctx.Response.Header.Set("Access-Control-Allow-Methods", handler.getMethods())
+
+		// OPTIONS case
+		if ctx.IsOptions() {
+			ctx.SetStatusCode(http.StatusNoContent)
+			return
+		}
+	}
 
 	// find route
 	routeCtx, ok := handler.router.Search(type_helper.BytesToString(ctx.Path()))
@@ -98,4 +121,69 @@ func writeError(ctx *fasthttp.RequestCtx, err interfaces.Error) {
 	ctx.SetStatusCode(err.HttpCode())
 	ctx.Response.Header.Set("Content-Type", err.ContentType())
 	ctx.SetBody(type_helper.StringToBytes(err.Error()))
+}
+
+func (handler *Handler) getHeaders(ctx *fasthttp.RequestCtx) string {
+	accessHeaders := make([]string, 0, 10)
+	for _, header := range ctx.Request.Header.PeekKeys() {
+		accessHeaders = append(accessHeaders, types.ToString(header))
+	}
+
+	accessHeaders = append(accessHeaders, "Content-Type", "Authorization", "Origin")
+	if len(handler.corsConfig.Methods) > 0 {
+		for _, header := range handler.corsConfig.Headers {
+			if header == "" {
+				continue
+			}
+
+			accessHeaders = append(accessHeaders, header)
+		}
+	}
+	return strings.Join(accessHeaders, ",")
+}
+
+func (handler *Handler) getMethods() string {
+	// custom methods
+	if len(handler.corsConfig.Methods) > 0 {
+		var methods string
+		for index, method := range handler.corsConfig.Methods {
+			if method == "" {
+				continue
+			}
+
+			methods += method
+			if index < len(handler.corsConfig.Methods)-1 {
+				methods += ","
+			}
+		}
+
+		if len(methods) == 0 {
+			return defaultMethods
+		}
+
+		return methods
+	}
+
+	return defaultMethods
+}
+
+func (handler *Handler) tryUpdateCORS() {
+	if !handler.corsConfig.Enabled {
+		handler.corsConfig.Enabled = strings.ToLower(config.Get("CORS_ENABLED")) == "true"
+	}
+
+	if len(handler.corsConfig.Origin) == 0 {
+		handler.corsConfig.Origin = config.Get("CORS_ORIGIN")
+		if handler.corsConfig.Origin == "" {
+			handler.corsConfig.Origin = "*"
+		}
+	}
+
+	if len(handler.corsConfig.Headers) == 0 {
+		handler.corsConfig.Headers = strings.Split(config.Get("CORS_HEADERS"), ",")
+	}
+
+	if len(handler.corsConfig.Methods) == 0 {
+		handler.corsConfig.Methods = strings.Split(config.Get("CORS_METHODS"), ",")
+	}
 }

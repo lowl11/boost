@@ -5,6 +5,7 @@ import (
 	"github.com/lowl11/boost/data/enums/colors"
 	"github.com/lowl11/boost/data/enums/modes"
 	"github.com/lowl11/boost/internal/boosties/di_container"
+	"github.com/lowl11/boost/internal/fast_handler"
 	"github.com/lowl11/boost/internal/services/boost/greeting"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/cron"
@@ -24,6 +25,14 @@ func (app *App) Run(port string) {
 	if len(port) == 0 {
 		panic("Port is empty")
 	}
+
+	// set cors config
+	app.handler.SetCorsConfig(fast_handler.CorsConfig{
+		Enabled: app.config.CorsEnabled,
+		Origin:  app.config.CorsOrigin,
+		Headers: app.config.CorsHeaders,
+		Methods: app.config.CorsMethods,
+	})
 
 	// check DI registers
 	if err := di_container.Get().Check(); err != nil {
