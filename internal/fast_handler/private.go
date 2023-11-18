@@ -120,18 +120,34 @@ func writeError(ctx *fasthttp.RequestCtx, err interfaces.Error) {
 }
 
 func (handler *Handler) getOrigin(ctx *fasthttp.RequestCtx) string {
+	// get from config
 	if handler.corsConfig.Origin != "" {
 		return handler.corsConfig.Origin
 	}
 
+	// get from request headers
 	requestOrigin := types.ToString(ctx.Request.Header.Peek("Origin"))
 	if requestOrigin != "" {
 		return requestOrigin
 	}
 
+	requestOrigin = types.ToString(ctx.Request.Header.Peek("X-Real-Ip"))
+	if requestOrigin != "" {
+		fmt.Println("X-Real-Ip:", requestOrigin)
+		return requestOrigin
+	}
+
+	requestOrigin = types.ToString(ctx.Request.Header.Peek("X-Forwarded-For"))
+	if requestOrigin != "" {
+		fmt.Println("X-Forwarded-For:", requestOrigin)
+		return requestOrigin
+	}
+
+	// try to build dynamic
 	dynamicOrigin := strings.Builder{}
 	dynamicOrigin.Grow(len(ctx.URI().Scheme()) + len(ctx.URI().Host()) + 3)
 	_, _ = fmt.Fprintf(&dynamicOrigin, "%s://%s", ctx.URI().Scheme(), ctx.URI().Host())
+	fmt.Println("return dynamic")
 	return dynamicOrigin.String()
 }
 
