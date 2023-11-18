@@ -131,17 +131,10 @@ func (handler *Handler) getOrigin(ctx *fasthttp.RequestCtx) string {
 		return requestOrigin
 	}
 
-	requestOrigin = types.ToString(ctx.Request.Header.Peek("X-Forwarded-For"))
-	if requestOrigin != "" {
-		fmt.Println("X-Forwarded-For:", requestOrigin)
-		return requestOrigin
-	}
-
 	// try to build dynamic
 	dynamicOrigin := strings.Builder{}
 	dynamicOrigin.Grow(len(ctx.URI().Scheme()) + len(ctx.URI().Host()) + 3)
 	_, _ = fmt.Fprintf(&dynamicOrigin, "%s://%s", ctx.URI().Scheme(), ctx.URI().Host())
-	fmt.Println("return dynamic")
 	return dynamicOrigin.String()
 }
 
