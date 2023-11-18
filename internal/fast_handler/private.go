@@ -131,12 +131,6 @@ func (handler *Handler) getOrigin(ctx *fasthttp.RequestCtx) string {
 		return requestOrigin
 	}
 
-	requestOrigin = types.ToString(ctx.Request.Header.Peek("X-Real-Ip"))
-	if requestOrigin != "" {
-		fmt.Println("X-Real-Ip:", requestOrigin)
-		return requestOrigin
-	}
-
 	requestOrigin = types.ToString(ctx.Request.Header.Peek("X-Forwarded-For"))
 	if requestOrigin != "" {
 		fmt.Println("X-Forwarded-For:", requestOrigin)
