@@ -1,6 +1,7 @@
 package fast_handler
 
 import (
+	"fmt"
 	"github.com/lowl11/boost/data/errors"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/boosties/context"
@@ -128,7 +129,10 @@ func (handler *Handler) getOrigin(ctx *fasthttp.RequestCtx) string {
 		return requestOrigin
 	}
 
-	return "*"
+	dynamicOrigin := strings.Builder{}
+	dynamicOrigin.Grow(len(ctx.URI().Scheme()) + len(ctx.URI().Host()) + 3)
+	_, _ = fmt.Fprintf(&dynamicOrigin, "%s://%s", ctx.URI().Scheme(), ctx.URI().Host())
+	return dynamicOrigin.String()
 }
 
 func (handler *Handler) getHeaders(ctx *fasthttp.RequestCtx) string {
