@@ -57,6 +57,7 @@ type Config struct {
 	CorsOrigin  string
 	CorsHeaders []string
 	CorsMethods []string
+	CorsVary    []string
 }
 
 func defaultConfig() Config {

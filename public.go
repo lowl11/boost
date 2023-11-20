@@ -32,6 +32,7 @@ func (app *App) Run(port string) {
 		Origin:  app.config.CorsOrigin,
 		Headers: app.config.CorsHeaders,
 		Methods: app.config.CorsMethods,
+		Vary:    app.config.CorsVary,
 	})
 
 	// check DI registers

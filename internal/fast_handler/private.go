@@ -45,8 +45,7 @@ func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Set("Access-Control-Allow-Headers", handler.getHeaders(ctx))
 		ctx.Response.Header.Set("Access-Control-Allow-Methods", handler.getMethods())
 		ctx.Response.Header.Set("Access-Control-Max-Age", "3600")
-		ctx.Response.Header.Set("Vary", "*")
-		//ctx.Response.Header.Set("Vary", "Accept-Encoding, Origin")
+		ctx.Response.Header.Set("Vary", handler.getVary())
 
 		// OPTIONS case
 		if ctx.IsOptions() {
@@ -213,4 +212,24 @@ func (handler *Handler) tryUpdateCORS() {
 	if len(handler.corsConfig.Methods) == 0 {
 		handler.corsConfig.Methods = strings.Split(config.Get("CORS_METHODS"), ",")
 	}
+
+	if len(handler.corsConfig.Vary) == 0 {
+		handler.corsConfig.Vary = strings.Split(config.Get("CORS_VARY"), ",")
+	}
+}
+
+func (handler *Handler) getVary() string {
+	if handler.corsConfig.Vary == nil || len(handler.corsConfig.Vary) == 0 {
+		return "*"
+	}
+
+	var varyHeader string
+	for index, header := range handler.corsConfig.Vary {
+		varyHeader += header
+		if index <= len(handler.corsConfig.Vary)-1 {
+			varyHeader += ","
+		}
+	}
+
+	return varyHeader
 }
