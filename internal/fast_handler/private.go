@@ -21,6 +21,11 @@ const (
 )
 
 func getServer() *fasthttp.Server {
+	server := &fasthttp.Server{
+		ErrorHandler: writeUnknownError,
+	}
+	server.MaxConnsPerIP = 10
+	server.MaxRequestsPerConn = 10
 	return &fasthttp.Server{
 		ErrorHandler: writeUnknownError,
 	}
