@@ -72,3 +72,7 @@ func MatchAll() map[string]any {
 func MultiMatch(query string, fields []string) map[string]any {
 	return searcher.MultiMatch(query, fields)
 }
+
+func QueryBool() *searcher.BoolQuery {
+	return searcher.QueryBool()
+}
