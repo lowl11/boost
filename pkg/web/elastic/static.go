@@ -56,6 +56,10 @@ func GetAll(ctx context.Context, indexName string, export any) error {
 	return elk_service.Get().GetAll(ctx, indexName, export)
 }
 
+func Search(ctx context.Context, indexName string, query map[string]any, export any) error {
+	return elk_service.Get().Search(ctx, indexName, query, export)
+}
+
 func Exist(ctx context.Context, indexName string) (bool, error) {
 	return elk_service.Get().Exist(ctx, indexName)
 }

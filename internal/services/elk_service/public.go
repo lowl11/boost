@@ -262,6 +262,42 @@ func (service *Service) GetAll(ctx context.Context, indexName string, export any
 	return nil
 }
 
+func (service *Service) Search(ctx context.Context, indexName string, query map[string]any, export any) error {
+	result := searchResult{}
+
+	response, err := service.client.
+		R().
+		SetContext(ctx).
+		SetBody(query).
+		SetResult(&result).
+		POST("/" + indexName + "/_search")
+	if err != nil {
+		return ErrorGetAllDocuments(err)
+	}
+
+	if response.StatusCode() != http.StatusOK {
+		return errors.
+			New("Status is not 200").
+			AddContext("body", response.Body())
+	}
+
+	sourceHits := make([]map[string]any, 0, len(result.Hits.Hits))
+	for _, hit := range result.Hits.Hits {
+		sourceHits = append(sourceHits, hit.Source)
+	}
+
+	sourceInBytes, err := json.Marshal(sourceHits)
+	if err != nil {
+		return err
+	}
+
+	if err = json.Unmarshal(sourceInBytes, &export); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (service *Service) Exist(ctx context.Context, indexName string) (bool, error) {
 	response, err := service.client.
 		R().
