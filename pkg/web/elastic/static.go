@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/lowl11/boost/data/entity"
 	"github.com/lowl11/boost/internal/services/elk_service"
+	"github.com/lowl11/boost/internal/services/web/searcher"
 	"github.com/lowl11/boost/log"
 )
 
@@ -62,4 +63,12 @@ func Search(ctx context.Context, indexName string, query map[string]any, export 
 
 func Exist(ctx context.Context, indexName string) (bool, error) {
 	return elk_service.Get().Exist(ctx, indexName)
+}
+
+func MatchAll() map[string]any {
+	return searcher.MatchAll()
+}
+
+func MultiMatch(query string, fields []string) map[string]any {
+	return searcher.MultiMatch(query, fields)
 }
