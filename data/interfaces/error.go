@@ -8,6 +8,7 @@ type Error interface {
 	GrpcCode() codes.Code
 	SetHttpCode(code int) Error
 	Type() string
+	Message() string
 	SetType(errorType string) Error
 	Context() map[string]any
 	SetContext(context map[string]any) Error

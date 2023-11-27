@@ -14,6 +14,10 @@ const (
 	status = "ERROR"
 )
 
+func (err *Error) Message() string {
+	return err.message
+}
+
 func (err *Error) SetHttpCode(code int) interfaces.Error {
 	err.httpCode = code
 	err.grpcCode = error_helper.ToGrpcCode(code)
