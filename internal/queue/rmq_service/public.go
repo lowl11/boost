@@ -3,6 +3,7 @@ package rmq_service
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/lowl11/boost/internal/queue/rmq"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -13,9 +14,27 @@ func (service *Service) Publish(ctx context.Context, exchangeName, eventName str
 		return err
 	}
 
+	// first try
 	if err = rmq.Publish(ctx, service.channel, eventName, eventInBytes, rmq.PublishConfig{
 		Exchange: exchangeName,
 	}); err != nil {
+		// if connection was closed
+		if errors.Is(err, amqp.ErrClosed) {
+			// reconnect to RMQ
+			if err = service.reConnect(); err != nil {
+				return err
+			}
+
+			// second try
+			if err = rmq.Publish(ctx, service.channel, eventName, eventInBytes, rmq.PublishConfig{
+				Exchange: exchangeName,
+			}); err != nil {
+				return err
+			}
+
+			return nil
+		}
+
 		return err
 	}
 
