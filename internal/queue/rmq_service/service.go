@@ -8,8 +8,9 @@ import (
 type Service struct {
 	url string
 
-	connection *amqp.Connection
-	channel    *amqp.Channel
+	connection        *amqp.Connection
+	listenerChannel   *amqp.Channel
+	dispatcherChannel *amqp.Channel
 }
 
 func New(url string) (*Service, error) {
@@ -18,15 +19,8 @@ func New(url string) (*Service, error) {
 		return nil, err
 	}
 
-	channel, err := rmq.NewChannel(connection)
-	if err != nil {
-		return nil, err
-	}
-
 	return &Service{
-		url: url,
-
+		url:        url,
 		connection: connection,
-		channel:    channel,
 	}, nil
 }
