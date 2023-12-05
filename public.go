@@ -124,6 +124,14 @@ func (app *App) RunListener(amqpConnectionURL string) {
 
 	app.handler.GetCounter().ListenerBind(app.listener.EventsCount())
 
+	app.destroyer.AddFunction(func() {
+		if err := app.listener.Close(); err != nil {
+			log.Error(err, "Close RabbitMQ connection error")
+			return
+		}
+		log.Info("RabbitMQ connection successfully closed!")
+	})
+
 	// print greeting text
 	greeting.New(app.handler.GetCounter(), greeting.Context{
 		Mode: modes.Listener,

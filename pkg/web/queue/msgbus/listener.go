@@ -70,7 +70,11 @@ func (listener *Listener) Run(amqpConnectionURL string) error {
 
 	infinite := make(chan struct{})
 	<-infinite
-	return nil
+	return listener.rmqService.Close()
+}
+
+func (listener *Listener) Close() error {
+	return listener.rmqService.Close()
 }
 
 func (listener *Listener) RegisterRoute(event Event) {

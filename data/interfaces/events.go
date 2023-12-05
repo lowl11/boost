@@ -12,6 +12,7 @@ type Listener interface {
 	Run(amqpConnectionURL string) error
 	Bind(event any, action func(ctx EventContext) error)
 	EventsCount() int
+	Close() error
 }
 
 type EventContext interface {

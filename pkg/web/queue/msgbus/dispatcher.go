@@ -63,6 +63,10 @@ func NewDispatcher(url string, cfg ...DispatcherConfig) (interfaces.Dispatcher, 
 	}, nil
 }
 
+func (dispatcher *Dispatcher) Close() error {
+	return dispatcher.rmqService.Close()
+}
+
 func (dispatcher *Dispatcher) Init() error {
 	if err := dispatcher.declareExchanges(); err != nil {
 		return err
