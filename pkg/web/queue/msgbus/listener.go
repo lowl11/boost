@@ -5,6 +5,7 @@ import (
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/helpers/event_helper"
 	"github.com/lowl11/boost/internal/queue/event_context"
+	"github.com/lowl11/boost/internal/queue/rmq_connection"
 	"github.com/lowl11/boost/internal/queue/rmq_service"
 	"github.com/lowl11/boost/log"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -158,11 +159,12 @@ func (listener *Listener) connect() error {
 		return nil
 	}
 
-	rmqService, err := rmq_service.New(listener.url)
+	rmq_connection.SetURL(listener.url)
+	_, err := rmq_connection.Get()
 	if err != nil {
 		return err
 	}
 
-	listener.rmqService = rmqService
+	listener.rmqService = rmq_service.New()
 	return nil
 }

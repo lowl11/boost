@@ -5,6 +5,7 @@ import (
 	"github.com/lowl11/boost/data/enums/exchanges"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/helpers/event_helper"
+	"github.com/lowl11/boost/internal/queue/rmq_connection"
 	"github.com/lowl11/boost/internal/queue/rmq_service"
 	"github.com/lowl11/boost/internal/services/system/validator"
 )
@@ -42,7 +43,8 @@ func NewDispatcher(url string, cfg ...DispatcherConfig) (interfaces.Dispatcher, 
 		return nil, err
 	}
 
-	rmqService, err := rmq_service.New(url)
+	rmq_connection.SetURL(url)
+	_, err = rmq_connection.Get()
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +58,7 @@ func NewDispatcher(url string, cfg ...DispatcherConfig) (interfaces.Dispatcher, 
 
 	return &Dispatcher{
 		validate:   validate,
-		rmqService: rmqService,
+		rmqService: rmq_service.New(),
 
 		messageBusExchangeName:       config.MessageBusExchangeName,
 		messageBusErrorsExchangeName: config.MessageBusErrorsExchangeName,

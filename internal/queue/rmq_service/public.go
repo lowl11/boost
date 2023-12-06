@@ -3,8 +3,8 @@ package rmq_service
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"github.com/lowl11/boost/internal/queue/rmq"
+	"github.com/lowl11/boost/internal/queue/rmq_connection"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -14,7 +14,12 @@ func (service *Service) Publish(ctx context.Context, exchangeName, eventName str
 		return err
 	}
 
-	dispatcherChannel, err := service.getDispatcherChannel()
+	connection, err := rmq_connection.Get()
+	if err != nil {
+		return err
+	}
+
+	dispatcherChannel, err := connection.GetDispatcherChannel()
 	if err != nil {
 		return err
 	}
@@ -23,23 +28,6 @@ func (service *Service) Publish(ctx context.Context, exchangeName, eventName str
 	if err = rmq.Publish(ctx, dispatcherChannel, eventName, eventInBytes, rmq.PublishConfig{
 		Exchange: exchangeName,
 	}); err != nil {
-		// if connection was closed
-		if errors.Is(err, amqp.ErrClosed) {
-			// reconnect to RMQ
-			if err = service.reConnect(); err != nil {
-				return err
-			}
-
-			// second try
-			if err = rmq.Publish(ctx, dispatcherChannel, eventName, eventInBytes, rmq.PublishConfig{
-				Exchange: exchangeName,
-			}); err != nil {
-				return err
-			}
-
-			return nil
-		}
-
 		return err
 	}
 
@@ -47,7 +35,12 @@ func (service *Service) Publish(ctx context.Context, exchangeName, eventName str
 }
 
 func (service *Service) Ack(deliveryTag uint64) error {
-	listenerChannel, err := service.getListenerChannel()
+	connection, err := rmq_connection.Get()
+	if err != nil {
+		return err
+	}
+
+	listenerChannel, err := connection.GetListenerChannel()
 	if err != nil {
 		return err
 	}
@@ -56,7 +49,12 @@ func (service *Service) Ack(deliveryTag uint64) error {
 }
 
 func (service *Service) NewExchange(exchangeName, exchangeType string) error {
-	listenerChannel, err := service.getListenerChannel()
+	connection, err := rmq_connection.Get()
+	if err != nil {
+		return err
+	}
+
+	listenerChannel, err := connection.GetListenerChannel()
 	if err != nil {
 		return err
 	}
@@ -65,7 +63,12 @@ func (service *Service) NewExchange(exchangeName, exchangeType string) error {
 }
 
 func (service *Service) NewQueue(queueName string) (*amqp.Queue, error) {
-	listenerChannel, err := service.getListenerChannel()
+	connection, err := rmq_connection.Get()
+	if err != nil {
+		return nil, err
+	}
+
+	listenerChannel, err := connection.GetListenerChannel()
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +77,12 @@ func (service *Service) NewQueue(queueName string) (*amqp.Queue, error) {
 }
 
 func (service *Service) Bind(exchangeName, queueName string) error {
-	listenerChannel, err := service.getListenerChannel()
+	connection, err := rmq_connection.Get()
+	if err != nil {
+		return err
+	}
+
+	listenerChannel, err := connection.GetListenerChannel()
 	if err != nil {
 		return err
 	}
@@ -83,7 +91,12 @@ func (service *Service) Bind(exchangeName, queueName string) error {
 }
 
 func (service *Service) Consume(queueName string) (<-chan amqp.Delivery, error) {
-	listenerChannel, err := service.getListenerChannel()
+	connection, err := rmq_connection.Get()
+	if err != nil {
+		return nil, err
+	}
+
+	listenerChannel, err := connection.GetListenerChannel()
 	if err != nil {
 		return nil, err
 	}
@@ -97,21 +110,10 @@ func (service *Service) Consume(queueName string) (<-chan amqp.Delivery, error) 
 }
 
 func (service *Service) Close() error {
-	if service.connection == nil {
-		return nil
+	connection, err := rmq_connection.Get()
+	if err != nil {
+		return err
 	}
 
-	if service.dispatcherChannel != nil {
-		if err := service.dispatcherChannel.Close(); err != nil {
-			return err
-		}
-	}
-
-	if service.listenerChannel != nil {
-		if err := service.listenerChannel.Close(); err != nil {
-			return err
-		}
-	}
-
-	return service.connection.Close()
+	return connection.Close()
 }
