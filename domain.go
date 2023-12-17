@@ -31,6 +31,9 @@ type (
 	EventContext = interfaces.EventContext
 
 	Explorer = interfaces.IExplorer
+
+	// try catch finally
+	Try = interfaces.Try
 )
 
 type routing interface {
