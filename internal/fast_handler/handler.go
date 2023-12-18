@@ -24,6 +24,7 @@ type Handler struct {
 	counter           *counter.Counter
 	validate          *validator.Validator
 	corsConfig        CorsConfig
+	panicHandler      types.PanicHandler
 }
 
 func New(validate *validator.Validator) *Handler {

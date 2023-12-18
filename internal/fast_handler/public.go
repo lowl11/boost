@@ -73,3 +73,7 @@ func (handler *Handler) GetCounter() *counter.Counter {
 func (handler *Handler) SetCorsConfig(config CorsConfig) {
 	handler.corsConfig = config
 }
+
+func (handler *Handler) SetPanicHandler(panicHandler types2.PanicHandler) {
+	handler.panicHandler = panicHandler
+}

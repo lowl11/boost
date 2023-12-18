@@ -7,6 +7,7 @@ import (
 	"github.com/lowl11/boost/internal/services/system/validator"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/cron"
+	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/boost/pkg/web/destroyer"
 	"github.com/lowl11/boost/pkg/web/middlewares"
 	"github.com/lowl11/boost/pkg/web/rpc"
@@ -58,6 +59,8 @@ type Config struct {
 	CorsHeaders []string
 	CorsMethods []string
 	CorsVary    []string
+
+	PanicHandler types.PanicHandler
 }
 
 func defaultConfig() Config {
@@ -123,6 +126,11 @@ func New(configs ...Config) *App {
 	// if timeout was set in config
 	if config.Timeout != 0 {
 		app.Use(middlewares.Timeout(config.Timeout))
+	}
+
+	// set panic handler
+	if config.PanicHandler != nil {
+		app.handler.SetPanicHandler(config.PanicHandler)
 	}
 
 	di_container.Get().RegisterImplementation(app)

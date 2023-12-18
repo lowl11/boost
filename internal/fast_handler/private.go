@@ -40,6 +40,11 @@ func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
 		}
 
 		log.Error(err, "PANIC RECOVERED")
+
+		if handler.panicHandler != nil {
+			handler.panicHandler(err)
+		}
+
 		writePanicError(ctx, err)
 	}()
 
