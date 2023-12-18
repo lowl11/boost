@@ -305,7 +305,12 @@ func (ctx *Context) Next() error {
 	// check need to load action
 	if !ctx.actionCalled.Load() && ctx.goingToCallAction.Load() {
 		ctx.actionCalled.Store(true)
-		return ctx.action(ctx)
+		err := ctx.action(ctx)
+		if err != nil {
+			return err
+		}
+
+		return nil
 	}
 
 	// if action already called
