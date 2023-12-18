@@ -81,4 +81,7 @@ type Context interface {
 
 	Context() context.Context
 	SetContext(ctx context.Context)
+
+	SetPanicHandler(panicHandler func(err error))
+	PanicHandler() func(err error)
 }

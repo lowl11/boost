@@ -32,6 +32,8 @@ func getServer() *fasthttp.Server {
 }
 
 func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
+	var boostCtx *context.Context
+
 	// handler panic
 	defer func() {
 		err := panicer.Handle(recover())
@@ -43,6 +45,10 @@ func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
 
 		if handler.panicHandler != nil {
 			handler.panicHandler(err)
+		}
+
+		if boostCtx.PanicHandler() != nil {
+			boostCtx.PanicHandler()(err)
 		}
 
 		writePanicError(ctx, err)
@@ -98,7 +104,7 @@ func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
 	handlersChain = append(handlersChain, endpointMiddlewares...)
 
 	// create new boost context
-	boostCtx := context.
+	boostCtx = context.
 		New(ctx, routeCtx.Action, handlersChain, handler.validate).
 		SetParams(routeCtx.Params)
 

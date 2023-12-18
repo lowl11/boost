@@ -340,3 +340,11 @@ func (ctx *Context) Context() context.Context {
 func (ctx *Context) SetContext(userContext context.Context) {
 	ctx.userCtx = userContext
 }
+
+func (ctx *Context) SetPanicHandler(panicHandler func(err error)) {
+	ctx.panicHandler = panicHandler
+}
+
+func (ctx *Context) PanicHandler() func(err error) {
+	return ctx.panicHandler
+}

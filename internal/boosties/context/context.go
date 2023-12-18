@@ -28,7 +28,8 @@ type Context struct {
 	handlersChain      []types.HandlerFunc
 	handlersChainIndex int
 
-	userCtx context.Context
+	userCtx      context.Context
+	panicHandler types.PanicHandler
 }
 
 func New(
