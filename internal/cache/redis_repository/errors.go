@@ -2,34 +2,18 @@ package redis_repository
 
 import (
 	"github.com/lowl11/boost/internal/boosties/errors"
-	"net/http"
-)
-
-const (
-	typeErrorURLRequired      = "URLRequired"
-	typeErrorUnknownValueType = "RedisUnknownType"
-	typeErrorPing             = "RedisPing"
-	typeErrorParseValue       = "RedisParseValue"
-	typeErrorSearchKeys       = "SearchKeys"
-	typeErrorGetType          = "RedisGetType"
-	typeErrorGetAllKeys       = "GetAllKeys"
-	typeErrorGetCacheByKey    = "GetCacheByKey"
-	typeErrorSetCache         = "SetCache"
-	typeErrorDeleteCache      = "DeleteCache"
 )
 
 func ErrorURLRequired() error {
 	return errors.
 		New("URL is required").
-		SetType(typeErrorURLRequired).
-		SetHttpCode(http.StatusInternalServerError)
+		SetType("Redis_URLRequired")
 }
 
 func ErrorRedisUnknownType(key, redisType string) error {
 	return errors.
 		New("Unknown Redis type").
-		SetType(typeErrorUnknownValueType).
-		SetHttpCode(http.StatusInternalServerError).
+		SetType("Redis_UnknownType").
 		AddContext("redis_type", redisType).
 		AddContext("key", key)
 }
@@ -37,32 +21,28 @@ func ErrorRedisUnknownType(key, redisType string) error {
 func ErrorRedisPing(err error) error {
 	return errors.
 		New("Ping Redis error").
-		SetType(typeErrorPing).
-		SetHttpCode(http.StatusInternalServerError).
+		SetType("Redis_Ping").
 		SetError(err)
 }
 
 func ErrorRedisGetType(err error) error {
 	return errors.
 		New("Get key type error").
-		SetType(typeErrorGetType).
-		SetHttpCode(http.StatusInternalServerError).
+		SetType("Redis_GetType").
 		SetError(err)
 }
 
 func ErrorRedisParseValue(err error) error {
 	return errors.
 		New("Redis parse value error").
-		SetType(typeErrorParseValue).
-		SetHttpCode(http.StatusInternalServerError).
+		SetType("Redis_ParseValue").
 		SetError(err)
 }
 
 func ErrorSearchKeys(pattern string, err error) error {
 	return errors.
 		New("Search keys by pattern error").
-		SetType(typeErrorSearchKeys).
-		SetHttpCode(http.StatusInternalServerError).
+		SetType("Redis_SearchKeys").
 		SetError(err).
 		AddContext("pattern", pattern)
 }
@@ -70,16 +50,14 @@ func ErrorSearchKeys(pattern string, err error) error {
 func ErrorGetAllKeys(err error) error {
 	return errors.
 		New("Get all keys error").
-		SetType(typeErrorGetAllKeys).
-		SetHttpCode(http.StatusInternalServerError).
+		SetType("Redis_GetAllKeys").
 		SetError(err)
 }
 
 func ErrorGetCacheByKey(key string, err error) error {
 	return errors.
 		New("Get cache by key error").
-		SetType(typeErrorGetCacheByKey).
-		SetHttpCode(http.StatusInternalServerError).
+		SetType("Redis_GetCacheByKey").
 		SetError(err).
 		AddContext("key", key)
 }
@@ -87,8 +65,7 @@ func ErrorGetCacheByKey(key string, err error) error {
 func ErrorSetCache(key string, value any, err error) error {
 	return errors.
 		New("Set cache error").
-		SetType(typeErrorSetCache).
-		SetHttpCode(http.StatusInternalServerError).
+		SetType("Redis_SetCache").
 		SetError(err).
 		SetContext(map[string]any{
 			"key":   key,
@@ -99,8 +76,7 @@ func ErrorSetCache(key string, value any, err error) error {
 func ErrorDeleteCache(key string, err error) error {
 	return errors.
 		New("Delete cache error").
-		SetType(typeErrorDeleteCache).
-		SetHttpCode(http.StatusInternalServerError).
+		SetType("Redis_DeleteCache").
 		SetError(err).
 		AddContext("key", key)
 }
