@@ -281,7 +281,7 @@ func (ctx *Context) Error(err error) error {
 		boostError.JSON(),
 	)
 
-	return nil
+	return err
 }
 
 func (ctx *Context) Redirect(url string, customStatus ...int) error {
