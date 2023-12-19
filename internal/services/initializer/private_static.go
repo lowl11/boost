@@ -31,7 +31,10 @@ func initControllers() {
 	createFolder("controllers/hello_controller")
 	createFile("controllers/hello_controller/controller.go", []byte(`package hello_controller
 
-import "github.com/lowl11/boost/pkg/web/base/controller"
+import (
+	"github.com/lowl11/boost"
+	"github.com/lowl11/boost/pkg/web/base/controller"
+)
 
 type Controller struct {
 	controller.Base
