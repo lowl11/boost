@@ -27,6 +27,10 @@ func initProfiles() {
 }
 
 func initControllers() {
+	if folder.Exist("controllers") {
+		return
+	}
+
 	createFolder("controllers")
 	createFolder("controllers/hello_controller")
 	createFile("controllers/hello_controller/controller.go", []byte(`package hello_controller
