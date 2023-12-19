@@ -75,6 +75,7 @@ func (service *Service) SetTLSConfig(tls *tls.Config) *Service {
 	}
 
 	transport.TLSClientConfig = tls
+	service.client.Transport = transport
 
 	return service
 }
