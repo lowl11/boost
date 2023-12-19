@@ -7,6 +7,7 @@ import (
 	"github.com/lowl11/boost/internal/boosties/di_container"
 	"github.com/lowl11/boost/internal/fast_handler"
 	"github.com/lowl11/boost/internal/services/boost/greeting"
+	"github.com/lowl11/boost/internal/services/gitignore"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/cron"
 	"github.com/lowl11/boost/pkg/system/types"
@@ -43,6 +44,9 @@ func (app *App) Run(port string) {
 	// register static endpoints
 	registerStaticEndpoints(app, app.healthcheck)
 
+	// create .gitignore file not exists
+	gitignore.Init()
+
 	// print greeting text
 	greeting.New(app.handler.GetCounter(), greeting.Context{
 		Mode: modes.Http,
@@ -75,6 +79,9 @@ func (app *App) RunRPC(port string) {
 	if err := di_container.Get().Check(); err != nil {
 		log.Fatal(err, "Dependency Injection error")
 	}
+
+	// create .gitignore file not exists
+	gitignore.Init()
 
 	// print greeting text
 	greeting.New(app.handler.GetCounter(), greeting.Context{
@@ -131,6 +138,9 @@ func (app *App) RunListener(amqpConnectionURL string) {
 		}
 		log.Info("RabbitMQ connection successfully closed!")
 	})
+
+	// create .gitignore file not exists
+	gitignore.Init()
 
 	// print greeting text
 	greeting.New(app.handler.GetCounter(), greeting.Context{
