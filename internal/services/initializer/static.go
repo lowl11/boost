@@ -18,7 +18,4 @@ func Run() {
 
 	// create services folder if not exists
 	initServices()
-
-	// create cmd folder if not exists
-	initCMD()
 }

@@ -4,9 +4,6 @@ import (
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/io/file"
 	"github.com/lowl11/boost/pkg/io/folder"
-	"github.com/lowl11/boost/pkg/system/types"
-	"regexp"
-	"strings"
 )
 
 func initGitignore() {
@@ -27,38 +24,6 @@ func initProfiles() {
 	createFile("profiles/config.yml", []byte(`port: ":8080"`))
 	createFile("profiles/dev.yml", nil)
 	createFile("profiles/production.yml", nil)
-}
-
-func initCMD() {
-	createFolder("cmd")
-	createFolder("cmd/api")
-
-	content, err := file.Read("go.mod")
-	if err != nil {
-		log.Error(err, "Read go.mod file error")
-		return
-	}
-
-	appName := regexp.MustCompile("module\\s(.*)").FindAllStringSubmatch(types.ToString(content), -1)[0][1]
-
-	createFile("cmd/api/main.go", []byte(strings.ReplaceAll(`package main
-
-import (
-	"github.com/lowl11/boost"
-	"github.com/lowl11/boost/pkg/system/config"
-	"%APP_NAME%/controllers/hello_controller"
-)
-
-func main() {
-	app := boost.New()
-
-	di.MapControllers(
-		hello_controller.New,
-	)
-
-	app.Run(config.Get("port"))
-}
-`, "%APP_NAME%", appName)))
 }
 
 func initControllers() {

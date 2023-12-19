@@ -4,6 +4,7 @@ import (
 	"github.com/lowl11/boost/internal/boosties/di_container"
 	"github.com/lowl11/boost/internal/fast_handler"
 	"github.com/lowl11/boost/internal/services/boost/healthcheck"
+	"github.com/lowl11/boost/internal/services/initializer"
 	"github.com/lowl11/boost/internal/services/system/validator"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/cron"
@@ -82,6 +83,9 @@ type App struct {
 
 // New method creates new instance of Boost App
 func New(configs ...Config) *App {
+	// run initializer
+	initializer.Run()
+
 	di_container.Get().SetControllerInterface(reflect.TypeOf(new(Controller)))
 
 	// init config
