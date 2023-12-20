@@ -63,17 +63,11 @@ func (service *Service) SetCookies(cookies map[string]string) *Service {
 
 func (service *Service) SetTimeout(timeout time.Duration) *Service {
 	service.timeout = &timeout
-
 	return service
 }
 
 func (service *Service) SetTLSConfig(tls *tls.Config) *Service {
-	transport, err := service.transport()
-	if err != nil {
-		log.Error(err, errorGetHttpTransport)
-		return service
-	}
-
+	transport := service.transport()
 	transport.TLSClientConfig = tls
 	service.client.Transport = transport
 
@@ -81,11 +75,7 @@ func (service *Service) SetTLSConfig(tls *tls.Config) *Service {
 }
 
 func (service *Service) SetProxy(proxyURL string) *Service {
-	transport, err := service.transport()
-	if err != nil {
-		log.Error(err, errorGetHttpTransport)
-		return service
-	}
+	transport := service.transport()
 
 	parsedURL, err := url.Parse(proxyURL)
 	if err != nil {
@@ -94,6 +84,7 @@ func (service *Service) SetProxy(proxyURL string) *Service {
 	}
 
 	transport.Proxy = http.ProxyURL(parsedURL)
+	service.client.Transport = transport
 
 	return service
 }

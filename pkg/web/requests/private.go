@@ -1,15 +1,14 @@
 package requests
 
 import (
-	"github.com/lowl11/boost/data/errors"
 	"net/http"
 )
 
-func (service *Service) transport() (*http.Transport, error) {
+func (service *Service) transport() *http.Transport {
 	transport, ok := service.client.Transport.(*http.Transport)
 	if !ok {
-		return nil, errors.New("HTTP Client does not content *http.Transport")
+		transport = &http.Transport{}
 	}
 
-	return transport, nil
+	return transport
 }
