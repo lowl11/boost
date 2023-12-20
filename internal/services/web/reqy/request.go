@@ -11,7 +11,7 @@ type Request struct {
 	baseURL string
 	body    any
 	ctx     context.Context
-	client  http.Client
+	client  *http.Client
 
 	// collect data
 	headers map[string]string
@@ -37,7 +37,7 @@ type Request struct {
 	waitForResult bool
 }
 
-func NewRequest(baseURL string, client http.Client) *Request {
+func NewRequest(baseURL string, client *http.Client) *Request {
 	return &Request{
 		baseURL: baseURL,
 		client:  client,

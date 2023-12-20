@@ -19,7 +19,7 @@ type Service struct {
 
 	basicAuth *reqy.BasicAuth
 
-	client http.Client
+	client *http.Client
 }
 
 func New() *Service {
@@ -29,6 +29,6 @@ func New() *Service {
 
 		retryWaitTime: time.Millisecond * 100,
 
-		client: http.Client{},
+		client: &http.Client{},
 	}
 }
