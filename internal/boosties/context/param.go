@@ -20,6 +20,10 @@ func (param Param) String() string {
 	return param.value
 }
 
+func (param Param) Strings() []string {
+	return strings.Split(param.value, ",")
+}
+
 func (param Param) Int() (int, error) {
 	intValue, err := strconv.Atoi(param.value)
 	if err != nil {

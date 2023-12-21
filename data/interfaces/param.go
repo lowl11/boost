@@ -7,6 +7,9 @@ type Param interface {
 	// String returns param value in string
 	String() string
 
+	// Strings return slice of param values
+	Strings() []string
+
 	// Bool returns param value in boolean
 	Bool() bool
 

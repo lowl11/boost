@@ -214,23 +214,23 @@ func (handler *Handler) getMethods() string {
 
 func (handler *Handler) tryUpdateCORS() {
 	if !handler.corsConfig.Enabled {
-		handler.corsConfig.Enabled = strings.ToLower(config.Get("CORS_ENABLED")) == "true"
+		handler.corsConfig.Enabled = config.Get("CORS_ENABLED").Bool()
 	}
 
 	if handler.corsConfig.Origin == "" {
-		handler.corsConfig.Origin = config.Get("CORS_ORIGIN")
+		handler.corsConfig.Origin = config.Get("CORS_ORIGIN").String()
 	}
 
 	if len(handler.corsConfig.Headers) == 0 {
-		handler.corsConfig.Headers = strings.Split(config.Get("CORS_HEADERS"), ",")
+		handler.corsConfig.Headers = config.Get("CORS_HEADERS").Strings()
 	}
 
 	if len(handler.corsConfig.Methods) == 0 {
-		handler.corsConfig.Methods = strings.Split(config.Get("CORS_METHODS"), ",")
+		handler.corsConfig.Methods = config.Get("CORS_METHODS").Strings()
 	}
 
 	if len(handler.corsConfig.Vary) == 0 {
-		handler.corsConfig.Vary = strings.Split(config.Get("CORS_VARY"), ",")
+		handler.corsConfig.Vary = config.Get("CORS_VARY").Strings()
 	}
 }
 

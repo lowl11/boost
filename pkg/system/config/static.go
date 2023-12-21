@@ -1,24 +1,26 @@
 package config
 
 import (
+	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/boosties/configuration"
+	"github.com/lowl11/boost/internal/boosties/context"
 	"github.com/lowl11/boost/pkg/io/file"
 	"os"
 	"regexp"
 	"strings"
 )
 
-func Get(key string) string {
+func Get(key string) interfaces.Param {
 	value := configuration.Get(key)
 	if value == "" {
 		value = os.Getenv(key)
 	}
 
-	return value
+	return context.NewParam(value)
 }
 
 func Env() string {
-	envValue := strings.ToLower(Get("env"))
+	envValue := strings.ToLower(Get("env").String())
 	if envValue == "" {
 		// check .env file exist
 		if !file.Exist(".env") {
