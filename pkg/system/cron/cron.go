@@ -3,6 +3,7 @@ package cron
 import (
 	"github.com/lowl11/boost/data/funcs"
 	"github.com/lowl11/boost/data/interfaces"
+	"github.com/lowl11/boost/internal/services/boost/counter"
 	"sync"
 )
 
@@ -14,15 +15,17 @@ type Cron struct {
 	errorHandler      funcs.CronErrorHandler
 	schedulersChannel chan interfaces.Scheduler
 	schedulers        []interfaces.Scheduler
+	counter           *counter.Counter
 
 	mutex sync.Mutex
 }
 
-func New(config Config) *Cron {
+func New(config Config, counter *counter.Counter) *Cron {
 	cron := &Cron{
 		schedulersChannel: make(chan interfaces.Scheduler),
 		schedulers:        make([]interfaces.Scheduler, 0),
 		errorHandler:      config.ErrorHandler,
+		counter:           counter,
 	}
 
 	go cron.readActions()

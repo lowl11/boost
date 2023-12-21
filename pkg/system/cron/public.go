@@ -9,10 +9,12 @@ import (
 )
 
 func (cron *Cron) Every(every int) interfaces.EveryScheduler {
+	cron.counter.CronAction()
 	return every_scheduler.New(cron.schedulersChannel, every)
 }
 
 func (cron *Cron) Cron(cronExpression string) interfaces.CronScheduler {
+	cron.counter.CronAction()
 	return cron_scheduler.New(cron.schedulersChannel, cronExpression)
 }
 
