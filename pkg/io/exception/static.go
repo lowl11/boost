@@ -1,10 +1,15 @@
 package exception
 
-import (
-	"github.com/lowl11/boost"
-	"github.com/lowl11/boost/internal/boosties/exception/try"
-)
+import "github.com/lowl11/boost/internal/boosties/panicer"
 
-func Try(tryFunc func()) boost.Try {
-	return try.New(tryFunc)
+func Try(tryFunc func() error) (err error) {
+	defer func() {
+		err = panicer.Handle(recover())
+	}()
+
+	if err = tryFunc(); err != nil {
+		return err
+	}
+
+	return nil
 }
