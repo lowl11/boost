@@ -14,6 +14,10 @@ func (semaphore *Semaphore) Release() {
 	<-semaphore.c
 }
 
+func (semaphore *Semaphore) Close() {
+	close(semaphore.c)
+}
+
 func NewSemaphore(size int) interfaces.Semaphore {
 	return &Semaphore{
 		c: make(chan struct{}, size),

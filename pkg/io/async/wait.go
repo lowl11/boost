@@ -2,6 +2,7 @@ package async
 
 import (
 	"context"
+	"github.com/lowl11/boost/data/interfaces"
 )
 
 func WaitAll(ctx context.Context, tasks ...func(ctx context.Context) error) error {
@@ -9,7 +10,7 @@ func WaitAll(ctx context.Context, tasks ...func(ctx context.Context) error) erro
 		return nil
 	}
 
-	runTasks := make([]*Task, 0, len(tasks))
+	runTasks := make([]interfaces.Task, 0, len(tasks))
 
 	for _, f := range tasks {
 		task := NewTask(ctx)
