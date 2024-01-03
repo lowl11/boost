@@ -2,6 +2,7 @@ package async
 
 import (
 	"context"
+	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/pkg/io/exception"
 	"sync"
 	"sync/atomic"
@@ -19,7 +20,7 @@ type Task struct {
 	isDone atomic.Bool
 }
 
-func NewTask(ctx context.Context) *Task {
+func NewTask(ctx context.Context) interfaces.Task {
 	ctx, cancel := context.WithCancel(ctx)
 	return &Task{
 		ctx:    ctx,
@@ -28,7 +29,7 @@ func NewTask(ctx context.Context) *Task {
 	}
 }
 
-func (task *Task) Run(f func(ctx context.Context) error) {
+func (task *Task) Run(f func(ctx context.Context) error) interfaces.Task {
 	task.wg.Add(1)
 
 	go func() {
@@ -47,6 +48,8 @@ func (task *Task) Run(f func(ctx context.Context) error) {
 			})
 		}
 	}()
+
+	return task
 }
 
 func (task *Task) Wait() error {
