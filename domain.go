@@ -34,6 +34,9 @@ type (
 
 	// try catch finally
 	Try = interfaces.Try
+
+	// async
+	Semaphore = interfaces.Semaphore
 )
 
 type routing interface {
