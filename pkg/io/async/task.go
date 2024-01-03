@@ -29,6 +29,10 @@ func NewTask(ctx context.Context) interfaces.Task {
 	}
 }
 
+func Run(ctx context.Context, f func(ctx context.Context) error) interfaces.Task {
+	return NewTask(ctx).Run(f)
+}
+
 func (t *task) Run(f func(ctx context.Context) error) interfaces.Task {
 	t.wg.Add(1)
 
