@@ -38,6 +38,7 @@ type (
 	// async
 	Semaphore = interfaces.Semaphore
 	Task      = interfaces.Task
+	TaskGroup = interfaces.TaskGroup
 )
 
 type routing interface {

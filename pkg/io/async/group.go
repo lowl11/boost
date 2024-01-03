@@ -12,7 +12,7 @@ type group struct {
 	errors    []error
 }
 
-func NewGroup(ctx context.Context) interfaces.Group {
+func NewGroup(ctx context.Context) interfaces.TaskGroup {
 	return &group{
 		ctx:    ctx,
 		tasks:  make([]interfaces.Task, 0),
@@ -20,7 +20,7 @@ func NewGroup(ctx context.Context) interfaces.Group {
 	}
 }
 
-func (g *group) Limit(limit int) interfaces.Group {
+func (g *group) Limit(limit int) interfaces.TaskGroup {
 	g.semaphore = NewSemaphore(limit)
 	return g
 }
