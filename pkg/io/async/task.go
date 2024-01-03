@@ -8,7 +8,7 @@ import (
 	"sync/atomic"
 )
 
-type Task struct {
+type task struct {
 	wg *sync.WaitGroup
 
 	ctx    context.Context
@@ -22,50 +22,50 @@ type Task struct {
 
 func NewTask(ctx context.Context) interfaces.Task {
 	ctx, cancel := context.WithCancel(ctx)
-	return &Task{
+	return &task{
 		ctx:    ctx,
 		cancel: cancel,
 		wg:     &sync.WaitGroup{},
 	}
 }
 
-func (task *Task) Run(f func(ctx context.Context) error) interfaces.Task {
-	task.wg.Add(1)
+func (t *task) Run(f func(ctx context.Context) error) interfaces.Task {
+	t.wg.Add(1)
 
 	go func() {
-		defer task.isDone.Store(true)
-		defer task.wg.Done()
+		defer t.isDone.Store(true)
+		defer t.wg.Done()
 
 		if err := exception.Try(func() error {
-			return f(task.ctx)
+			return f(t.ctx)
 		}); err != nil {
-			task.errOnce.Do(func() {
-				task.err = err
+			t.errOnce.Do(func() {
+				t.err = err
 
-				if task.cancel != nil {
-					task.cancel()
+				if t.cancel != nil {
+					t.cancel()
 				}
 			})
 		}
 	}()
 
-	return task
+	return t
 }
 
-func (task *Task) Wait() error {
-	task.wg.Wait()
+func (t *task) Wait() error {
+	t.wg.Wait()
 
-	if task.cancel != nil {
-		task.cancel()
+	if t.cancel != nil {
+		t.cancel()
 	}
 
-	return task.err
+	return t.err
 }
 
-func (task *Task) IsDone() bool {
-	return task.isDone.Load()
+func (t *task) IsDone() bool {
+	return t.isDone.Load()
 }
 
-func (task *Task) Error() error {
-	return task.err
+func (t *task) Error() error {
+	return t.err
 }

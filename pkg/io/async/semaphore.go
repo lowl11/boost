@@ -2,24 +2,24 @@ package async
 
 import "github.com/lowl11/boost/data/interfaces"
 
-type Semaphore struct {
+type semaphore struct {
 	c chan struct{}
 }
 
-func (semaphore *Semaphore) Acquire() {
-	semaphore.c <- struct{}{}
+func (s *semaphore) Acquire() {
+	s.c <- struct{}{}
 }
 
-func (semaphore *Semaphore) Release() {
-	<-semaphore.c
+func (s *semaphore) Release() {
+	<-s.c
 }
 
-func (semaphore *Semaphore) Close() {
-	close(semaphore.c)
+func (s *semaphore) Close() {
+	close(s.c)
 }
 
 func NewSemaphore(size int) interfaces.Semaphore {
-	return &Semaphore{
+	return &semaphore{
 		c: make(chan struct{}, size),
 	}
 }

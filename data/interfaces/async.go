@@ -14,3 +14,10 @@ type Task interface {
 	IsDone() bool
 	Error() error
 }
+
+type Group interface {
+	Limit(limit int) Group
+	Run(f func(ctx context.Context) error)
+	Wait()
+	Errors() []error
+}

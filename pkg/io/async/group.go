@@ -5,73 +5,73 @@ import (
 	"github.com/lowl11/boost/data/interfaces"
 )
 
-type Group struct {
+type group struct {
 	ctx       context.Context
 	semaphore interfaces.Semaphore
 	tasks     []interfaces.Task
 	errors    []error
 }
 
-func NewGroup(ctx context.Context) *Group {
-	return &Group{
+func NewGroup(ctx context.Context) interfaces.Group {
+	return &group{
 		ctx:    ctx,
 		tasks:  make([]interfaces.Task, 0),
 		errors: make([]error, 0),
 	}
 }
 
-func (group *Group) Limit(limit int) *Group {
-	group.semaphore = NewSemaphore(limit)
-	return group
+func (g *group) Limit(limit int) interfaces.Group {
+	g.semaphore = NewSemaphore(limit)
+	return g
 }
 
-func (group *Group) Run(f func(ctx context.Context) error) {
-	task := NewTask(group.ctx)
+func (g *group) Run(f func(ctx context.Context) error) {
+	task := NewTask(g.ctx)
 
 	task.Run(func(ctx context.Context) error {
-		group.acquire()
-		defer group.release()
+		g.acquire()
+		defer g.release()
 
 		return f(ctx)
 	})
 
-	group.tasks = append(group.tasks, task)
+	g.tasks = append(g.tasks, task)
 }
 
-func (group *Group) Wait() {
-	for _, task := range group.tasks {
+func (g *group) Wait() {
+	for _, task := range g.tasks {
 		if err := task.Wait(); err != nil {
-			group.errors = append(group.errors, err)
+			g.errors = append(g.errors, err)
 		}
 	}
 
-	group.closeSemaphore()
+	g.closeSemaphore()
 }
 
-func (group *Group) Errors() []error {
-	return group.errors
+func (g *group) Errors() []error {
+	return g.errors
 }
 
-func (group *Group) acquire() {
-	if group.semaphore == nil {
+func (g *group) acquire() {
+	if g.semaphore == nil {
 		return
 	}
 
-	group.semaphore.Acquire()
+	g.semaphore.Acquire()
 }
 
-func (group *Group) release() {
-	if group.semaphore == nil {
+func (g *group) release() {
+	if g.semaphore == nil {
 		return
 	}
 
-	group.semaphore.Release()
+	g.semaphore.Release()
 }
 
-func (group *Group) closeSemaphore() {
-	if group.semaphore == nil {
+func (g *group) closeSemaphore() {
+	if g.semaphore == nil {
 		return
 	}
 
-	group.semaphore.Close()
+	g.semaphore.Close()
 }
