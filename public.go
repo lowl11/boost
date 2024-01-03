@@ -52,11 +52,15 @@ func (app *App) Run(port string) {
 		SpecificColor(colors.Green).
 		Print()
 
+	// catch shutdown signal
+	go app.shutdown()
+
 	// run server app
 	log.Fatal(app.handler.Run(port))
 }
 
 func (app *App) RunFlag() {
+	// run app by using port from command argument
 	flagPort := Flag("port")
 	if flagPort == "" {
 		panic("Not given flag 'port=<PORT>'")
@@ -122,8 +126,10 @@ func (app *App) RunListener(amqpConnectionURL string) {
 		log.Fatal(err, "Dependency Injection error")
 	}
 
+	// count listener binds (for greeting print)
 	app.handler.GetCounter().ListenerBind(app.listener.EventsCount())
 
+	// close RMQ connection
 	app.destroyer.AddFunction(func() {
 		if err := app.listener.Close(); err != nil {
 			log.Error(err, "Close RabbitMQ connection error")
@@ -144,6 +150,8 @@ func (app *App) RunListener(amqpConnectionURL string) {
 	log.Fatal(app.listener.Run(amqpConnectionURL))
 }
 
+// Listener returns message bus listener.
+// Method return only single instance of listener i.e. singleton
 func (app *App) Listener() Listener {
 	if app.listener == nil {
 		app.listener = msgbus.NewListener()
@@ -227,6 +235,7 @@ func (app *App) CronApp() cron.CronRouter {
 	return app.cron
 }
 
+// RpcApp returns boost RPC application
 func (app *App) RpcApp() *rpc.App {
 	if app.rpcServer == nil {
 		app.rpcServer = rpc.New(app.config.RpcConfig)

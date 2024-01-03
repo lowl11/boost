@@ -26,16 +26,15 @@ type (
 	// CacheRepository is interface for using cache
 	CacheRepository = interfaces.CacheRepository
 
+	// Message Bus
 	Listener     = interfaces.Listener
 	Dispatcher   = interfaces.Dispatcher
 	EventContext = interfaces.EventContext
 
+	// Explorer is tool for File System
 	Explorer = interfaces.IExplorer
 
-	// try catch finally
-	Try = interfaces.Try
-
-	// async
+	// Async
 	Semaphore = interfaces.Semaphore
 	Task      = interfaces.Task
 	TaskGroup = interfaces.TaskGroup
@@ -77,6 +76,8 @@ type Group interface {
 	Use(middlewares ...MiddlewareFunc)
 }
 
+// Controller is boost controller interface.
+// Basically used for registering custom Controllers for DI (Dependency Injection)
 type Controller interface {
 	RegisterEndpoints(Router)
 }

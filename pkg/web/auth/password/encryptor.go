@@ -9,16 +9,21 @@ import (
 	"io"
 )
 
+// Encryptor is a service which can encrypt or decrypt given password (or any string)
 type Encryptor struct {
 	key []byte
 }
 
+// NewEncryptor creates Encryptor instance.
+// Argument "key" is key for AES encryption.
+// Key should have 16, 24 or 36 bytes length
 func NewEncryptor(key string) *Encryptor {
 	return &Encryptor{
 		key: types.ToBytes(key),
 	}
 }
 
+// Encrypt encrypts given password (or any string) by using encryptors key
 func (encrypt Encryptor) Encrypt(password string) (string, error) {
 	plaintext := types.ToBytes(password)
 
@@ -40,6 +45,7 @@ func (encrypt Encryptor) Encrypt(password string) (string, error) {
 	return base64.URLEncoding.EncodeToString(ciphertext), nil
 }
 
+// Decrypt decrypts given password (or any string) by using encryptors key
 func (encrypt Encryptor) Decrypt(password string) (string, error) {
 	ciphertext, _ := base64.URLEncoding.DecodeString(password)
 

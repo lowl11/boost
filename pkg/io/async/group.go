@@ -26,21 +26,21 @@ func (g *group) Limit(limit int) interfaces.TaskGroup {
 }
 
 func (g *group) Run(f func(ctx context.Context) error) {
-	task := NewTask(g.ctx)
+	t := NewTask(g.ctx)
 
-	task.Run(func(ctx context.Context) error {
+	t.Run(func(ctx context.Context) error {
 		g.acquire()
 		defer g.release()
 
 		return f(ctx)
 	})
 
-	g.tasks = append(g.tasks, task)
+	g.tasks = append(g.tasks, t)
 }
 
 func (g *group) Wait() interfaces.TaskGroup {
-	for _, task := range g.tasks {
-		if err := task.Wait(); err != nil {
+	for _, t := range g.tasks {
+		if err := t.Wait(); err != nil {
 			g.errors = append(g.errors, err)
 		}
 	}

@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+// Flag returns value of the given flag name.
+// Function search combination like "key=value"
 func Flag(value string) string {
 	for _, arg := range os.Args {
 		before, after, found := strings.Cut(arg, "=")
@@ -20,6 +22,7 @@ func Flag(value string) string {
 	return ""
 }
 
+// FlagExist checks exist flag or not
 func FlagExist(value string) bool {
 	if Flag(value) != "" {
 		return true

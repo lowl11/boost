@@ -61,6 +61,7 @@ type Config struct {
 	CorsMethods []string
 	CorsVary    []string
 
+	// Custom handler of panics
 	PanicHandler types.PanicHandler
 }
 
@@ -86,6 +87,7 @@ func New(configs ...Config) *App {
 	// run initializer
 	initializer.Run()
 
+	// register "Controller" interface type, it will be used by method "MapControllers()"
 	di_container.Get().SetControllerInterface(reflect.TypeOf(new(Controller)))
 
 	// init config
@@ -119,9 +121,6 @@ func New(configs ...Config) *App {
 		healthcheck: healthcheck.New(),
 	}
 
-	// catch shutdown signal
-	go app.shutdown()
-
 	// default middlewares
 	app.Use(
 		middlewares.Secure(),
@@ -137,8 +136,10 @@ func New(configs ...Config) *App {
 		app.handler.SetPanicHandler(config.PanicHandler)
 	}
 
+	// need to register "Controllers"
 	di_container.Get().RegisterImplementation(app)
 	di_container.Get().SetAppType(reflect.TypeOf(app))
+
 	return app
 }
 
@@ -155,6 +156,6 @@ func (app *App) shutdown() {
 	// run destroy actions
 	app.destroyer.Destroy()
 
-	// call shutdown
+	// exist from the app
 	os.Exit(0)
 }
