@@ -61,6 +61,10 @@ func (group *Group) acquire() {
 }
 
 func (group *Group) release() {
+	if group.semaphore == nil {
+		return
+	}
+
 	group.semaphore.Release()
 }
 
