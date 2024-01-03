@@ -18,6 +18,6 @@ type Task interface {
 type TaskGroup interface {
 	Limit(limit int) TaskGroup
 	Run(f func(ctx context.Context) error)
-	Wait()
+	Wait() TaskGroup
 	Errors() []error
 }

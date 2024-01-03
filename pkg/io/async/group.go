@@ -38,7 +38,7 @@ func (g *group) Run(f func(ctx context.Context) error) {
 	g.tasks = append(g.tasks, task)
 }
 
-func (g *group) Wait() {
+func (g *group) Wait() interfaces.TaskGroup {
 	for _, task := range g.tasks {
 		if err := task.Wait(); err != nil {
 			g.errors = append(g.errors, err)
@@ -46,6 +46,7 @@ func (g *group) Wait() {
 	}
 
 	g.closeSemaphore()
+	return g
 }
 
 func (g *group) Errors() []error {
