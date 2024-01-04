@@ -3,9 +3,17 @@ package elk_parser
 import (
 	"github.com/lowl11/flex"
 	"reflect"
+	"strings"
 )
 
-func convertTypeToMapping(t reflect.Type) string {
+func convertTypeToMapping(t reflect.Type, tagName string) string {
+	if strings.Contains(tagName, "custom") {
+		_, after, found := strings.Cut(tagName, ":")
+		if found && len(after) > 0 {
+			return after
+		}
+	}
+
 	fxType := flex.Type(t)
 	fxType.Reset(fxType.Unwrap())
 
