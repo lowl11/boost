@@ -6,11 +6,13 @@ import (
 	"strings"
 )
 
-func convertTypeToMapping(t reflect.Type, tagName string) string {
-	if strings.Contains(tagName, "custom") {
-		_, after, found := strings.Cut(tagName, ":")
-		if found && len(after) > 0 {
-			return after
+func convertTypeToMapping(t reflect.Type, tags []string) string {
+	for _, tag := range tags {
+		if strings.Contains(tag, "custom") {
+			_, after, found := strings.Cut(tag, ":")
+			if found && len(after) > 0 {
+				return after
+			}
 		}
 	}
 

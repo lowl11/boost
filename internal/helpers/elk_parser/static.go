@@ -28,7 +28,7 @@ func ParseObject(object any) (map[string]MappingField, error) {
 		}
 
 		mappings[name[0]] = MappingField{
-			Type: convertTypeToMapping(field.Type, name[0]),
+			Type: convertTypeToMapping(field.Type, name),
 		}
 	}
 
