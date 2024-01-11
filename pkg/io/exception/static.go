@@ -13,3 +13,7 @@ func Try(tryFunc func() error) (err error) {
 
 	return nil
 }
+
+func CatchPanic(err any) error {
+	return panicer.Handle(err)
+}
