@@ -149,7 +149,7 @@ func (app *App) shutdown() {
 	signalChannel := make(chan os.Signal, 1)
 
 	// notify the signal channel when a SIGINT or SIGTERM signal is received
-	signal.Notify(signalChannel, os.Interrupt, syscall.SIGTERM)
+	signal.Notify(signalChannel, os.Interrupt, os.Kill, syscall.SIGTERM)
 
 	<-signalChannel
 
