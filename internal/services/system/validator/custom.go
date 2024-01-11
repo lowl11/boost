@@ -33,3 +33,16 @@ func validateUUID(fl baseValidator.FieldLevel) (isValid bool) {
 
 	return
 }
+
+func validateUndefined(fl baseValidator.FieldLevel) (isValid bool) {
+	const undefined = "undefined"
+	switch val := fl.Field().Interface().(type) {
+	case string:
+		return val != undefined
+	case *string:
+		value := *val
+		return value != undefined
+	}
+
+	return
+}

@@ -13,6 +13,10 @@ func New() (*Validator, error) {
 		return nil, err // TODO: need implement BoostError?
 	}
 
+	if err := base.RegisterValidation("undefined", validateUndefined); err != nil {
+		return nil, err
+	}
+
 	return &Validator{
 		Validate: base,
 	}, nil
