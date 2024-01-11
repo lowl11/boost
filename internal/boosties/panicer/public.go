@@ -19,6 +19,10 @@ func Handle(err any) error {
 		AddContext("trace", getStackTrace())
 }
 
+func StackTrace() []string {
+	return getStackTrace()
+}
+
 func getStackTrace() []string {
 	stackTrace := make([]string, 0, 10)
 

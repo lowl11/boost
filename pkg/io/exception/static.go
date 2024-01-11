@@ -17,3 +17,7 @@ func Try(tryFunc func() error) (err error) {
 func CatchPanic(err any) error {
 	return panicer.Handle(err)
 }
+
+func StackTrance() []string {
+	return panicer.StackTrace()
+}
