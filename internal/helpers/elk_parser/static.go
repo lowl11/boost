@@ -22,7 +22,7 @@ func ParseObject(object any) (map[string]MappingField, error) {
 
 	mappings := make(map[string]MappingField)
 	for _, field := range fields {
-		name := flex.Field(field).Tag("elk")
+		name := flex.Field(field).Tag("json")
 		if len(name) == 0 {
 			continue
 		}
