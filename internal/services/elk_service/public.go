@@ -275,6 +275,10 @@ func (service *Service) Search(ctx context.Context, indexName string, query map[
 		return ErrorGetAllDocuments(err)
 	}
 
+	if response.StatusCode() == http.StatusNotFound {
+		return nil
+	}
+
 	if response.StatusCode() != http.StatusOK {
 		return errors.
 			New("Status is not 200").
