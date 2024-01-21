@@ -17,7 +17,7 @@ var (
 
 func _init() {
 	if _config == nil {
-		panic("Logger configuration object is NULL. Please, use log_internal.SetConfig() or log_internal.Init()")
+		_config = &LogConfig{}
 	}
 
 	loggerInstance := logapi.New()
