@@ -53,7 +53,7 @@ func Init(config Config) {
 
 func Get(key string) string {
 	if !_initialized {
-		return ""
+		Init(Config{})
 	}
 
 	configPtr := _configServicePool.Get().(*config_service.Service)

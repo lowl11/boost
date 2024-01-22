@@ -1,7 +1,6 @@
 package config_service
 
 import (
-	"errors"
 	"github.com/lowl11/boost/internal/helpers/env_helper"
 	"github.com/lowl11/boost/pkg/io/file"
 	"github.com/lowl11/boost/pkg/io/folder"
@@ -21,14 +20,19 @@ func (service *Service) Load() {
 }
 
 func (service *Service) Read() error {
-	if !folder.Exist(service.baseFolder) {
-		return errors.New("base folder does not exist: " + service.baseFolder)
-	}
-
 	// read .env file
 	envFileContent, err := env_helper.Read(service.environmentFileName)
 	if err != nil {
 		return err
+	}
+
+	for key, value := range envFileContent {
+		_ = os.Setenv(key, value)
+	}
+
+	if !folder.Exist(service.baseFolder) {
+		//return errors.New("base folder does not exist: " + service.baseFolder)
+		return nil
 	}
 
 	service.envVariables = envFileContent
