@@ -40,10 +40,16 @@ func (service *Service) Connect() error {
 	return nil
 }
 
-func (service *Service) CreateFolder(ctx context.Context, path string) error {
+func (service *Service) CreateFolder(ctx context.Context, path string, acl ...string) error {
+	var aclValue *string
+	if len(acl) > 0 {
+		aclValue = aws.String(acl[0])
+	}
+
 	if _, err := service.client.PutObjectWithContext(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(service.bucket),
 		Key:    aws.String(path + "/"),
+		ACL:    aclValue,
 	}); err != nil {
 		return ErrorCreateFolder(err, path)
 	}
@@ -51,11 +57,17 @@ func (service *Service) CreateFolder(ctx context.Context, path string) error {
 	return nil
 }
 
-func (service *Service) CreateFile(ctx context.Context, path string, body []byte) error {
+func (service *Service) CreateFile(ctx context.Context, path string, body []byte, acl ...string) error {
+	var aclValue *string
+	if len(acl) > 0 {
+		aclValue = aws.String(acl[0])
+	}
+
 	if _, err := service.client.PutObjectWithContext(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(service.bucket),
 		Key:    aws.String(path),
 		Body:   bytes.NewReader(body),
+		ACL:    aclValue,
 	}); err != nil {
 		return ErrorCreateFile(err, path)
 	}

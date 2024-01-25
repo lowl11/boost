@@ -20,12 +20,12 @@ func MustInit(region, bucket string) {
 	}
 }
 
-func CreateFile(ctx context.Context, path string, body []byte) error {
-	return service().CreateFile(ctx, path, body)
+func CreateFile(ctx context.Context, path string, body []byte, acl ...string) error {
+	return service().CreateFile(ctx, path, body, acl...)
 }
 
-func CreateFolder(ctx context.Context, path string) error {
-	return service().CreateFolder(ctx, path)
+func CreateFolder(ctx context.Context, path string, acl ...string) error {
+	return service().CreateFolder(ctx, path, acl...)
 }
 
 func Delete(ctx context.Context, path string) error {
