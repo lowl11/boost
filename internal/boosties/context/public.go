@@ -7,10 +7,12 @@ import (
 	"github.com/lowl11/boost/data/enums/content_types"
 	"github.com/lowl11/boost/data/enums/headers"
 	"github.com/lowl11/boost/data/interfaces"
+	"github.com/lowl11/boost/internal/controller/domain"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/log"
 	"github.com/valyala/fasthttp"
 	"io"
+	"net/http"
 	"reflect"
 	"strings"
 )
@@ -265,38 +267,25 @@ func (ctx *Context) XML(body any) error {
 	return nil
 }
 
-func (ctx *Context) Error(err error) error {
-	if err == nil {
-		return nil
-	}
-
-	boostError, ok := err.(interfaces.Error)
-	if !ok {
-		boostError = ErrorUnknownType(err)
-	}
-
-	ctx.writer.Write(
-		boostError.ContentType(),
-		boostError.HttpCode(),
-		boostError.JSON(),
-	)
-
-	return err
+func (ctx *Context) ThrowError(err error) error {
+	return ctx.returnError(err)
 }
 
-func (ctx *Context) Redirect(url string, customStatus ...int) error {
-	ctx.inner.Response.Header.SetCanonical(
-		type_helper.StringToBytes("Location"),
-		type_helper.StringToBytes(url),
-	)
-
-	if len(customStatus) > 0 {
-		ctx.Status(customStatus[0])
+func (ctx *Context) Error(err error) error {
+	if err == nil {
+		return ctx.Status(http.StatusInternalServerError).Empty()
 	}
 
-	ctx.inner.Redirect(url, ctx.status)
+	log.Error(err)
+	return ctx.returnError(err)
+}
 
-	return nil
+func (ctx *Context) Redirect(url string) error {
+	return ctx.redirect(url, http.StatusTemporaryRedirect)
+}
+
+func (ctx *Context) RedirectStatus(url string, status ...int) error {
+	return ctx.redirect(url, status...)
 }
 
 func (ctx *Context) Next() error {
@@ -352,4 +341,39 @@ func (ctx *Context) SetPanicHandler(panicHandler func(err error)) {
 
 func (ctx *Context) PanicHandler() func(err error) {
 	return ctx.panicHandler
+}
+
+func (ctx *Context) Ok(body ...any) error {
+	ctx.Status(http.StatusOK)
+
+	if len(body) > 0 {
+		// todo: return wrapped OK object
+		return ctx.returnOKObject(body[0])
+	}
+
+	return ctx.JSON(domain.NewJustOK())
+}
+
+func (ctx *Context) Created() error {
+	return ctx.Status(http.StatusCreated).Empty()
+}
+
+func (ctx *Context) CreatedBody(body any) error {
+	return ctx.Status(http.StatusCreated).JSON(body)
+}
+
+func (ctx *Context) CreatedID(id any) error {
+	return ctx.Status(http.StatusCreated).JSON(domain.NewCreatedWithID(id))
+}
+
+func (ctx *Context) NotFound() error {
+	return ctx.Status(http.StatusNotFound).Empty()
+}
+
+func (ctx *Context) NotFoundError(err error) error {
+	return ctx.Status(http.StatusNotFound).Error(err)
+}
+
+func (ctx *Context) NotFoundString(message string) error {
+	return ctx.Status(http.StatusNotFound).JSON(domain.NewNotFoundMessage(message))
 }

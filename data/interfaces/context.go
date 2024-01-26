@@ -55,7 +55,9 @@ type Context interface {
 	// Set creates new context container key-value pair
 	Set(key string, value any)
 
+	// SetCookie sets new cookie key=value to response
 	SetCookie(key, value string) Context
+	// SetHeader sets new header key=value to response
 	SetHeader(key, value string) Context
 
 	// Status sets HTTP status code to response
@@ -71,17 +73,50 @@ type Context interface {
 	JSON(body any) error
 	// XML writes response body of given object converted to XML
 	XML(body any) error
-	// Error writes response body of given error to JSON object
-	Error(err error) error
+	// ThrowError writes response body of given error to JSON object
+	ThrowError(err error) error
 	// Redirect redirects to the given URL
-	Redirect(url string, customStatus ...int) error
+	Redirect(url string) error
+	// RedirectStatus redirects to the given URL and with given status
+	RedirectStatus(url string, status ...int) error
 
 	// Next method which calls next handler from handlers chain
 	Next() error
 
+	// Context returns context.Context.
+	// If there was set timeout on Boost App config, context will be with timeout.
+	// Also, there is possibility to add custom context at middleware level with SetContext method
 	Context() context.Context
+	// SetContext possibility to set custom context.Context and boost context will return it at Context() method
 	SetContext(ctx context.Context)
 
+	// SetPanicHandler sets custom panic handler function
 	SetPanicHandler(panicHandler func(err error))
+	// PanicHandler returns custom panic handler function
 	PanicHandler() func(err error)
+
+	// Ok returns response with code 200 and given body.
+	// Note: if given body is primitive variable (int, string, bool, etc.) it will be returned with text/plain
+	Ok(body ...any) error
+	// Created returns response with code 201, with no body
+	Created() error
+	// CreatedBody returns response with code 201, with given body
+	CreatedBody(body any) error
+	// CreatedID returns response with code 201, with given ID to return.
+	// Note: response object will be in JSON. If id is int, will be returns int, if string will be returned string
+	// Example:
+	//
+	//	{
+	//		"id": 123
+	//	}
+	CreatedID(id any) error
+	// NotFound returns response with status 404, with no body
+	NotFound() error
+	// NotFoundError returns response with status 404, with given body
+	NotFoundError(err error) error
+	// NotFoundString returns response with status 404, with given message
+	NotFoundString(message string) error
+	// Error returns response with given error status, error object.
+	// Note: if given err will not be defined as Boost Error, default status code is 500
+	Error(err error) error
 }
