@@ -29,7 +29,8 @@ func ParseObject(object any) (map[string]MappingField, error) {
 			continue
 		}
 
-		if flex.Type(field.Type).IsStruct() {
+		fieldName := field.Type.String()
+		if flex.Type(field.Type).IsStruct() && fieldName != "time.Time" && fieldName != "uuid.UUID" {
 			props, err := ParseObject(reflect.New(field.Type).Interface())
 			if err != nil {
 				log.Error(err, "Parse nested document error")
