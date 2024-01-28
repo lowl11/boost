@@ -2,12 +2,14 @@ package elk_parser
 
 import (
 	"github.com/google/uuid"
+	"github.com/lowl11/boost/log"
 	"github.com/lowl11/flex"
 	"reflect"
 )
 
 type MappingField struct {
-	Type string `json:"type"`
+	Type       string                  `json:"type"`
+	Properties map[string]MappingField `json:"properties,omitempty"`
 }
 
 func ParseObject(object any) (map[string]MappingField, error) {
@@ -24,6 +26,21 @@ func ParseObject(object any) (map[string]MappingField, error) {
 	for _, field := range fields {
 		name := flex.Field(field).Tag("json")
 		if len(name) == 0 {
+			continue
+		}
+
+		if flex.Type(field.Type).IsStruct() {
+			props, err := ParseObject(reflect.New(field.Type).Interface())
+			if err != nil {
+				log.Error(err, "Parse nested document error")
+				continue
+			}
+
+			mappings[name[0]] = MappingField{
+				Type:       "nested",
+				Properties: props,
+			}
+
 			continue
 		}
 
