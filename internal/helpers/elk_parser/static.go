@@ -2,6 +2,7 @@ package elk_parser
 
 import (
 	"github.com/google/uuid"
+	"github.com/lowl11/boost/internal/boosties/errors"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/flex"
 	"reflect"
@@ -30,19 +31,33 @@ func ParseObject(object any) (map[string]MappingField, error) {
 		}
 
 		fieldName := field.Type.String()
-		if flex.Type(field.Type).IsStruct() && fieldName != "time.Time" && fieldName != "uuid.UUID" {
-			props, err := ParseObject(reflect.New(field.Type).Interface())
-			if err != nil {
-				log.Error(err, "Parse nested document error")
+		fxFieldType := flex.Type(field.Type)
+		if fxFieldType.IsSlice() {
+			fxFieldType = flex.Type(field.Type.Elem())
+		}
+
+		if fieldName != "time.Time" && fieldName != "uuid.UUID" {
+			if !fxFieldType.IsPrimitive() && (fxFieldType.IsStruct() || fxFieldType.IsSlice()) && fieldName != "time.Time" && fieldName != "uuid.UUID" {
+				fxFieldType = flex.Type(field.Type.Elem())
+
+				props, err := ParseObject(reflect.New(fxFieldType.Type()).Elem().Interface())
+				if err != nil {
+					log.Error(err, "Parse nested document error")
+					continue
+				}
+
+				if len(props) == 0 {
+					log.Error(errors.New("No props for nested document error"))
+					continue
+				}
+
+				mappings[name[0]] = MappingField{
+					Type:       "nested",
+					Properties: props,
+				}
+
 				continue
 			}
-
-			mappings[name[0]] = MappingField{
-				Type:       "nested",
-				Properties: props,
-			}
-
-			continue
 		}
 
 		mappings[name[0]] = MappingField{

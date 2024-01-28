@@ -123,15 +123,14 @@ func (err *Error) String() string {
 	builder := strings.Builder{}
 	builder.Grow(500)
 	builder.WriteString(err.message)
-	builder.WriteString(". ")
 
 	if err.innerError != nil {
-		builder.WriteString(err.innerError.Error())
 		builder.WriteString(". ")
+		builder.WriteString(err.innerError.Error())
 	}
 
-	if err.context != nil {
-		builder.WriteString("Context: ")
+	if err.context != nil && len(err.context) > 0 {
+		builder.WriteString(". Context: ")
 		for key, value := range err.context {
 			if key == "trace" {
 				trace := value.([]string)
