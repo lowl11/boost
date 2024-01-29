@@ -1,10 +1,9 @@
-package rmq_service
+package rmq
 
 import (
 	"context"
 	"encoding/json"
-	"github.com/lowl11/boost/internal/queue/rmq"
-	"github.com/lowl11/boost/internal/queue/rmq_connection"
+	"github.com/lowl11/boost/pkg/web/queue/rabbitmq/rmq_connection"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -25,7 +24,7 @@ func (service *Service) Publish(ctx context.Context, exchangeName, eventName str
 	}
 
 	// first try
-	if err = rmq.Publish(ctx, dispatcherChannel, eventName, eventInBytes, rmq.PublishConfig{
+	if err = publish(ctx, dispatcherChannel, eventName, eventInBytes, publishConfig{
 		Exchange: exchangeName,
 	}); err != nil {
 		return err
@@ -45,7 +44,7 @@ func (service *Service) Ack(deliveryTag uint64) error {
 		return err
 	}
 
-	return rmq.Ack(listenerChannel, deliveryTag, false)
+	return ack(listenerChannel, deliveryTag, false)
 }
 
 func (service *Service) NewExchange(exchangeName, exchangeType string) error {
@@ -59,7 +58,7 @@ func (service *Service) NewExchange(exchangeName, exchangeType string) error {
 		return err
 	}
 
-	return rmq.NewExchange(listenerChannel, exchangeName, exchangeType)
+	return newExchange(listenerChannel, exchangeName, exchangeType)
 }
 
 func (service *Service) NewQueue(queueName string) (*amqp.Queue, error) {
@@ -73,7 +72,7 @@ func (service *Service) NewQueue(queueName string) (*amqp.Queue, error) {
 		return nil, err
 	}
 
-	return rmq.NewQueue(listenerChannel, queueName)
+	return newQueue(listenerChannel, queueName)
 }
 
 func (service *Service) Bind(exchangeName, queueName string) error {
@@ -87,7 +86,7 @@ func (service *Service) Bind(exchangeName, queueName string) error {
 		return err
 	}
 
-	return rmq.Bind(listenerChannel, exchangeName, queueName)
+	return bind(listenerChannel, exchangeName, queueName)
 }
 
 func (service *Service) Consume(queueName string) (<-chan amqp.Delivery, error) {
@@ -101,7 +100,7 @@ func (service *Service) Consume(queueName string) (<-chan amqp.Delivery, error) 
 		return nil, err
 	}
 
-	messages, err := rmq.Consume(listenerChannel, queueName)
+	messages, err := consume(listenerChannel, queueName)
 	if err != nil {
 		return nil, err
 	}

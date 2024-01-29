@@ -1,4 +1,4 @@
-package rmq_service
+package rmq
 
 type Service struct{}
 

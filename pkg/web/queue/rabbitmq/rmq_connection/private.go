@@ -1,7 +1,6 @@
 package rmq_connection
 
 import (
-	"github.com/lowl11/boost/internal/queue/rmq"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -53,7 +52,7 @@ func (connection *Connection) reConnect() error {
 	}
 
 	var err error
-	connection.connection, err = rmq.NewConnection(connection.connectionString)
+	connection.connection, err = newConnection(connection.connectionString)
 	if err != nil {
 		return err
 	}

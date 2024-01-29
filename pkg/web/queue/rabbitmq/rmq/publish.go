@@ -6,21 +6,21 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-type PublishConfig struct {
+type publishConfig struct {
 	Exchange    string
 	Mandatory   bool
 	Immediate   bool
 	ContentType string
 }
 
-func defaultPublishConfig() PublishConfig {
-	return PublishConfig{
+func defaultPublishConfig() publishConfig {
+	return publishConfig{
 		ContentType: content_types.JSON,
 	}
 }
 
-func Publish(ctx context.Context, channel *amqp.Channel, queueName string, body []byte, cfg ...PublishConfig) error {
-	var config PublishConfig
+func publish(ctx context.Context, channel *amqp.Channel, queueName string, body []byte, cfg ...publishConfig) error {
+	var config publishConfig
 	if len(cfg) > 0 {
 		config = cfg[0]
 	} else {

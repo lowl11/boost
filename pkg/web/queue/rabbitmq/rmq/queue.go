@@ -2,7 +2,7 @@ package rmq
 
 import amqp "github.com/rabbitmq/amqp091-go"
 
-type QueueConfig struct {
+type queueConfig struct {
 	Durable    bool
 	AutoDelete bool
 	Exclusive  bool
@@ -10,12 +10,12 @@ type QueueConfig struct {
 	Args       amqp.Table
 }
 
-func defaultQueueConfig() QueueConfig {
-	return QueueConfig{}
+func defaultQueueConfig() queueConfig {
+	return queueConfig{}
 }
 
-func NewQueue(channel *amqp.Channel, queueName string, cfg ...QueueConfig) (*amqp.Queue, error) {
-	var config QueueConfig
+func newQueue(channel *amqp.Channel, queueName string, cfg ...queueConfig) (*amqp.Queue, error) {
+	var config queueConfig
 	if len(cfg) > 0 {
 		config = cfg[0]
 	} else {

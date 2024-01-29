@@ -4,10 +4,9 @@ import (
 	"github.com/lowl11/boost/data/enums/exchanges"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/helpers/event_helper"
-	"github.com/lowl11/boost/internal/queue/event_context"
-	"github.com/lowl11/boost/internal/queue/rmq_connection"
-	"github.com/lowl11/boost/internal/queue/rmq_service"
 	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/web/queue/rabbitmq/rmq"
+	"github.com/lowl11/boost/pkg/web/queue/rabbitmq/rmq_connection"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -25,7 +24,7 @@ func defaultListenerConfig() ListenerConfig {
 
 type Listener struct {
 	url        string
-	rmqService *rmq_service.Service
+	rmqService *rmq.Service
 
 	events []Event
 
@@ -144,7 +143,7 @@ func (listener *Listener) listen(messages <-chan amqp.Delivery, event Event) {
 }
 
 func (listener *Listener) async(event Event, message amqp.Delivery) {
-	if err := event.Action(event_context.New(&message)); err != nil {
+	if err := event.Action(newContext(&message)); err != nil {
 		log.Error(err, "Event action error")
 		return
 	}
@@ -165,6 +164,6 @@ func (listener *Listener) connect() error {
 		return err
 	}
 
-	listener.rmqService = rmq_service.New()
+	listener.rmqService = rmq.New()
 	return nil
 }

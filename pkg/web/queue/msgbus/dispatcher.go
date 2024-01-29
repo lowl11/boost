@@ -5,9 +5,9 @@ import (
 	"github.com/lowl11/boost/data/enums/exchanges"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/helpers/event_helper"
-	"github.com/lowl11/boost/internal/queue/rmq_connection"
-	"github.com/lowl11/boost/internal/queue/rmq_service"
 	"github.com/lowl11/boost/pkg/system/validator"
+	"github.com/lowl11/boost/pkg/web/queue/rabbitmq/rmq"
+	"github.com/lowl11/boost/pkg/web/queue/rabbitmq/rmq_connection"
 )
 
 const (
@@ -31,7 +31,7 @@ type Dispatcher struct {
 	validate       *validator.Validator
 	skipValidation bool
 
-	rmqService *rmq_service.Service
+	rmqService *rmq.Service
 
 	messageBusExchangeName       string
 	messageBusErrorsExchangeName string
@@ -58,7 +58,7 @@ func NewDispatcher(url string, cfg ...DispatcherConfig) (interfaces.Dispatcher, 
 
 	return &Dispatcher{
 		validate:   validate,
-		rmqService: rmq_service.New(),
+		rmqService: rmq.New(),
 
 		messageBusExchangeName:       config.MessageBusExchangeName,
 		messageBusErrorsExchangeName: config.MessageBusErrorsExchangeName,

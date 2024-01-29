@@ -1,7 +1,6 @@
 package rmq_connection
 
 import (
-	"github.com/lowl11/boost/internal/queue/rmq"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"sync"
 )
@@ -34,7 +33,7 @@ func Get() (*Connection, error) {
 		return instance, nil
 	}
 
-	connection, err := rmq.NewConnection(_connectionString)
+	connection, err := newConnection(_connectionString)
 	if err != nil {
 		return nil, err
 	}

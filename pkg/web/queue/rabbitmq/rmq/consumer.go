@@ -4,7 +4,7 @@ import amqp "github.com/rabbitmq/amqp091-go"
 
 type MessagesQueue <-chan amqp.Delivery
 
-type ConsumerConfig struct {
+type consumerConfig struct {
 	Consumer  string
 	AutoAck   bool
 	Exclusive bool
@@ -13,12 +13,12 @@ type ConsumerConfig struct {
 	Args      amqp.Table
 }
 
-func defaultConsumerConfig() ConsumerConfig {
-	return ConsumerConfig{}
+func defaultConsumerConfig() consumerConfig {
+	return consumerConfig{}
 }
 
-func Consume(channel *amqp.Channel, queueName string, cfg ...ConsumerConfig) (MessagesQueue, error) {
-	var config ConsumerConfig
+func consume(channel *amqp.Channel, queueName string, cfg ...consumerConfig) (MessagesQueue, error) {
+	var config consumerConfig
 	if len(cfg) > 0 {
 		config = cfg[0]
 	} else {
