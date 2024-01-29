@@ -161,14 +161,6 @@ func (handler *Handler) getOrigin(ctx *fasthttp.RequestCtx) string {
 		return requestOrigin
 	}
 
-	requestOrigin = types.ToString(ctx.Request.Header.Peek("X-Forwarded-For"))
-	if requestOrigin != "" {
-		if handler.corsConfig.debugPrint {
-			log.Info("CORS origin from request 'X-Forwarded-For' header:", requestOrigin)
-		}
-		return requestOrigin
-	}
-
 	// try to build dynamic
 	dynamicOrigin := strings.Builder{}
 	dynamicOrigin.Grow(len(ctx.URI().Scheme()) + len(ctx.URI().Host()) + 3)
