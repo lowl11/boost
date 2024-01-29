@@ -3,7 +3,6 @@ package router
 import (
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/helpers/path_helper"
-	"github.com/lowl11/boost/internal/services/boost/route_searcher"
 	"github.com/lowl11/boost/pkg/system/types"
 	"strings"
 )
@@ -75,7 +74,7 @@ func (router *Router) Search(searchPath string) (*RouteContext, bool) {
 			routePathString = path_helper.RemoveLast(routePathString)
 		}
 
-		if searcher := route_searcher.New(searchPath, routePathString); searcher.Find() {
+		if searcher := newSearcher(searchPath, routePathString); searcher.Find() {
 			found = true
 			searchRoute = routeCtx.(*RouteContext)
 			searchRoute.Params = searcher.Params()
