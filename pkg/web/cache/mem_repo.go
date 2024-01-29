@@ -1,14 +1,30 @@
-package mem_repository
+package cache
 
 import (
 	"context"
 	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/patrickmn/go-cache"
 	"regexp"
 	"strings"
 	"time"
 )
 
-func (repo Repository) All(_ context.Context) (map[string][]byte, error) {
+const (
+	_memDefaultExpiration = time.Hour
+	_memCleanupInterval   = time.Hour
+)
+
+type memRepo struct {
+	client *cache.Cache
+}
+
+func newMemRepo() *memRepo {
+	return &memRepo{
+		client: cache.New(_memDefaultExpiration, _memCleanupInterval),
+	}
+}
+
+func (repo memRepo) All(_ context.Context) (map[string][]byte, error) {
 	allCacheItems := repo.client.Items()
 	all := make(map[string][]byte, len(allCacheItems))
 
@@ -19,7 +35,7 @@ func (repo Repository) All(_ context.Context) (map[string][]byte, error) {
 	return all, nil
 }
 
-func (repo Repository) Search(ctx context.Context, pattern string) ([]string, error) {
+func (repo memRepo) Search(ctx context.Context, pattern string) ([]string, error) {
 	all, err := repo.All(ctx)
 	if err != nil {
 		return nil, err
@@ -39,8 +55,8 @@ func (repo Repository) Search(ctx context.Context, pattern string) ([]string, er
 	return matchKeys, nil
 }
 
-func (repo Repository) Set(_ context.Context, key string, x any, expiration ...time.Duration) error {
-	expires := defaultExpiration
+func (repo memRepo) Set(_ context.Context, key string, x any, expiration ...time.Duration) error {
+	expires := _memDefaultExpiration
 	if len(expiration) > 0 {
 		expires = expiration[0]
 	}
@@ -49,7 +65,7 @@ func (repo Repository) Set(_ context.Context, key string, x any, expiration ...t
 	return nil
 }
 
-func (repo Repository) Get(_ context.Context, key string) ([]byte, error) {
+func (repo memRepo) Get(_ context.Context, key string) ([]byte, error) {
 	x, found := repo.client.Get(key)
 	if !found {
 		return nil, nil
@@ -58,11 +74,11 @@ func (repo Repository) Get(_ context.Context, key string) ([]byte, error) {
 	return types.ToBytes(x), nil
 }
 
-func (repo Repository) Delete(_ context.Context, key string) error {
+func (repo memRepo) Delete(_ context.Context, key string) error {
 	repo.client.Delete(key)
 	return nil
 }
 
-func (repo Repository) Close() error {
+func (repo memRepo) Close() error {
 	return nil
 }

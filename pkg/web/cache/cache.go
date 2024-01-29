@@ -3,14 +3,12 @@ package cache
 import (
 	"github.com/lowl11/boost/data/enums/caches"
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/cache/mem_repository"
-	"github.com/lowl11/boost/internal/cache/redis_repository"
 )
 
 func getCacheRepository(cacheType string, cfg ...any) (interfaces.CacheRepository, error) {
 	switch cacheType {
 	case caches.Memory:
-		return mem_repository.New(), nil
+		return newMemRepo(), nil
 	case caches.Redis:
 		var redisConfig RedisConfig
 		if len(cfg) > 0 {
@@ -22,7 +20,7 @@ func getCacheRepository(cacheType string, cfg ...any) (interfaces.CacheRepositor
 			redisConfig = rdsCfg
 		}
 
-		return redis_repository.New(redis_repository.Config{
+		return newRedisRepo(redisConfigInstance{
 			URL:      redisConfig.URL,
 			Password: redisConfig.Password,
 			DB:       redisConfig.DB,
