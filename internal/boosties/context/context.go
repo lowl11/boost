@@ -2,7 +2,6 @@ package context
 
 import (
 	"context"
-	"github.com/lowl11/boost/internal/boosties/fast_writer"
 	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/boost/pkg/system/validator"
 	"github.com/valyala/fasthttp"
@@ -13,7 +12,7 @@ import (
 
 type Context struct {
 	inner    *fasthttp.RequestCtx
-	writer   *fast_writer.Writer
+	writer   *fastWriter
 	validate *validator.Validator
 
 	status       int
@@ -45,7 +44,7 @@ func New(
 
 	return &Context{
 		inner:    inner,
-		writer:   fast_writer.New(inner),
+		writer:   newFastWriter(inner),
 		validate: validate,
 
 		status: http.StatusOK,
