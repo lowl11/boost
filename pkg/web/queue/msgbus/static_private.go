@@ -1,11 +1,11 @@
-package event_helper
+package msgbus
 
 import (
-	"github.com/lowl11/boost/internal/boosties/errors"
+	"github.com/lowl11/boost/data/errors"
 	"reflect"
 )
 
-func NameOfEvent(event any) (string, error) {
+func nameOfEvent(event any) (string, error) {
 	reflectValue := reflect.TypeOf(event)
 	if reflectValue.Kind() != reflect.Struct {
 		return "", errors.New("given argument is not struct{}")

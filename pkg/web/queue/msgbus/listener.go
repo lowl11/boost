@@ -3,7 +3,6 @@ package msgbus
 import (
 	"github.com/lowl11/boost/data/enums/exchanges"
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/helpers/event_helper"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/web/queue/rabbitmq/rmq"
 	"github.com/lowl11/boost/pkg/web/queue/rabbitmq/rmq_connection"
@@ -82,7 +81,7 @@ func (listener *Listener) RegisterRoute(event Event) {
 }
 
 func (listener *Listener) Bind(event any, action func(ctx interfaces.EventContext) error) {
-	eventName, err := event_helper.NameOfEvent(event)
+	eventName, err := nameOfEvent(event)
 	if err != nil {
 		return
 	}

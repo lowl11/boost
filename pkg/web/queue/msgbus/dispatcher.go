@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/lowl11/boost/data/enums/exchanges"
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/helpers/event_helper"
 	"github.com/lowl11/boost/pkg/system/validator"
 	"github.com/lowl11/boost/pkg/web/queue/rabbitmq/rmq"
 	"github.com/lowl11/boost/pkg/web/queue/rabbitmq/rmq_connection"
@@ -78,7 +77,7 @@ func (dispatcher *Dispatcher) Init() error {
 }
 
 func (dispatcher *Dispatcher) Dispatch(ctx context.Context, event any) error {
-	eventName, err := event_helper.NameOfEvent(event)
+	eventName, err := nameOfEvent(event)
 	if err != nil {
 		return ErrorGetNameOfEvent(err)
 	}
