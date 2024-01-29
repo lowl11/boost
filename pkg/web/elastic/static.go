@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/lowl11/boost/data/entity"
 	"github.com/lowl11/boost/internal/services/elk_service"
-	"github.com/lowl11/boost/internal/services/web/searcher"
 	"github.com/lowl11/boost/log"
 )
 
@@ -66,13 +65,24 @@ func Exist(ctx context.Context, indexName string) (bool, error) {
 }
 
 func MatchAll() map[string]any {
-	return searcher.MatchAll()
+	return map[string]any{
+		"query": map[string]any{
+			"match_all": map[string]any{},
+		},
+	}
 }
 
 func MultiMatch(query string, fields []string) map[string]any {
-	return searcher.MultiMatch(query, fields)
+	return map[string]any{
+		"query": map[string]any{
+			"multi_match": map[string]any{
+				"query":  query,
+				"fields": fields,
+			},
+		},
+	}
 }
 
-func QueryBool() *searcher.BoolQuery {
-	return searcher.QueryBool()
+func QueryBool() *BoolQuery {
+	return queryBool()
 }

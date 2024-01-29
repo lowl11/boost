@@ -1,8 +1,6 @@
-package searcher
+package elastic
 
-import (
-	"github.com/lowl11/boost/data/enums/query_types"
-)
+import "github.com/lowl11/boost/data/enums/query_types"
 
 type QueryPair struct {
 	Mode  string // Match, Term, Filter
@@ -15,7 +13,7 @@ type BoolQuery struct {
 	should []QueryPair
 }
 
-func QueryBool() *BoolQuery {
+func queryBool() *BoolQuery {
 	return &BoolQuery{
 		must:   make([]QueryPair, 0),
 		should: make([]QueryPair, 0),
