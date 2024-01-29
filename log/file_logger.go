@@ -2,8 +2,8 @@ package log
 
 import (
 	"fmt"
-	"github.com/lowl11/boost/internal/helpers/message_tools"
 	"github.com/lowl11/boost/pkg/io/folder"
+	"github.com/lowl11/boost/pkg/system/logging"
 	"log"
 	"os"
 	"time"
@@ -31,11 +31,11 @@ func (logger *fileLogger) Debug(args ...any) {
 	logger.updateFile()
 	var message string
 
-	if !message_tools.JsonMode {
-		logger.writer.SetPrefix(message_tools.BuildPrefix(debugLevel))
-		message = message_tools.Build(args...)
+	if !logging.GetConfig().JsonMode {
+		logger.writer.SetPrefix(buildPrefix(debugLevel))
+		message = buildMessage(args...)
 	} else {
-		message = message_tools.Json(jsonDebugLevel, args...)
+		message = buildJSON(jsonDebugLevel, args...)
 	}
 
 	logger.writer.Println(message)
@@ -45,11 +45,11 @@ func (logger *fileLogger) Info(args ...any) {
 	logger.updateFile()
 	var message string
 
-	if !message_tools.JsonMode {
-		logger.writer.SetPrefix(message_tools.BuildPrefix(infoLevel))
-		message = message_tools.Build(args...)
+	if !logging.GetConfig().JsonMode {
+		logger.writer.SetPrefix(buildPrefix(infoLevel))
+		message = buildMessage(args...)
 	} else {
-		message = message_tools.Json(jsonInfoLevel, args...)
+		message = buildJSON(jsonInfoLevel, args...)
 	}
 
 	logger.writer.Println(message)
@@ -59,11 +59,11 @@ func (logger *fileLogger) Warn(args ...any) {
 	logger.updateFile()
 	var message string
 
-	if !message_tools.JsonMode {
-		logger.writer.SetPrefix(message_tools.BuildPrefix(warnLevel))
-		message = message_tools.Build(args...)
+	if !logging.GetConfig().JsonMode {
+		logger.writer.SetPrefix(buildPrefix(warnLevel))
+		message = buildMessage(args...)
 	} else {
-		message = message_tools.Json(jsonWarnLevel, args...)
+		message = buildJSON(jsonWarnLevel, args...)
 	}
 
 	logger.writer.Println(message)
@@ -73,11 +73,11 @@ func (logger *fileLogger) Error(args ...any) {
 	logger.updateFile()
 	var message string
 
-	if !message_tools.JsonMode {
-		logger.writer.SetPrefix(message_tools.BuildPrefix(errorLevel))
-		message = message_tools.Build(args...)
+	if !logging.GetConfig().JsonMode {
+		logger.writer.SetPrefix(buildPrefix(errorLevel))
+		message = buildMessage(args...)
 	} else {
-		message = message_tools.Json(jsonErrorLevel, args...)
+		message = buildJSON(jsonErrorLevel, args...)
 	}
 
 	logger.writer.Println(message)
@@ -87,11 +87,11 @@ func (logger *fileLogger) Fatal(args ...any) {
 	logger.updateFile()
 	var message string
 
-	if !message_tools.JsonMode {
-		logger.writer.SetPrefix(message_tools.BuildPrefix(fatalLevel))
-		message = message_tools.Build(args...)
+	if !logging.GetConfig().JsonMode {
+		logger.writer.SetPrefix(buildPrefix(fatalLevel))
+		message = buildMessage(args...)
 	} else {
-		message = message_tools.Json(jsonFatalLevel, args...)
+		message = buildJSON(jsonFatalLevel, args...)
 	}
 
 	logger.writer.Println(message)

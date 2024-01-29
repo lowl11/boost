@@ -1,10 +1,13 @@
 package log
 
 import (
-	"github.com/lowl11/boost/internal/helpers/message_tools"
+	"encoding/json"
+	"github.com/lowl11/boost/pkg/system/logging"
+	"github.com/lowl11/boost/pkg/system/types"
 	"log"
 	"os"
 	"strings"
+	"time"
 )
 
 type consoleLogger struct {
@@ -48,11 +51,11 @@ const (
 func (logger *consoleLogger) Debug(args ...any) {
 	var message string
 
-	if !message_tools.JsonMode {
-		logger.writer.SetPrefix(message_tools.BuildPrefix(debugLevel))
-		message = message_tools.Build(args...)
+	if !logging.GetConfig().JsonMode {
+		logger.writer.SetPrefix(buildPrefix(debugLevel))
+		message = buildMessage(args...)
 	} else {
-		message = message_tools.Json(jsonDebugLevel, args...)
+		message = buildJSON(jsonDebugLevel, args...)
 	}
 
 	logger.writer.Println(consoleDebug(message))
@@ -61,11 +64,11 @@ func (logger *consoleLogger) Debug(args ...any) {
 func (logger *consoleLogger) Info(args ...any) {
 	var message string
 
-	if !message_tools.JsonMode {
-		logger.writer.SetPrefix(message_tools.BuildPrefix(infoLevel))
-		message = message_tools.Build(args...)
+	if !logging.GetConfig().JsonMode {
+		logger.writer.SetPrefix(buildPrefix(infoLevel))
+		message = buildMessage(args...)
 	} else {
-		message = message_tools.Json(jsonInfoLevel, args...)
+		message = buildJSON(jsonInfoLevel, args...)
 	}
 
 	logger.writer.Println(consoleInfo(message))
@@ -74,11 +77,11 @@ func (logger *consoleLogger) Info(args ...any) {
 func (logger *consoleLogger) Warn(args ...any) {
 	var message string
 
-	if !message_tools.JsonMode {
-		logger.writer.SetPrefix(message_tools.BuildPrefix(warnLevel))
-		message = message_tools.Build(args...)
+	if !logging.GetConfig().JsonMode {
+		logger.writer.SetPrefix(buildPrefix(warnLevel))
+		message = buildMessage(args...)
 	} else {
-		message = message_tools.Json(jsonWarnLevel, args...)
+		message = buildJSON(jsonWarnLevel, args...)
 	}
 
 	logger.writer.Println(consoleWarn(message))
@@ -87,11 +90,11 @@ func (logger *consoleLogger) Warn(args ...any) {
 func (logger *consoleLogger) Error(args ...any) {
 	var message string
 
-	if !message_tools.JsonMode {
-		logger.writer.SetPrefix(message_tools.BuildPrefix(errorLevel))
-		message = message_tools.Build(args...)
+	if !logging.GetConfig().JsonMode {
+		logger.writer.SetPrefix(buildPrefix(errorLevel))
+		message = buildMessage(args...)
 	} else {
-		message = message_tools.Json(jsonErrorLevel, args...)
+		message = buildJSON(jsonErrorLevel, args...)
 	}
 
 	logger.writer.Println(consoleError(message))
@@ -100,11 +103,11 @@ func (logger *consoleLogger) Error(args ...any) {
 func (logger *consoleLogger) Fatal(args ...any) {
 	var message string
 
-	if !message_tools.JsonMode {
-		logger.writer.SetPrefix(message_tools.BuildPrefix(fatalLevel))
-		message = message_tools.Build(args...)
+	if !logging.GetConfig().JsonMode {
+		logger.writer.SetPrefix(buildPrefix(fatalLevel))
+		message = buildMessage(args...)
 	} else {
-		message = message_tools.Json(jsonFatalLevel, args...)
+		message = buildJSON(jsonFatalLevel, args...)
 	}
 
 	logger.writer.Println(consoleFatal(message))
@@ -136,4 +139,69 @@ func color(color, text string) string {
 	coloredText.WriteString(text)
 	coloredText.WriteString(reset)
 	return coloredText.String()
+}
+
+func buildMessage(args ...any) string {
+	if len(args) == 0 {
+		return ""
+	}
+
+	stringArgs := strings.Builder{}
+	for _, arg := range args {
+		stringArgs.WriteString(types.ToString(arg))
+		stringArgs.WriteString(" ")
+	}
+	return stringArgs.String()[:stringArgs.Len()-1]
+}
+
+func buildPrefix(level string) string {
+	prefix := strings.Builder{}
+	if logging.GetConfig().NoPrefix && !logging.GetConfig().NoTime {
+		prefix.WriteString(getTime())
+		prefix.WriteString(" ")
+		return prefix.String()
+	}
+
+	if logging.GetConfig().NoPrefix {
+		return ""
+	}
+
+	if logging.GetConfig().NoTime {
+		return level
+	}
+
+	prefix.WriteString(getTime())
+	prefix.WriteString(" ")
+	prefix.WriteString(level)
+	return prefix.String()
+}
+
+func buildJSON(level string, args ...any) string {
+	logMessage := &consoleLogMessage{
+		Message: buildMessage(args...),
+		Level:   level,
+		Time:    getTime(),
+	}
+
+	logMessageInBytes, err := json.Marshal(logMessage)
+	if err != nil {
+		return "|ERROR IN BUILDING MESSAGE|"
+	}
+
+	return string(logMessageInBytes)
+}
+
+func getTime() string {
+	if logging.GetConfig().NoTime {
+		return ""
+	}
+
+	return time.Now().Format("02-01-2006 15:04:05")
+}
+
+type consoleLogMessage struct {
+	Time    string `json:"time,omitempty"`
+	Level   string `json:"level"`
+	Message string `json:"message"`
+	Error   string `json:"error,omitempty"`
 }

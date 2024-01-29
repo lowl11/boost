@@ -2,7 +2,6 @@ package log
 
 import (
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/helpers/message_tools"
 	"github.com/lowl11/boost/pkg/system/logging"
 	"os"
 	"sync"
@@ -117,17 +116,17 @@ func (logger *logger) CustomExitDuration(duration time.Duration) *logger {
 }
 
 func (logger *logger) JSON() *logger {
-	message_tools.JsonMode = true
+	logging.GetConfig().JsonMode = true
 	return logger
 }
 
 func (logger *logger) NoTime() *logger {
-	message_tools.NoTimeMode = true
+	logging.GetConfig().NoTime = true
 	return logger
 }
 
 func (logger *logger) NoPrefix() *logger {
-	message_tools.NoPrefixMode = true
+	logging.GetConfig().NoPrefix = true
 	return logger
 }
 
