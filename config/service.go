@@ -1,7 +1,6 @@
 package config
 
 import (
-	"github.com/lowl11/boost/internal/helpers/env_helper"
 	"github.com/lowl11/boost/pkg/io/file"
 	"github.com/lowl11/boost/pkg/io/folder"
 	"gopkg.in/yaml.v3"
@@ -54,7 +53,7 @@ func (service *configService) Load() {
 
 func (service *configService) Read() error {
 	// read .env file
-	envFileContent, err := env_helper.Read(service.environmentFileName)
+	envFileContent, err := read(service.environmentFileName)
 	if err != nil {
 		return err
 	}
@@ -79,7 +78,7 @@ func (service *configService) Read() error {
 			return err
 		}
 
-		envBaseContent, err = env_helper.ReplaceVariables(envBaseContent, envFileContent)
+		envBaseContent, err = replaceVariables(envBaseContent, envFileContent)
 		if err != nil {
 			return err
 		}
@@ -102,7 +101,7 @@ func (service *configService) Read() error {
 	}
 
 	// replace variables from file
-	config, err := env_helper.ReplaceVariables(envContent, envFileContent)
+	config, err := replaceVariables(envContent, envFileContent)
 	if err != nil {
 		return err
 	}
@@ -117,7 +116,7 @@ func (service *configService) Read() error {
 	for key, baseValue := range baseVariables {
 		if currentValue, ok := service.variables[key]; (!ok || currentValue == "") && baseValue != "" {
 			// if basic config value is "variable"
-			if varValue, isVariable := env_helper.IsVariable(baseValue); isVariable {
+			if varValue, isVariable := isVar(baseValue); isVariable {
 				// try getting value of variable from .env file
 				fileValue, fileOk := envFileContent[varValue]
 				if fileOk {

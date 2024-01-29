@@ -1,7 +1,7 @@
-package env_helper
+package config
 
 import (
-	"errors"
+	"github.com/lowl11/boost/data/errors"
 	"github.com/lowl11/boost/pkg/io/file"
 	"os"
 	"regexp"
@@ -9,7 +9,7 @@ import (
 	"unicode/utf8"
 )
 
-func Read(fileName string) (map[string]string, error) {
+func read(fileName string) (map[string]string, error) {
 	envVariables := make(map[string]string)
 
 	if !file.Exist(fileName) {
@@ -35,7 +35,7 @@ func Read(fileName string) (map[string]string, error) {
 	return envVariables, nil
 }
 
-func ReplaceVariables(fileContent []byte, envVariables map[string]string) ([]byte, error) {
+func replaceVariables(fileContent []byte, envVariables map[string]string) ([]byte, error) {
 	if envVariables == nil {
 		return nil, errors.New("env variables map is NULL")
 	}
@@ -56,7 +56,7 @@ func ReplaceVariables(fileContent []byte, envVariables map[string]string) ([]byt
 	// replace variables
 	variables := variableRegex.FindAllString(fileContentString, -1)
 	for _, envVariable := range variables {
-		if cleanVariableValue, isVariable := IsVariable(envVariable); isVariable {
+		if cleanVariableValue, isVariable := isVar(envVariable); isVariable {
 			if value, ok := envVariables[cleanVariableValue]; ok {
 				fileContentString = strings.ReplaceAll(fileContentString, envVariable, value)
 			} else {
@@ -73,7 +73,7 @@ func ReplaceVariables(fileContent []byte, envVariables map[string]string) ([]byt
 	return []byte(fileContentString), nil
 }
 
-func IsVariable(value string) (string, bool) {
+func isVar(value string) (string, bool) {
 	length := utf8.RuneCountInString(value)
 	if length < 4 {
 		return "", false
