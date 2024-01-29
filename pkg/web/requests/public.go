@@ -2,15 +2,14 @@ package requests
 
 import (
 	"crypto/tls"
-	"github.com/lowl11/boost/internal/services/web/reqy"
 	"github.com/lowl11/boost/log"
 	"net/http"
 	"net/url"
 	"time"
 )
 
-func (service *Service) R() *reqy.Request {
-	request := reqy.NewRequest(service.baseURL, service.client).
+func (service *Service) R() *Reqy {
+	request := newReqy(service.baseURL, service.client).
 		SetHeaders(service.headers).
 		SetCookies(service.cookies).
 		SetRetryCount(service.retryCount).
@@ -100,7 +99,7 @@ func (service *Service) SetRetryWaitTime(waitTime time.Duration) *Service {
 }
 
 func (service *Service) SetBasicAuth(username, password string) *Service {
-	service.basicAuth = &reqy.BasicAuth{
+	service.basicAuth = &basicAuth{
 		Username: username,
 		Password: password,
 	}
