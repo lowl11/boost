@@ -3,7 +3,7 @@ package cache
 import (
 	"context"
 	"github.com/lowl11/boost/data/enums/redis_types"
-	"github.com/lowl11/boost/data/errors"
+	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/redis/go-redis/v9"
 	"time"
@@ -26,8 +26,7 @@ type redisRepo struct {
 
 func newRedisRepo(cfg redisConfigInstance) (*redisRepo, error) {
 	if cfg.URL == "" {
-		return nil, errors.
-			New("URL is required").
+		return nil, errors.New("URL is required").
 			SetType("Redis_URLRequired")
 	}
 
@@ -68,8 +67,7 @@ func (repo redisRepo) All(ctx context.Context) (map[string][]byte, error) {
 func (repo redisRepo) Search(ctx context.Context, pattern string) ([]string, error) {
 	keys, err := repo.client.Keys(ctx, pattern).Result()
 	if err != nil {
-		return nil, errors.
-			New("Search keys by pattern error").
+		return nil, errors.New("Search keys by pattern error").
 			SetType("Redis_SearchKeys").
 			SetError(err).
 			AddContext("pattern", pattern)
@@ -85,8 +83,7 @@ func (repo redisRepo) Set(ctx context.Context, key string, x any, expiration ...
 	}
 
 	if err := repo.client.Set(ctx, key, types.ToBytes(x), expires).Err(); err != nil {
-		return errors.
-			New("Set cache error").
+		return errors.New("Set cache error").
 			SetType("Redis_SetCache").
 			SetError(err).
 			SetContext(map[string]any{
@@ -112,8 +109,7 @@ func (repo redisRepo) Get(ctx context.Context, key string) ([]byte, error) {
 	case redis_types.None:
 		return nil, nil
 	default:
-		return nil, errors.
-			New("Unknown Redis type").
+		return nil, errors.New("Unknown Redis type").
 			SetType("Redis_UnknownType").
 			AddContext("redis_type", valueType).
 			AddContext("key", key)
@@ -122,8 +118,7 @@ func (repo redisRepo) Get(ctx context.Context, key string) ([]byte, error) {
 
 func (repo redisRepo) Delete(ctx context.Context, key string) error {
 	if err := repo.client.Del(ctx, key).Err(); err != nil {
-		return errors.
-			New("Delete cache error").
+		return errors.New("Delete cache error").
 			SetType("Redis_DeleteCache").
 			SetError(err).
 			AddContext("key", key)
@@ -141,8 +136,7 @@ func pingRedis(client *redis.Client) error {
 	defer cancel()
 
 	if err := client.Ping(ctx).Err(); err != nil {
-		return errors.
-			New("Ping Redis error").
+		return errors.New("Ping Redis error").
 			SetType("Redis_Ping").
 			SetError(err)
 	}
@@ -153,8 +147,7 @@ func pingRedis(client *redis.Client) error {
 func (repo redisRepo) allKeys(ctx context.Context) ([]string, error) {
 	keys, err := repo.client.Keys(ctx, "*").Result()
 	if err != nil {
-		return nil, errors.
-			New("Get all keys error").
+		return nil, errors.New("Get all keys error").
 			SetType("Redis_GetAllKeys").
 			SetError(err)
 	}
@@ -165,8 +158,7 @@ func (repo redisRepo) allKeys(ctx context.Context) ([]string, error) {
 func (repo redisRepo) getType(ctx context.Context, key string) (string, error) {
 	typeObject := repo.client.Type(ctx, key)
 	if err := typeObject.Err(); err != nil {
-		return "", errors.
-			New("Get key type error").
+		return "", errors.New("Get key type error").
 			SetType("Redis_GetType").
 			SetError(err)
 	}
@@ -181,8 +173,7 @@ func (repo redisRepo) getList(ctx context.Context, key string) ([]byte, error) {
 			return nil, nil
 		}
 
-		return nil, errors.
-			New("Get cache by key error").
+		return nil, errors.New("Get cache by key error").
 			SetType("Redis_GetCacheByKey").
 			SetError(err).
 			AddContext("key", key)
@@ -199,8 +190,7 @@ func (repo redisRepo) getPrimitive(ctx context.Context, key string) ([]byte, err
 			return nil, nil
 		}
 
-		return nil, errors.
-			New("Get cache by key error").
+		return nil, errors.New("Get cache by key error").
 			SetType("Redis_GetCacheByKey").
 			SetError(err).
 			AddContext("key", key)

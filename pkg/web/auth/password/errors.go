@@ -1,7 +1,7 @@
 package password
 
 import (
-	"github.com/lowl11/boost/data/errors"
+	"github.com/lowl11/boost/errors"
 	"net/http"
 )
 

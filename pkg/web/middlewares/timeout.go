@@ -3,7 +3,7 @@ package middlewares
 import (
 	"context"
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/boosties/errors"
+	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/internal/boosties/panicer"
 	"github.com/lowl11/boost/pkg/system/types"
 	"net/http"

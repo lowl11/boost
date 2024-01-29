@@ -12,6 +12,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lowl11/flex v0.1.5
 	github.com/patrickmn/go-cache v2.1.0+incompatible
+	github.com/pkg/errors v0.9.1
 	github.com/rabbitmq/amqp091-go v1.8.1
 	github.com/redis/go-redis/v9 v9.0.5
 	github.com/valyala/fasthttp v1.48.0
@@ -26,7 +27,6 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.14.0 // indirect

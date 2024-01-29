@@ -3,7 +3,7 @@ package jwt_service
 import (
 	"encoding/json"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/lowl11/boost/data/errors"
+	"github.com/lowl11/boost/errors"
 )
 
 func generate(object any, key []byte) (string, error) {

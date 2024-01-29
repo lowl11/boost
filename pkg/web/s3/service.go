@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/lowl11/boost/data/errors"
+	"github.com/lowl11/boost/errors"
 	"io"
 )
 
@@ -58,8 +58,7 @@ func (service *service) Connect() error {
 		MaxRetries: &service.maxRetries,
 	})
 	if err != nil {
-		return errors.
-			New("Connect to S3 error").
+		return errors.New("Connect to S3 error").
 			SetType("ConnectS3Error").
 			SetError(err)
 	}
@@ -81,8 +80,7 @@ func (service *service) CreateFolder(ctx context.Context, path string, acl ...st
 		Key:    aws.String(path + "/"),
 		ACL:    aclValue,
 	}); err != nil {
-		return errors.
-			New("Create folder error").
+		return errors.New("Create folder error").
 			SetType("S3_CreateFolderError").
 			SetError(err).
 			AddContext("path", path)
@@ -103,8 +101,7 @@ func (service *service) CreateFile(ctx context.Context, path string, body []byte
 		Body:   bytes.NewReader(body),
 		ACL:    aclValue,
 	}); err != nil {
-		return errors.
-			New("Create file error").
+		return errors.New("Create file error").
 			SetType("S3_CreateFileError").
 			SetError(err).
 			AddContext("path", path)
@@ -118,8 +115,7 @@ func (service *service) Delete(ctx context.Context, name string) error {
 		Bucket: aws.String(service.bucket),
 		Key:    aws.String(name),
 	}); err != nil {
-		return errors.
-			New("Delete object error").
+		return errors.New("Delete object error").
 			SetType("S3_DeleteObjectError").
 			SetError(err).
 			AddContext("path", name)
@@ -135,8 +131,7 @@ func (service *service) Rename(ctx context.Context, oldName, newName string) err
 		CopySource: aws.String(oldName),
 		Key:        aws.String(newName),
 	}); err != nil {
-		return errors.
-			New("Copy object error").
+		return errors.New("Copy object error").
 			SetType("S3_CopyObjectError").
 			SetError(err).
 			AddContext("old", oldName).
@@ -186,8 +181,7 @@ func (service *service) get(ctx context.Context, prefix ...string) ([]*s3.Object
 			return false
 		},
 	); err != nil {
-		return nil, errors.
-			New("Get objects error").
+		return nil, errors.New("Get objects error").
 			SetType("S3_GetObjectsError").
 			SetError(err).
 			AddContext("path", input.StartAfter)

@@ -2,7 +2,7 @@ package validator
 
 import (
 	baseValidator "github.com/go-playground/validator/v10"
-	"github.com/lowl11/boost/internal/boosties/errors"
+	"github.com/lowl11/boost/errors"
 	"net/http"
 )
 

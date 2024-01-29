@@ -2,7 +2,7 @@ package panicer
 
 import (
 	"fmt"
-	"github.com/lowl11/boost/data/errors"
+	"github.com/lowl11/boost/errors"
 	"runtime"
 	"strings"
 )
@@ -13,8 +13,7 @@ func Handle(err any) error {
 	}
 
 	parsedError := fromAny(err)
-	return errors.
-		New("PANIC RECOVER: "+parsedError).
+	return errors.New("PANIC RECOVER: "+parsedError).
 		SetType("PanicError").
 		AddContext("trace", getStackTrace())
 }

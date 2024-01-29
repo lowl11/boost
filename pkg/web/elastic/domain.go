@@ -3,7 +3,6 @@ package elastic
 import (
 	"github.com/google/uuid"
 	"github.com/lowl11/boost/data/entity"
-	"github.com/lowl11/boost/internal/helpers/elk_parser"
 	"time"
 )
 
@@ -68,5 +67,5 @@ type indexSettings struct {
 }
 
 type indexMappings struct {
-	Properties map[string]elk_parser.MappingField `json:"properties"`
+	Properties map[string]mappingField `json:"properties"`
 }

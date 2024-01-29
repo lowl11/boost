@@ -2,7 +2,7 @@ package elastic
 
 import (
 	"github.com/google/uuid"
-	"github.com/lowl11/boost/data/errors"
+	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/flex"
 	"reflect"
@@ -18,8 +18,7 @@ func parseObject(object any) (map[string]mappingField, error) {
 	fxType := flex.Type(reflect.TypeOf(object))
 	fxType.Reset(fxType.Unwrap())
 	if !fxType.IsStruct() {
-		return nil, errors.
-			New("Given object is not struct").
+		return nil, errors.New("Given object is not struct").
 			SetType("ELK_ObjectIsNotStruct")
 	}
 
@@ -76,8 +75,7 @@ func getID(object any) (string, error) {
 	fxType.Reset(fxType.Unwrap())
 
 	if !fxType.IsStruct() {
-		return "", errors.
-			New("Given object is not struct").
+		return "", errors.New("Given object is not struct").
 			SetType("ELK_ObjectIsNotStruct")
 	}
 

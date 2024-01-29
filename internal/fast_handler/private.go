@@ -3,8 +3,8 @@ package fast_handler
 import (
 	"fmt"
 	"github.com/lowl11/boost/config"
-	"github.com/lowl11/boost/data/errors"
 	"github.com/lowl11/boost/data/interfaces"
+	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/internal/boosties/context"
 	"github.com/lowl11/boost/internal/boosties/panicer"
 	"github.com/lowl11/boost/log"

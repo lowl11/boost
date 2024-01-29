@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/lowl11/boost/data/errors"
+	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/pkg/io/file"
 	"os"
 	"regexp"

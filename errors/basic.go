@@ -2,7 +2,6 @@ package errors
 
 import (
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/boosties/errors"
 	"net/http"
 )
 
@@ -15,8 +14,7 @@ const (
 
 // ErrorUnknown returns Boost Error for unknown type errors
 func ErrorUnknown(err error) interfaces.Error {
-	return errors.
-		New("Unknown error: " + err.Error()).
+	return New("Unknown error: " + err.Error()).
 		SetType(TypeErrorUnknown).
 		SetHttpCode(http.StatusInternalServerError)
 }
@@ -27,24 +25,21 @@ func ErrorPanic(err error) interfaces.Error {
 		return boostError
 	}
 
-	return errors.
-		New("PANIC RECOVER: " + err.Error()).
+	return New("PANIC RECOVER: " + err.Error()).
 		SetType(TypeErrorPanic).
 		SetHttpCode(http.StatusInternalServerError)
 }
 
 // ErrorNotFound returns Boost Error for not found endpoints
 func ErrorNotFound() interfaces.Error {
-	return errors.
-		New("Route not found").
+	return New("Route not found").
 		SetType(TypeErrorRouteNotFound).
 		SetHttpCode(http.StatusNotFound)
 }
 
 // ErrorMethodNotAllowed returns Boost Error for not allowed request method
 func ErrorMethodNotAllowed() interfaces.Error {
-	return errors.
-		New("Method not allowed").
+	return New("Method not allowed").
 		SetType(TypeErrorMethodNotAllowed).
 		SetHttpCode(http.StatusMethodNotAllowed)
 }
