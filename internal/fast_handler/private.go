@@ -161,7 +161,7 @@ func (handler *Handler) getOrigin(ctx *fasthttp.RequestCtx) string {
 	}
 
 	// try to build dynamic
-	referer := types.ToString(ctx.Referer())
+	referer := types.ToString(ctx.Request.Header.Peek("Referer"))
 	if handler.corsConfig.debugPrint {
 		if referer != "" {
 			log.Info("CORS origin by referer:", referer)
