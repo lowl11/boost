@@ -59,7 +59,7 @@ func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
 		ctx.Response.Header.Set("Access-Control-Allow-Credentials", "true")
 		ctx.Response.Header.Set("Access-Control-Allow-Headers", handler.getHeaders(ctx))
 		ctx.Response.Header.Set("Access-Control-Allow-Methods", handler.getMethods())
-		ctx.Response.Header.Set("Access-Control-Max-Age", "3600")
+		ctx.Response.Header.Set("Access-Control-Max-Age", "1728000")
 		ctx.Response.Header.Set("Vary", handler.getVary())
 
 		// OPTIONS case
@@ -138,12 +138,18 @@ func writeError(ctx *fasthttp.RequestCtx, err interfaces.Error) {
 func (handler *Handler) getOrigin(ctx *fasthttp.RequestCtx) string {
 	// get from config
 	if handler.corsConfig.Origin != "" {
+		if handler.corsConfig.debugPrint {
+			log.Info("CORS origin from config:", handler.corsConfig.Origin)
+		}
 		return handler.corsConfig.Origin
 	}
 
 	// get from request headers
 	requestOrigin := types.ToString(ctx.Request.Header.Peek("Origin"))
 	if requestOrigin != "" {
+		if handler.corsConfig.debugPrint {
+			log.Info("CORS origin from request 'Origin' header:", requestOrigin)
+		}
 		return requestOrigin
 	}
 
@@ -151,6 +157,11 @@ func (handler *Handler) getOrigin(ctx *fasthttp.RequestCtx) string {
 	dynamicOrigin := strings.Builder{}
 	dynamicOrigin.Grow(len(ctx.URI().Scheme()) + len(ctx.URI().Host()) + 3)
 	_, _ = fmt.Fprintf(&dynamicOrigin, "%s://%s", ctx.URI().Scheme(), ctx.URI().Host())
+	if handler.corsConfig.debugPrint {
+		if dynamicOrigin.String() != "" {
+			log.Info("CORS origin build by dynamic URL context:", dynamicOrigin.String())
+		}
+	}
 	return dynamicOrigin.String()
 }
 
@@ -230,6 +241,8 @@ func (handler *Handler) tryUpdateCORS() {
 	if len(handler.corsConfig.Vary) == 0 {
 		handler.corsConfig.Vary = config.Get("CORS_VARY").Strings()
 	}
+
+	handler.corsConfig.debugPrint = config.Get("CORS_DEBUG").Bool()
 }
 
 func (handler *Handler) getVary() string {

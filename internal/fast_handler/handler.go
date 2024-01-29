@@ -13,6 +13,8 @@ type CorsConfig struct {
 	Headers []string
 	Methods []string
 	Vary    []string
+
+	debugPrint bool
 }
 
 type Handler struct {
