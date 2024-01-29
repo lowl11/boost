@@ -1,7 +1,6 @@
 package greeting
 
 import (
-	"github.com/lowl11/boost/internal/boosties/static_controller"
 	"github.com/lowl11/boost/pkg/system/types"
 	"os"
 	"strings"
@@ -12,13 +11,14 @@ func (greeting *Greeting) getHttpStatistic() string {
 		startLine = " │ "
 		endLine   = " │\n"
 
-		_spaces = 17
+		_spaces                     = 17
+		staticControllerRoutesCount = 2
 	)
 
 	builder := strings.Builder{}
 
 	// first line
-	routes := types.ToString(greeting.counter.GetRoutes() - static_controller.RouteCount)
+	routes := types.ToString(greeting.counter.GetRoutes() - staticControllerRoutesCount)
 	groups := types.ToString(greeting.counter.GetGroups())
 
 	builder.WriteString(color(startLine, greeting.getMainColor()))
