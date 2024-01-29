@@ -5,9 +5,8 @@ import (
 	"context"
 	"encoding/json"
 	"encoding/xml"
-	"github.com/lowl11/boost/internal/helpers/request_helper"
-	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/system/types"
 	"io"
 	"net/http"
 	"strings"
@@ -253,8 +252,8 @@ func (req *Reqy) execute(method, url string, ctx context.Context) error {
 
 	// try to unmarshal response body if response code is success
 	if req.waitForResult && response.StatusCode < http.StatusBadRequest &&
-		!strings.Contains(type_helper.ToString(responseBody, false), "<!DOCTYPE html>") &&
-		!strings.Contains(type_helper.ToString(responseBody, false), "ERROR = ") {
+		!strings.Contains(types.ToString(responseBody), "<!DOCTYPE html>") &&
+		!strings.Contains(types.ToString(responseBody), "ERROR = ") {
 		if err = req.unmarshal(responseBody, &req.result); err != nil {
 			log.Error(err, "Unmarshal result error")
 		}
@@ -294,8 +293,8 @@ func (req *Reqy) createNewRequest(ctx context.Context, method, url string) (*htt
 	}
 
 	// fill meta data
-	request_helper.FillHeaders(request, req.headers)
-	request_helper.FillCookies(request, req.cookies)
+	fillHeaders(request, req.headers)
+	fillCookies(request, req.cookies)
 
 	// set basic auth
 	if req.basicAuth != nil {
@@ -369,4 +368,27 @@ func (response *reqyResponse) Status() string {
 
 func (response *reqyResponse) StatusCode() int {
 	return response.statusCode
+}
+
+func fillHeaders(request *http.Request, headers map[string]string) {
+	if request == nil || headers == nil {
+		return
+	}
+
+	for key, value := range headers {
+		request.Header.Set(key, value)
+	}
+}
+
+func fillCookies(request *http.Request, cookies map[string]string) {
+	if request == nil || cookies == nil {
+		return
+	}
+
+	for name, value := range cookies {
+		request.AddCookie(&http.Cookie{
+			Name:  name,
+			Value: value,
+		})
+	}
 }
