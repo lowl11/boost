@@ -7,8 +7,8 @@ import (
 	"github.com/lowl11/boost/data/enums/content_types"
 	"github.com/lowl11/boost/data/enums/headers"
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/valyala/fasthttp"
 	"io"
 	"net/http"
@@ -25,7 +25,7 @@ func (ctx *Context) Response() *fasthttp.Response {
 }
 
 func (ctx *Context) Method() string {
-	return type_helper.BytesToString(ctx.inner.Method())
+	return types.BytesToString(ctx.inner.Method())
 }
 
 func (ctx *Context) Scheme() string {
@@ -84,41 +84,41 @@ func (ctx *Context) SetParams(params map[string]string) *Context {
 }
 
 func (ctx *Context) QueryParam(name string) interfaces.Param {
-	return NewParam(type_helper.BytesToString(ctx.inner.URI().QueryArgs().Peek(name)))
+	return NewParam(types.BytesToString(ctx.inner.URI().QueryArgs().Peek(name)))
 }
 
 func (ctx *Context) QueryParams() map[string]interfaces.Param {
 	params := make(map[string]interfaces.Param)
 	ctx.inner.QueryArgs().VisitAll(func(key, value []byte) {
-		params[type_helper.BytesToString(key)] = NewParam(type_helper.BytesToString(value))
+		params[types.BytesToString(key)] = NewParam(types.BytesToString(value))
 	})
 
 	return params
 }
 
 func (ctx *Context) Header(name string) string {
-	return type_helper.BytesToString(ctx.inner.Request.Header.Peek(name))
+	return types.BytesToString(ctx.inner.Request.Header.Peek(name))
 }
 
 func (ctx *Context) Headers() map[string]string {
 	requestHeaders := make(map[string]string)
 
 	ctx.inner.Request.Header.VisitAll(func(key, value []byte) {
-		requestHeaders[type_helper.BytesToString(key)] = type_helper.BytesToString(value)
+		requestHeaders[types.BytesToString(key)] = types.BytesToString(value)
 	})
 
 	return requestHeaders
 }
 
 func (ctx *Context) Cookie(name string) string {
-	return type_helper.BytesToString(ctx.inner.Request.Header.Cookie(name))
+	return types.BytesToString(ctx.inner.Request.Header.Cookie(name))
 }
 
 func (ctx *Context) Cookies() map[string]string {
 	cookies := make(map[string]string)
 
 	ctx.inner.Request.Header.VisitAllCookie(func(key, value []byte) {
-		cookies[type_helper.BytesToString(key)] = type_helper.BytesToString(value)
+		cookies[types.BytesToString(key)] = types.BytesToString(value)
 	})
 
 	return cookies
@@ -186,7 +186,7 @@ func (ctx *Context) FormFile(key string) []byte {
 }
 
 func (ctx *Context) IsWebSocket() bool {
-	headerUpgrade := type_helper.BytesToString(ctx.inner.Request.Header.Peek("Upgrade"))
+	headerUpgrade := types.BytesToString(ctx.inner.Request.Header.Peek("Upgrade"))
 	return strings.EqualFold(headerUpgrade, "websocket")
 }
 
@@ -232,7 +232,7 @@ func (ctx *Context) Empty() error {
 }
 
 func (ctx *Context) String(message string) error {
-	ctx.writer.Write(content_types.Text, ctx.status, type_helper.StringToBytes(message))
+	ctx.writer.Write(content_types.Text, ctx.status, types.StringToBytes(message))
 
 	return nil
 

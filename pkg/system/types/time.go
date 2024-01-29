@@ -1,10 +1,23 @@
 package types
 
 import (
-	"github.com/lowl11/boost/internal/helpers/type_helper"
+	"github.com/lowl11/boost/pkg/system/types/timec"
 	"time"
 )
 
 func StringToTime(value, format string) time.Time {
-	return type_helper.StringToTime(value, format)
+	parsedTime, err := time.Parse(format, value)
+	if err != nil {
+		return zeroTime()
+	}
+
+	return parsedTime
+}
+
+func IsZeroTime(timeValue timec.Time) bool {
+	return timeValue.IsZero()
+}
+
+func zeroTime() time.Time {
+	return time.Time{}
 }

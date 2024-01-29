@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/boosties/errors"
-	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/system/types"
 	"net/http"
 	"strings"
@@ -19,7 +18,7 @@ func BasicAuth(username, password string) types.MiddlewareFunc {
 			return ctx.Error(errorBasicAuthParseHeader(err))
 		}
 
-		parsedUsername, parsedPassword, found := strings.Cut(type_helper.BytesToString(parsedToken), ":")
+		parsedUsername, parsedPassword, found := strings.Cut(types.BytesToString(parsedToken), ":")
 		if !found {
 			return ctx.Error(errorBasicAuthParseToken())
 		}
@@ -37,7 +36,7 @@ func BasicAuth(username, password string) types.MiddlewareFunc {
 }
 
 func errorBasicAuthParseHeader(err error) error {
-	return errors.New(type_helper.StringFromError(err, "Parse header error")).
+	return errors.New(types.StringFromError(err, "Parse header error")).
 		SetType("ErrorBasicAuthParseHeader").
 		SetHttpCode(http.StatusUnauthorized)
 }

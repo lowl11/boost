@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/lowl11/boost/data/enums/headers"
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/pkg/system/types"
 )
 
@@ -45,7 +44,7 @@ func SecureWithConfig(config SecureConfig) types.MiddlewareFunc {
 			res.Header.Set(headers.HeaderXFrameOptions, config.XFrameOptions)
 		}
 
-		if (ctx.IsTLS() || (type_helper.BytesToString(req.Header.Peek(headers.HeaderXForwardedProto)) == "https")) &&
+		if (ctx.IsTLS() || (types.BytesToString(req.Header.Peek(headers.HeaderXForwardedProto)) == "https")) &&
 			config.HSTSMaxAge != 0 {
 			subdomains := ""
 			if !config.HSTSExcludeSubdomains {

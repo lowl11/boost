@@ -1,4 +1,4 @@
-package type_helper
+package types
 
 func IsPrimitive(value any) bool {
 	return isInteger(value) || isString(value) || isBool(value) || isFloat(value)

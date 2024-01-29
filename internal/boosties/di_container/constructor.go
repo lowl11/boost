@@ -2,8 +2,8 @@ package di_container
 
 import (
 	"github.com/lowl11/boost/data/enums/di_modes"
-	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/system/types"
 	"reflect"
 	"strings"
 )
@@ -22,7 +22,7 @@ func callValues(tq *tQueue, constructor any, services map[reflect.Type]*serviceI
 		} else {
 			argType = reflect.New(constructorType.In(i))
 		}
-		unwrappedArgType := type_helper.UnwrapValue(argType)
+		unwrappedArgType := types.UnwrapValue(argType)
 
 		// service case
 		argService, isArgService := services[unwrappedArgType.Type()]
@@ -130,7 +130,7 @@ func (c *constructor) IsReturnMatch(returnType reflect.Type) *constructor {
 		panic("Constructor returns anything")
 	}
 
-	realReturnType := type_helper.UnwrapType(c.t.Out(0))
+	realReturnType := types.UnwrapType(c.t.Out(0))
 	if realReturnType != returnType {
 		panic("Constructor return value type is not correct")
 	}
@@ -141,7 +141,7 @@ func (c *constructor) IsReturnMatch(returnType reflect.Type) *constructor {
 func (c *constructor) GetDependencies() []reflect.Type {
 	deps := make([]reflect.Type, 0, c.t.NumIn())
 	for i := 0; i < c.t.NumIn(); i++ {
-		dep := type_helper.UnwrapType(c.t.In(i))
+		dep := types.UnwrapType(c.t.In(i))
 		deps = append(deps, dep)
 	}
 	return deps

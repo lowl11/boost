@@ -3,12 +3,12 @@ package context
 import (
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/boosties/errors"
-	"github.com/lowl11/boost/internal/helpers/type_helper"
+	"github.com/lowl11/boost/pkg/system/types"
 )
 
 func (ctx *Context) returnOKObject(value any) error {
-	if type_helper.IsPrimitive(value) {
-		return ctx.String(type_helper.ToString(value, false))
+	if types.IsPrimitive(value) {
+		return ctx.String(types.ToString(value))
 	}
 
 	return ctx.JSON(value)
@@ -20,8 +20,8 @@ func (ctx *Context) redirect(url string, customStatus ...int) error {
 	}
 
 	ctx.inner.Response.Header.SetCanonical(
-		type_helper.StringToBytes("Location"),
-		type_helper.StringToBytes(url),
+		types.StringToBytes("Location"),
+		types.StringToBytes(url),
 	)
 
 	if len(customStatus) > 0 {

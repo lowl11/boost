@@ -2,7 +2,7 @@ package greeting
 
 import (
 	"github.com/lowl11/boost/internal/boosties/static_controller"
-	"github.com/lowl11/boost/internal/helpers/type_helper"
+	"github.com/lowl11/boost/pkg/system/types"
 	"os"
 	"strings"
 )
@@ -18,8 +18,8 @@ func (greeting *Greeting) getHttpStatistic() string {
 	builder := strings.Builder{}
 
 	// first line
-	routes := type_helper.ToString(greeting.counter.GetRoutes()-static_controller.RouteCount, false)
-	groups := type_helper.ToString(greeting.counter.GetGroups(), false)
+	routes := types.ToString(greeting.counter.GetRoutes() - static_controller.RouteCount)
+	groups := types.ToString(greeting.counter.GetGroups())
 
 	builder.WriteString(color(startLine, greeting.getMainColor()))
 	builder.WriteString("Routes: ........")
@@ -33,7 +33,7 @@ func (greeting *Greeting) getHttpStatistic() string {
 
 	// second line
 	port := greeting.ctx.Port
-	pid := type_helper.ToString(os.Getpid(), false)
+	pid := types.ToString(os.Getpid())
 
 	builder.WriteString(color(startLine, greeting.getMainColor()))
 	builder.WriteString("Port: ..........")
@@ -60,7 +60,7 @@ func (greeting *Greeting) getRPCStatistic() string {
 
 	// first line
 	port := greeting.ctx.Port
-	pid := type_helper.ToString(os.Getpid(), false)
+	pid := types.ToString(os.Getpid())
 
 	builder.WriteString(color(startLine, greeting.getMainColor()))
 	builder.WriteString("Port: ..........")
@@ -86,8 +86,8 @@ func (greeting *Greeting) getCronStatistic() string {
 	builder := strings.Builder{}
 
 	// first line
-	actions := type_helper.ToString(greeting.counter.GetCronActions(), false)
-	pid := type_helper.ToString(os.Getpid(), false)
+	actions := types.ToString(greeting.counter.GetCronActions())
+	pid := types.ToString(os.Getpid())
 
 	builder.WriteString(color(startLine, greeting.getMainColor()))
 	builder.WriteString("Actions: ........")
@@ -113,8 +113,8 @@ func (greeting *Greeting) getListenerStatistic() string {
 	builder := strings.Builder{}
 
 	// first line
-	binds := type_helper.ToString(greeting.counter.GetListenerBind(), false)
-	pid := type_helper.ToString(os.Getpid(), false)
+	binds := types.ToString(greeting.counter.GetListenerBind())
+	pid := types.ToString(os.Getpid())
 
 	builder.WriteString(color(startLine, greeting.getMainColor()))
 	builder.WriteString("Binds: ........")

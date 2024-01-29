@@ -7,7 +7,6 @@ import (
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/boosties/context"
 	"github.com/lowl11/boost/internal/boosties/panicer"
-	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/valyala/fasthttp"
@@ -71,7 +70,7 @@ func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
 	}
 
 	// find route
-	routeCtx, ok := handler.router.Search(type_helper.BytesToString(ctx.Path()))
+	routeCtx, ok := handler.router.Search(types.BytesToString(ctx.Path()))
 
 	// if route not found
 	if !ok {
@@ -81,7 +80,7 @@ func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
 
 	// if incoming method & registered are not match
 	// in other case, registered may use method "ANY"
-	if routeCtx.Method != type_helper.BytesToString(ctx.Method()) && routeCtx.Method != methodAny {
+	if routeCtx.Method != types.BytesToString(ctx.Method()) && routeCtx.Method != methodAny {
 		writeError(ctx, errors.ErrorMethodNotAllowed())
 		return
 	}
@@ -134,7 +133,7 @@ func writePanicError(ctx *fasthttp.RequestCtx, err error) {
 func writeError(ctx *fasthttp.RequestCtx, err interfaces.Error) {
 	ctx.SetStatusCode(err.HttpCode())
 	ctx.Response.Header.Set("Content-Type", err.ContentType())
-	ctx.SetBody(type_helper.StringToBytes(err.Error()))
+	ctx.SetBody(types.StringToBytes(err.Error()))
 }
 
 func (handler *Handler) getOrigin(ctx *fasthttp.RequestCtx) string {

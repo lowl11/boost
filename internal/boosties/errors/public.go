@@ -5,7 +5,7 @@ import (
 	"github.com/lowl11/boost/data/enums/content_types"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/helpers/error_helper"
-	"github.com/lowl11/boost/internal/helpers/type_helper"
+	"github.com/lowl11/boost/pkg/system/types"
 	"google.golang.org/grpc/codes"
 	"strings"
 )
@@ -98,7 +98,7 @@ func (err *Error) Error() string {
 	}
 
 	outputInBytes, _ := json.Marshal(output)
-	return type_helper.BytesToString(outputInBytes)
+	return types.BytesToString(outputInBytes)
 }
 
 func (err *Error) JSON() []byte {
@@ -144,7 +144,7 @@ func (err *Error) String() string {
 
 			builder.WriteString(key)
 			builder.WriteString("=")
-			builder.WriteString(type_helper.ToString(value, false))
+			builder.WriteString(types.ToString(value))
 			builder.WriteString(";")
 		}
 	}

@@ -1,4 +1,4 @@
-package type_helper
+package types
 
 import "reflect"
 

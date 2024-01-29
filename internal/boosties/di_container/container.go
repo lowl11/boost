@@ -3,7 +3,7 @@ package di_container
 import (
 	"github.com/lowl11/boost/data/enums/di_modes"
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/helpers/type_helper"
+	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/flex"
 	"reflect"
 	"sync"
@@ -45,19 +45,19 @@ func Get() interfaces.DependencyContainer {
 }
 
 func (c *container) SetControllerInterface(controllerInterfaceType reflect.Type) {
-	c.controllerInterfaceType = type_helper.UnwrapType(controllerInterfaceType)
+	c.controllerInterfaceType = types.UnwrapType(controllerInterfaceType)
 	c.registerEndpointsMethodName = c.controllerInterfaceType.Method(0).Name
 }
 
 func (c *container) SetAppType(appType reflect.Type) {
-	c.appType = type_helper.UnwrapType(appType)
+	c.appType = types.UnwrapType(appType)
 }
 
 func (c *container) Register(t reflect.Type, constructor any, mode int, dependencies ...any) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	t = type_helper.UnwrapType(t)
+	t = types.UnwrapType(t)
 
 	// check mode
 	if mode < 1 || mode > 3 {
@@ -83,7 +83,7 @@ func (c *container) Register(t reflect.Type, constructor any, mode int, dependen
 }
 
 func (c *container) RegisterImplementation(impl any) {
-	c.services[type_helper.UnwrapType(reflect.TypeOf(impl))] = &serviceInfo{
+	c.services[types.UnwrapType(reflect.TypeOf(impl))] = &serviceInfo{
 		mode:     di_modes.Singleton,
 		instance: impl,
 	}
@@ -159,7 +159,7 @@ func (c *container) Get(t reflect.Type, params ...any) any {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	t = type_helper.UnwrapType(t)
+	t = types.UnwrapType(t)
 
 	service, ok := c.services[t]
 	if !ok {
