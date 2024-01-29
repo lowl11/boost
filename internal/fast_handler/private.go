@@ -1,7 +1,6 @@
 package fast_handler
 
 import (
-	"fmt"
 	"github.com/lowl11/boost/config"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/errors"
@@ -153,16 +152,22 @@ func (handler *Handler) getOrigin(ctx *fasthttp.RequestCtx) string {
 		return requestOrigin
 	}
 
+	requestOrigin = types.ToString(ctx.Request.Header.Peek("X-Forwarded-For"))
+	if requestOrigin != "" {
+		if handler.corsConfig.debugPrint {
+			log.Info("CORS origin from request 'X-Forwarded-For' header:", requestOrigin)
+		}
+		return requestOrigin
+	}
+
 	// try to build dynamic
-	dynamicOrigin := strings.Builder{}
-	dynamicOrigin.Grow(len(ctx.URI().Scheme()) + len(ctx.URI().Host()) + 3)
-	_, _ = fmt.Fprintf(&dynamicOrigin, "%s://%s", ctx.URI().Scheme(), ctx.URI().Host())
+	referer := types.ToString(ctx.Referer())
 	if handler.corsConfig.debugPrint {
-		if dynamicOrigin.String() != "" {
-			log.Info("CORS origin build by dynamic URL context:", dynamicOrigin.String())
+		if referer != "" {
+			log.Info("CORS origin by referer:", referer)
 		}
 	}
-	return dynamicOrigin.String()
+	return referer
 }
 
 func (handler *Handler) getHeaders(ctx *fasthttp.RequestCtx) string {
