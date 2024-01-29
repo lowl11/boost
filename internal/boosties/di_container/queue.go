@@ -1,7 +1,6 @@
 package di_container
 
 import (
-	"github.com/lowl11/boost/internal/helpers/container_helper"
 	"reflect"
 )
 
@@ -37,7 +36,7 @@ func (q *queue) Dequeue() any {
 	}
 
 	first := q.data[0]
-	q.data = container_helper.Remove(q.data, 0)
+	q.data = remove(q.data, 0)
 	q.len--
 	if q.len == 0 {
 		copy(q.data, q.copyData)
@@ -62,4 +61,8 @@ func (q *queue) Copy() *queue {
 
 func (q *queue) DT() reflect.Type {
 	return q.dataType
+}
+
+func remove[T any](slice []T, index int) []T {
+	return append(slice[:index], slice[index+1:]...)
 }
