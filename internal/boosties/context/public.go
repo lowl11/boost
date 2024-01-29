@@ -7,7 +7,6 @@ import (
 	"github.com/lowl11/boost/data/enums/content_types"
 	"github.com/lowl11/boost/data/enums/headers"
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/controller/domain"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/log"
 	"github.com/valyala/fasthttp"
@@ -351,7 +350,7 @@ func (ctx *Context) Ok(body ...any) error {
 		return ctx.returnOKObject(body[0])
 	}
 
-	return ctx.JSON(domain.NewJustOK())
+	return ctx.JSON(newJustOK())
 }
 
 func (ctx *Context) Created() error {
@@ -363,7 +362,7 @@ func (ctx *Context) CreatedBody(body any) error {
 }
 
 func (ctx *Context) CreatedID(id any) error {
-	return ctx.Status(http.StatusCreated).JSON(domain.NewCreatedWithID(id))
+	return ctx.Status(http.StatusCreated).JSON(newCreatedWithID(id))
 }
 
 func (ctx *Context) NotFound() error {
@@ -375,5 +374,5 @@ func (ctx *Context) NotFoundError(err error) error {
 }
 
 func (ctx *Context) NotFoundString(message string) error {
-	return ctx.Status(http.StatusNotFound).JSON(domain.NewNotFoundMessage(message))
+	return ctx.Status(http.StatusNotFound).JSON(newNotFoundMessage(message))
 }
