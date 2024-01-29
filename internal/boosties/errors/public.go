@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/lowl11/boost/data/enums/content_types"
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/helpers/error_helper"
 	"github.com/lowl11/boost/pkg/system/types"
 	"google.golang.org/grpc/codes"
 	"strings"
@@ -20,7 +19,7 @@ func (err *Error) Message() string {
 
 func (err *Error) SetHttpCode(code int) interfaces.Error {
 	err.httpCode = code
-	err.grpcCode = error_helper.ToGrpcCode(code)
+	err.grpcCode = toGrpcCode(code)
 
 	return err
 }
