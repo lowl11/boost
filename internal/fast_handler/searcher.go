@@ -1,4 +1,4 @@
-package router
+package fast_handler
 
 import (
 	"regexp"

@@ -1,12 +1,50 @@
-package router
+package fast_handler
 
 import (
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/pkg/system/types"
 	"strings"
+	"sync"
 )
 
-func (router *Router) Register(
+type router struct {
+	routes sync.Map
+}
+
+func newRouter() *router {
+	return &router{}
+}
+
+type RouteContext struct {
+	Path   string
+	Method string
+	Action types.HandlerFunc
+
+	WaitParam bool
+	Params    map[string]string
+
+	GroupID     string
+	Middlewares []types.HandlerFunc
+}
+
+func (route *RouteContext) Use(middlewares ...func(ctx interfaces.Context) error) {
+	if len(middlewares) == 0 {
+		return
+	}
+
+	middlewareHandlers := make([]types.HandlerFunc, 0, len(middlewares))
+	for _, middleware := range middlewares {
+		if middleware == nil {
+			continue
+		}
+
+		middlewareHandlers = append(middlewareHandlers, middleware)
+	}
+
+	route.Middlewares = middlewareHandlers
+}
+
+func (router *router) Register(
 	method, path string,
 	action types.HandlerFunc,
 	groupID string,
@@ -37,7 +75,7 @@ func (router *Router) Register(
 	return route
 }
 
-func (router *Router) Get(path string) (*RouteContext, bool) {
+func (router *router) Get(path string) (*RouteContext, bool) {
 	route, ok := router.routes.Load(path)
 	if !ok {
 		return nil, false
@@ -46,7 +84,7 @@ func (router *Router) Get(path string) (*RouteContext, bool) {
 	return route.(*RouteContext), true
 }
 
-func (router *Router) Search(searchPath string) (*RouteContext, bool) {
+func (router *router) Search(searchPath string) (*RouteContext, bool) {
 	// try to find by static path
 	route, ok := router.Get(searchPath)
 

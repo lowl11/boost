@@ -1,7 +1,6 @@
 package fast_handler
 
 import (
-	"github.com/lowl11/boost/internal/boosties/router"
 	"github.com/lowl11/boost/internal/services/counter"
 	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/boost/pkg/system/validator"
@@ -18,7 +17,7 @@ type CorsConfig struct {
 
 type Handler struct {
 	server            *fasthttp.Server
-	router            *router.Router
+	router            *router
 	globalMiddlewares []types.HandlerFunc
 	groupMiddlewares  map[string][]types.HandlerFunc
 	counter           *counter.Counter
@@ -30,7 +29,7 @@ type Handler struct {
 func New(validate *validator.Validator) *Handler {
 	return &Handler{
 		server:            getServer(),
-		router:            router.New(),
+		router:            newRouter(),
 		globalMiddlewares: make([]types.HandlerFunc, 0),
 		groupMiddlewares:  make(map[string][]types.HandlerFunc),
 		counter:           counter.New(),
