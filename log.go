@@ -1,12 +1,12 @@
 package boost
 
 import (
-	"github.com/lowl11/boost/internal/boosties/logging"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
+	"github.com/lowl11/boost/pkg/system/logging"
 )
 
 func initLogger(config Config) {
-	logConfig := logging.LogConfig{
+	logConfig := logging.Config{
 		JsonMode: config.LogJSON,
 		LogLevel: uint(config.LogLevel),
 	}
@@ -17,6 +17,4 @@ func initLogger(config Config) {
 	if config.CustomLoggers != nil && len(config.CustomLoggers) > 0 {
 		logConfig.CustomLoggers = config.CustomLoggers
 	}
-
-	logging.Init(logConfig)
 }

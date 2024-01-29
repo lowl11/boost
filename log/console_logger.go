@@ -1,8 +1,23 @@
-package file_logger
+package log
 
 import (
+	"github.com/lowl11/boost/internal/helpers/console_tools"
 	"github.com/lowl11/boost/internal/helpers/message_tools"
+	"log"
+	"os"
 )
+
+type consoleLogger struct {
+	writer *log.Logger
+}
+
+func newConsole() *consoleLogger {
+	writer := log.New(os.Stdout, "", 0)
+
+	return &consoleLogger{
+		writer: writer,
+	}
+}
 
 const (
 	debugLevel = "[DEBUG] "
@@ -18,8 +33,7 @@ const (
 	jsonFatalLevel = "FATAL"
 )
 
-func (logger *Logger) Debug(args ...any) {
-	logger.updateFile()
+func (logger *consoleLogger) Debug(args ...any) {
 	var message string
 
 	if !message_tools.JsonMode {
@@ -29,11 +43,10 @@ func (logger *Logger) Debug(args ...any) {
 		message = message_tools.Json(jsonDebugLevel, args...)
 	}
 
-	logger.writer.Println(message)
+	logger.writer.Println(console_tools.Debug(message))
 }
 
-func (logger *Logger) Info(args ...any) {
-	logger.updateFile()
+func (logger *consoleLogger) Info(args ...any) {
 	var message string
 
 	if !message_tools.JsonMode {
@@ -43,11 +56,10 @@ func (logger *Logger) Info(args ...any) {
 		message = message_tools.Json(jsonInfoLevel, args...)
 	}
 
-	logger.writer.Println(message)
+	logger.writer.Println(console_tools.Info(message))
 }
 
-func (logger *Logger) Warn(args ...any) {
-	logger.updateFile()
+func (logger *consoleLogger) Warn(args ...any) {
 	var message string
 
 	if !message_tools.JsonMode {
@@ -57,33 +69,31 @@ func (logger *Logger) Warn(args ...any) {
 		message = message_tools.Json(jsonWarnLevel, args...)
 	}
 
-	logger.writer.Println(message)
+	logger.writer.Println(console_tools.Warn(message))
 }
 
-func (logger *Logger) Error(err error, args ...any) {
-	logger.updateFile()
+func (logger *consoleLogger) Error(args ...any) {
 	var message string
 
 	if !message_tools.JsonMode {
 		logger.writer.SetPrefix(message_tools.BuildPrefix(errorLevel))
-		message = message_tools.BuildError(err, args...)
+		message = message_tools.Build(args...)
 	} else {
-		message = message_tools.JsonError(err, jsonErrorLevel, args...)
+		message = message_tools.Json(jsonErrorLevel, args...)
 	}
 
-	logger.writer.Println(message)
+	logger.writer.Println(console_tools.Error(message))
 }
 
-func (logger *Logger) Fatal(err error, args ...any) {
-	logger.updateFile()
+func (logger *consoleLogger) Fatal(args ...any) {
 	var message string
 
 	if !message_tools.JsonMode {
 		logger.writer.SetPrefix(message_tools.BuildPrefix(fatalLevel))
-		message = message_tools.BuildError(err, args...)
+		message = message_tools.Build(args...)
 	} else {
-		message = message_tools.JsonError(err, jsonFatalLevel, args...)
+		message = message_tools.Json(jsonFatalLevel, args...)
 	}
 
-	logger.writer.Println(message)
+	logger.writer.Println(console_tools.Fatal(message))
 }

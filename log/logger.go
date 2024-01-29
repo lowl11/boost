@@ -1,23 +1,23 @@
-package logapi
+package log
 
 import (
-	"github.com/lowl11/boost/data/enums/log_levels"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/helpers/message_tools"
-	"github.com/lowl11/boost/internal/services/logging/line_service"
-	"github.com/lowl11/boost/internal/services/logging/logapi/loggers/console_logger"
-	"github.com/lowl11/boost/internal/services/logging/logapi/loggers/file_logger"
-
+	"github.com/lowl11/boost/pkg/system/logging"
 	"os"
 	"sync"
 	"time"
 )
 
-type Logger struct {
+const (
+	defaultExitDuration = 250
+)
+
+type logger struct {
 	loggers       []interfaces.ILogger
 	customLoggers []interfaces.ILogger
 	mutex         sync.Mutex
-	line          *line_service.Service
+	line          *line
 
 	exitDuration     time.Duration
 	customDuration   time.Duration
@@ -26,18 +26,55 @@ type Logger struct {
 	level uint
 }
 
-func New() *Logger {
-	return &Logger{
+func getLogger() *logger {
+	if _logger != nil {
+		return _logger
+	}
+
+	_logger = &logger{
 		loggers: []interfaces.ILogger{
-			console_logger.Create(),
+			newConsole(),
 		},
 		mutex:        sync.Mutex{},
 		exitDuration: time.Millisecond * defaultExitDuration,
 	}
+
+	config := logging.GetConfig()
+
+	// custom loggers
+	for _, customLogger := range config.CustomLoggers {
+		_logger.Custom(customLogger)
+	}
+
+	// file logger
+	if !config.NoFile {
+		_logger.File(logging.GetFileAndFolder(config))
+	}
+
+	// no time flag
+	if config.NoTime {
+		_logger.NoTime()
+	}
+
+	// no prefix flag
+	if config.NoPrefix {
+		_logger.NoPrefix()
+	}
+
+	// json mode
+	if config.JsonMode {
+		_logger.JSON()
+	}
+
+	if config.LogLevel > 0 {
+		_logger.Level(config.LogLevel)
+	}
+
+	return _logger
 }
 
-func (logger *Logger) Level(level uint) *Logger {
-	if level > log_levels.FATAL {
+func (logger *logger) Level(level uint) *logger {
+	if level > _FATAL {
 		return logger
 	}
 
@@ -45,29 +82,30 @@ func (logger *Logger) Level(level uint) *Logger {
 	return logger
 }
 
-func (logger *Logger) File(fileBase string, filePath ...string) *Logger {
+func (logger *logger) File(fileBase string, filePath ...string) *logger {
 	var singleFilePath string
 	if len(filePath) > 0 {
 		singleFilePath = filePath[0]
 	}
 
-	logger.loggers = append(logger.loggers, file_logger.Create(fileBase, singleFilePath))
+	logger.loggers = append(logger.loggers, newFile(fileBase, singleFilePath))
 	return logger
 }
 
-func (logger *Logger) Custom(customLogger ILogger) *Logger {
+func (logger *logger) Custom(customLogger interfaces.ILogger) *logger {
 	logger.customLoggers = append(logger.customLoggers, customLogger)
 	if !logger.isCustomDuration {
 		logger.exitDuration = logger.exitDuration + time.Millisecond*defaultExitDuration
 	}
 
 	if logger.line == nil && len(logger.customLoggers) > 0 {
-		logger.line = line_service.New()
+		logger.line = newLine()
 	}
+
 	return logger
 }
 
-func (logger *Logger) CustomExitDuration(duration time.Duration) *Logger {
+func (logger *logger) CustomExitDuration(duration time.Duration) *logger {
 	if duration < defaultExitDuration {
 		return logger
 	}
@@ -78,22 +116,22 @@ func (logger *Logger) CustomExitDuration(duration time.Duration) *Logger {
 	return logger
 }
 
-func (logger *Logger) JSON() *Logger {
+func (logger *logger) JSON() *logger {
 	message_tools.JsonMode = true
 	return logger
 }
 
-func (logger *Logger) NoTime() *Logger {
+func (logger *logger) NoTime() *logger {
 	message_tools.NoTimeMode = true
 	return logger
 }
 
-func (logger *Logger) NoPrefix() *Logger {
+func (logger *logger) NoPrefix() *logger {
 	message_tools.NoPrefixMode = true
 	return logger
 }
 
-func (logger *Logger) Debug(args ...any) {
+func (logger *logger) Debug(args ...any) {
 	if len(args) == 0 {
 		return
 	}
@@ -102,7 +140,7 @@ func (logger *Logger) Debug(args ...any) {
 	defer logger.mutex.Unlock()
 
 	// skip log by level
-	if log_levels.Check(logger.level, log_levels.DEBUG) {
+	if checkLevel(logger.level, _DEBUG) {
 		return
 	}
 
@@ -115,7 +153,7 @@ func (logger *Logger) Debug(args ...any) {
 	}
 }
 
-func (logger *Logger) Info(args ...any) {
+func (logger *logger) Info(args ...any) {
 	if len(args) == 0 {
 		return
 	}
@@ -124,7 +162,7 @@ func (logger *Logger) Info(args ...any) {
 	defer logger.mutex.Unlock()
 
 	// skip log by level
-	if log_levels.Check(logger.level, log_levels.INFO) {
+	if checkLevel(logger.level, _INFO) {
 		return
 	}
 
@@ -137,7 +175,7 @@ func (logger *Logger) Info(args ...any) {
 	}
 }
 
-func (logger *Logger) Warn(args ...any) {
+func (logger *logger) Warn(args ...any) {
 	if len(args) == 0 {
 		return
 	}
@@ -146,7 +184,7 @@ func (logger *Logger) Warn(args ...any) {
 	defer logger.mutex.Unlock()
 
 	// skip log by level
-	if log_levels.Check(logger.level, log_levels.WARN) {
+	if checkLevel(logger.level, _WARN) {
 		return
 	}
 
@@ -159,42 +197,34 @@ func (logger *Logger) Warn(args ...any) {
 	}
 }
 
-func (logger *Logger) Error(err error, args ...any) {
-	if err == nil {
-		return
-	}
-
+func (logger *logger) Error(args ...any) {
 	logger.mutex.Lock()
 	defer logger.mutex.Unlock()
 
 	// skip log by level
-	if log_levels.Check(logger.level, log_levels.ERROR) {
+	if checkLevel(logger.level, _ERROR) {
 		return
 	}
 
 	for _, loggerItem := range logger.loggers {
-		loggerItem.Error(err, args...)
+		loggerItem.Error(args...)
 	}
 
 	for _, customLogger := range logger.customLoggers {
-		logger.line.AddErrorCustom(customLogger.Error, err, args...)
+		logger.line.AddErrorCustom(customLogger.Error, args...)
 	}
 }
 
-func (logger *Logger) Fatal(err error, args ...any) {
-	if err == nil {
-		return
-	}
-
+func (logger *logger) Fatal(args ...any) {
 	logger.mutex.Lock()
 	defer logger.mutex.Unlock()
 
 	for _, loggerItem := range logger.loggers {
-		loggerItem.Fatal(err, args...)
+		loggerItem.Fatal(args...)
 	}
 
 	for _, customLogger := range logger.customLoggers {
-		logger.line.AddErrorCustom(customLogger.Fatal, err, args...)
+		logger.line.AddErrorCustom(customLogger.Fatal, args...)
 	}
 
 	if logger.isCustomDuration {

@@ -2,7 +2,6 @@ package message_tools
 
 import (
 	"encoding/json"
-	"github.com/lowl11/boost/data/interfaces"
 	"strings"
 )
 
@@ -23,33 +22,6 @@ func Build(args ...any) string {
 		stringArgs.WriteString(" ")
 	}
 	return stringArgs.String()[:stringArgs.Len()-1]
-}
-
-func BuildError(err error, args ...any) string {
-	stringArgs := strings.Builder{}
-	for _, arg := range args {
-		stringArgs.WriteString(toString(arg))
-		stringArgs.WriteString(" ")
-	}
-
-	var errorMessage string
-	if err != nil {
-		if boostError, ok := err.(interfaces.Error); ok {
-			errorMessage = boostError.String()
-		} else {
-			errorMessage = err.Error()
-		}
-
-		if stringArgs.Len() > 0 {
-			errorMessage += " | "
-		}
-	}
-
-	if len(args) == 0 {
-		return errorMessage
-	}
-
-	return errorMessage + stringArgs.String()[:stringArgs.Len()-1]
 }
 
 func BuildPrefix(level string) string {
@@ -79,27 +51,6 @@ func Json(level string, args ...any) string {
 		Message: Build(args...),
 		Level:   level,
 		Time:    getTime(),
-	}
-
-	logMessageInBytes, err := json.Marshal(logMessage)
-	if err != nil {
-		return "|ERROR IN BUILDING MESSAGE|"
-	}
-
-	return string(logMessageInBytes)
-}
-
-func JsonError(err error, level string, args ...any) string {
-	var errorMessage string
-	if err != nil {
-		errorMessage = err.Error()
-	}
-
-	logMessage := &LogMessage{
-		Message: Build(args...),
-		Level:   level,
-		Time:    getTime(),
-		Error:   errorMessage,
 	}
 
 	logMessageInBytes, err := json.Marshal(logMessage)

@@ -19,6 +19,10 @@ func Type[T any](key string) *T {
 		return nil
 	}
 
-	x := T(value)
-	return &x
+	converted, ok := value.(T)
+	if !ok {
+		return nil
+	}
+
+	return &converted
 }
