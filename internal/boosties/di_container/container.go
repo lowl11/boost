@@ -3,7 +3,6 @@ package di_container
 import (
 	"github.com/lowl11/boost/data/enums/di_modes"
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/containers/tqueue"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/flex"
 	"reflect"
@@ -14,7 +13,7 @@ type serviceInfo struct {
 	constructor any
 	mode        int
 	instance    any
-	tq          *tqueue.Queue
+	tq          *tQueue
 }
 
 type container struct {
@@ -70,7 +69,7 @@ func (c *container) Register(t reflect.Type, constructor any, mode int, dependen
 		IsFunc().
 		IsReturnMatch(t)
 
-	tq := tqueue.New()
+	tq := newTQueue()
 	for _, dep := range dependencies {
 		tq.Enqueue(dep)
 	}

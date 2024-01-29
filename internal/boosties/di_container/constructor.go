@@ -2,14 +2,13 @@ package di_container
 
 import (
 	"github.com/lowl11/boost/data/enums/di_modes"
-	"github.com/lowl11/boost/internal/containers/tqueue"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
 	"github.com/lowl11/boost/log"
 	"reflect"
 	"strings"
 )
 
-func callValues(tq *tqueue.Queue, constructor any, services map[reflect.Type]*serviceInfo) []reflect.Value {
+func callValues(tq *tQueue, constructor any, services map[reflect.Type]*serviceInfo) []reflect.Value {
 	constructorType := reflect.TypeOf(constructor)
 
 	argsCount := constructorType.NumIn()
@@ -74,7 +73,7 @@ func callValues(tq *tqueue.Queue, constructor any, services map[reflect.Type]*se
 	return reflect.ValueOf(constructor).Call(arguments)
 }
 
-func call(tq *tqueue.Queue, constructor any, services map[reflect.Type]*serviceInfo) any {
+func call(tq *tQueue, constructor any, services map[reflect.Type]*serviceInfo) any {
 	var result = callValues(tq, constructor, services)
 	if len(result) == 0 {
 		return nil
