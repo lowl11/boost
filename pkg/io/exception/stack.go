@@ -1,28 +1,12 @@
-package panicer
+package exception
 
 import (
 	"fmt"
-	"github.com/lowl11/boost/errors"
 	"runtime"
 	"strings"
 )
 
-func Handle(err any) error {
-	if err == nil {
-		return nil
-	}
-
-	parsedError := fromAny(err)
-	return errors.New("PANIC RECOVER: "+parsedError).
-		SetType("PanicError").
-		AddContext("trace", getStackTrace())
-}
-
 func StackTrace() []string {
-	return getStackTrace()
-}
-
-func getStackTrace() []string {
 	stackTrace := make([]string, 0, 10)
 
 	var file string

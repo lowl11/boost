@@ -6,8 +6,8 @@ import (
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/internal/boosties/context"
-	"github.com/lowl11/boost/internal/boosties/panicer"
 	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/io/exception"
 	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/valyala/fasthttp"
 	"net/http"
@@ -35,7 +35,7 @@ func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
 
 	// handler panic
 	defer func() {
-		err := panicer.Handle(recover())
+		err := exception.CatchPanic(recover())
 		if err == nil {
 			return
 		}

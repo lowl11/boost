@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/errors"
-	"github.com/lowl11/boost/internal/boosties/panicer"
+	"github.com/lowl11/boost/pkg/io/exception"
 	"github.com/lowl11/boost/pkg/system/types"
 	"net/http"
 	"time"
@@ -29,7 +29,7 @@ func Timeout(timeout time.Duration) types.MiddlewareFunc {
 
 		go func() {
 			defer func() {
-				errorChannel <- panicer.Handle(recover())
+				errorChannel <- exception.CatchPanic(recover())
 			}()
 			if err := ctx.Next(); err != nil {
 				errorChannel <- err

@@ -2,8 +2,8 @@ package runner
 
 import (
 	"github.com/lowl11/boost/data/funcs"
-	"github.com/lowl11/boost/internal/boosties/panicer"
 	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/io/exception"
 	"time"
 )
 
@@ -38,7 +38,7 @@ func (runner *Runner) FromStart(fromStart bool) *Runner {
 func (runner *Runner) runAction() {
 	defer func() {
 		if err := recover(); err != nil {
-			log.Error(panicer.Handle(err), "PANIC RECOVERED")
+			log.Error(exception.CatchPanic(err), "PANIC RECOVERED")
 		}
 	}()
 
