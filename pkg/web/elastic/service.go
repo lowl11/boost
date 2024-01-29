@@ -1,20 +1,50 @@
-package elk_service
+package elastic
 
 import (
 	"context"
 	"encoding/json"
 	"github.com/lowl11/boost/data/entity"
-	"github.com/lowl11/boost/internal/boosties/errors"
+	"github.com/lowl11/boost/data/enums/content_types"
+	"github.com/lowl11/boost/data/errors"
 	"github.com/lowl11/boost/internal/helpers/elk_parser"
+	"github.com/lowl11/boost/pkg/web/requests"
 	"net/http"
+	"time"
 )
 
-func (service *Service) SetAuth(username, password string) *Service {
+type service struct {
+	client *requests.Service
+}
+
+var instance *service
+
+func getService(host ...string) *service {
+	if instance != nil {
+		return instance
+	}
+
+	var hostValue string
+	if len(host) > 0 {
+		hostValue = host[0]
+	}
+
+	instance = &service{
+		client: requests.
+			New().
+			SetBaseURL(hostValue).
+			SetHeader("Content-Type", content_types.JSON).
+			SetRetryCount(3).
+			SetRetryWaitTime(time.Millisecond * 100),
+	}
+	return instance
+}
+
+func (service *service) SetAuth(username, password string) *service {
 	service.client.SetBasicAuth(username, password)
 	return service
 }
 
-func (service *Service) Ping(ctx context.Context) error {
+func (service *service) Ping(ctx context.Context) error {
 	response, err := service.client.
 		R().
 		SetContext(ctx).
@@ -33,7 +63,7 @@ func (service *Service) Ping(ctx context.Context) error {
 	return nil
 }
 
-func (service *Service) GetIndices(ctx context.Context) ([]entity.ElasticIndex, error) {
+func (service *service) GetIndices(ctx context.Context) ([]entity.ElasticIndex, error) {
 	var indices []entity.ElasticIndex
 
 	response, err := service.client.
@@ -42,7 +72,10 @@ func (service *Service) GetIndices(ctx context.Context) ([]entity.ElasticIndex, 
 		SetResult(&indices).
 		GET("/_cat/indices?format=json")
 	if err != nil {
-		return nil, ErrorGetAllIndices(err)
+		return nil, errors.
+			New("Get all indices error").
+			SetType("ELK_GetAllIndicesError").
+			SetError(err)
 	}
 
 	if response.StatusCode() != http.StatusOK {
@@ -63,7 +96,7 @@ func (service *Service) GetIndices(ctx context.Context) ([]entity.ElasticIndex, 
 	return filtered, nil
 }
 
-func (service *Service) CreateIndex(ctx context.Context, indexName string, object any, config ...entity.ElasticIndexConfig) error {
+func (service *service) CreateIndex(ctx context.Context, indexName string, object any, config ...entity.ElasticIndexConfig) error {
 	// check for index exist
 	exist, err := service.Exist(ctx, indexName)
 	if err != nil {
@@ -102,7 +135,10 @@ func (service *Service) CreateIndex(ctx context.Context, indexName string, objec
 		SetBody(request).
 		PUT("/" + indexName)
 	if err != nil {
-		return ErrorCreateIndex(err)
+		return errors.
+			New("Create new index error").
+			SetType("ELK_CreateIndexError").
+			SetError(err)
 	}
 
 	// check response code
@@ -116,7 +152,7 @@ func (service *Service) CreateIndex(ctx context.Context, indexName string, objec
 	return nil
 }
 
-func (service *Service) DeleteIndex(ctx context.Context, indexName string) error {
+func (service *service) DeleteIndex(ctx context.Context, indexName string) error {
 	exist, err := service.Exist(ctx, indexName)
 	if err != nil {
 		return err
@@ -131,7 +167,10 @@ func (service *Service) DeleteIndex(ctx context.Context, indexName string) error
 		SetContext(ctx).
 		DELETE("/" + indexName)
 	if err != nil {
-		return ErrorDeleteIndex(err)
+		return errors.
+			New("Delete index error").
+			SetType("ELK_DeleteIndexError").
+			SetError(err)
 	}
 
 	if response.StatusCode() == http.StatusNotFound {
@@ -147,7 +186,7 @@ func (service *Service) DeleteIndex(ctx context.Context, indexName string) error
 	return nil
 }
 
-func (service *Service) BindAlias(ctx context.Context, pairs []entity.ElasticAliasPair) error {
+func (service *service) BindAlias(ctx context.Context, pairs []entity.ElasticAliasPair) error {
 	if len(pairs) == 0 {
 		return nil
 	}
@@ -168,7 +207,10 @@ func (service *Service) BindAlias(ctx context.Context, pairs []entity.ElasticAli
 		SetBody(request).
 		POST("/_aliases")
 	if err != nil {
-		return ErrorBindAlias(err)
+		return errors.
+			New("Bind alias error").
+			SetType("ELK_BindAliasError").
+			SetError(err)
 	}
 
 	if response.StatusCode() != http.StatusOK {
@@ -180,7 +222,7 @@ func (service *Service) BindAlias(ctx context.Context, pairs []entity.ElasticAli
 	return nil
 }
 
-func (service *Service) Insert(ctx context.Context, indexName string, object any) error {
+func (service *service) Insert(ctx context.Context, indexName string, object any) error {
 	id, err := elk_parser.GetID(object)
 	if err != nil {
 		return err
@@ -192,7 +234,10 @@ func (service *Service) Insert(ctx context.Context, indexName string, object any
 		SetBody(object).
 		POST("/" + indexName + "/_doc/" + id)
 	if err != nil {
-		return ErrorInsertData(err)
+		return errors.
+			New("Insert data error").
+			SetType("ELK_InsertDataError").
+			SetError(err)
 	}
 
 	if response.StatusCode() != http.StatusCreated {
@@ -204,13 +249,16 @@ func (service *Service) Insert(ctx context.Context, indexName string, object any
 	return nil
 }
 
-func (service *Service) Delete(ctx context.Context, indexName string, id string) error {
+func (service *service) Delete(ctx context.Context, indexName string, id string) error {
 	response, err := service.client.
 		R().
 		SetContext(ctx).
 		DELETE("/" + indexName + "/_doc/" + id)
 	if err != nil {
-		return ErrorInsertData(err)
+		return errors.
+			New("Delete data error").
+			SetType("ELK_DeleteData").
+			SetError(err)
 	}
 
 	if response.StatusCode() != http.StatusOK {
@@ -222,7 +270,7 @@ func (service *Service) Delete(ctx context.Context, indexName string, id string)
 	return nil
 }
 
-func (service *Service) GetAll(ctx context.Context, indexName string, export any) error {
+func (service *service) GetAll(ctx context.Context, indexName string, export any) error {
 	result := searchResult{}
 
 	response, err := service.client.
@@ -236,7 +284,10 @@ func (service *Service) GetAll(ctx context.Context, indexName string, export any
 		SetResult(&result).
 		POST("/" + indexName + "/_search")
 	if err != nil {
-		return ErrorGetAllDocuments(err)
+		return errors.
+			New("Get all documents error").
+			SetType("ELK_GetAllDocs").
+			SetError(err)
 	}
 
 	if response.StatusCode() != http.StatusOK {
@@ -262,7 +313,7 @@ func (service *Service) GetAll(ctx context.Context, indexName string, export any
 	return nil
 }
 
-func (service *Service) Search(ctx context.Context, indexName string, query map[string]any, export any) error {
+func (service *service) Search(ctx context.Context, indexName string, query map[string]any, export any) error {
 	result := searchResult{}
 
 	response, err := service.client.
@@ -272,7 +323,10 @@ func (service *Service) Search(ctx context.Context, indexName string, query map[
 		SetResult(&result).
 		POST("/" + indexName + "/_search")
 	if err != nil {
-		return ErrorGetAllDocuments(err)
+		return errors.
+			New("Get all documents error").
+			SetType("ELK_GetAllDocsError").
+			SetError(err)
 	}
 
 	if response.StatusCode() == http.StatusNotFound {
@@ -302,7 +356,7 @@ func (service *Service) Search(ctx context.Context, indexName string, query map[
 	return nil
 }
 
-func (service *Service) Exist(ctx context.Context, indexName string) (bool, error) {
+func (service *service) Exist(ctx context.Context, indexName string) (bool, error) {
 	response, err := service.client.
 		R().
 		SetContext(ctx).
