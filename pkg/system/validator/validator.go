@@ -9,10 +9,11 @@ type Validator struct {
 
 func New() (*Validator, error) {
 	base := baseValidator.New()
+
 	if err := base.RegisterValidation("uuid", validateUUID); err != nil {
 		return nil, err // TODO: need implement BoostError?
 	}
-
+	
 	if err := base.RegisterValidation("undefined", validateUndefined); err != nil {
 		return nil, err
 	}

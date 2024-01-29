@@ -3,8 +3,8 @@ package fast_handler
 import (
 	"github.com/lowl11/boost/internal/boosties/router"
 	"github.com/lowl11/boost/internal/services/boost/counter"
-	"github.com/lowl11/boost/internal/services/system/validator"
 	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/system/validator"
 	"github.com/valyala/fasthttp"
 )
 

@@ -3,8 +3,8 @@ package context
 import (
 	"context"
 	"github.com/lowl11/boost/internal/boosties/fast_writer"
-	"github.com/lowl11/boost/internal/services/system/validator"
 	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/system/validator"
 	"github.com/valyala/fasthttp"
 	"net/http"
 	"sync"

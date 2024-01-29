@@ -7,7 +7,7 @@ import (
 	"github.com/lowl11/boost/internal/helpers/event_helper"
 	"github.com/lowl11/boost/internal/queue/rmq_connection"
 	"github.com/lowl11/boost/internal/queue/rmq_service"
-	"github.com/lowl11/boost/internal/services/system/validator"
+	"github.com/lowl11/boost/pkg/system/validator"
 )
 
 const (
