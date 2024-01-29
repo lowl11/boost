@@ -1,6 +1,8 @@
 package initializer
 
-import "github.com/lowl11/boost/pkg/system/config"
+import (
+	"github.com/lowl11/boost/config"
+)
 
 func Run() {
 	if config.IsProduction() {

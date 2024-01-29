@@ -1,9 +1,9 @@
 package boost
 
 import (
+	"github.com/lowl11/boost/config"
 	"github.com/lowl11/boost/internal/boosties/configuration"
 	"github.com/lowl11/boost/internal/helpers/type_helper"
-	"github.com/lowl11/boost/pkg/system/config"
 )
 
 func initConfig(cfg Config) {
