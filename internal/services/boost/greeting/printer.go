@@ -1,4 +1,4 @@
-package printer
+package greeting
 
 import (
 	"fmt"
@@ -8,17 +8,17 @@ import (
 	"strings"
 )
 
-func Print(text string, args ...any) {
+func _print(text string, args ...any) {
 	_, _ = fmt.Fprintf(os.Stdout, text, args...)
 }
 
-func Build(text string, args ...any) string {
+func build(text string, args ...any) string {
 	builder := strings.Builder{}
 	_, _ = fmt.Fprintf(&builder, text, args...)
 	return builder.String()
 }
 
-func Color(text any, color string) string {
+func color(text any, color string) string {
 	textInString := type_helper.ToString(text, false)
 
 	coloredText := strings.Builder{}
@@ -28,7 +28,7 @@ func Color(text any, color string) string {
 	return coloredText.String()
 }
 
-func Spaces(count int) string {
+func spaces(count int) string {
 	const space = " "
 
 	var spaces string

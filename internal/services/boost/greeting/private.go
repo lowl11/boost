@@ -2,7 +2,6 @@ package greeting
 
 import (
 	"github.com/lowl11/boost/data/enums/modes"
-	"github.com/lowl11/boost/internal/services/boost/greeting/printer"
 	"strings"
 )
 
@@ -16,7 +15,7 @@ func (greeting *Greeting) printMessage() {
 		return
 	}
 
-	printer.Print(greeting.message)
+	_print(greeting.message)
 	greeting.printed = true
 }
 
@@ -29,11 +28,11 @@ func (greeting *Greeting) getSpecificColor() string {
 }
 
 func (greeting *Greeting) appendHeader() {
-	greeting.message += printer.Color(header, greeting.getMainColor())
+	greeting.message += color(header, greeting.getMainColor())
 }
 
 func (greeting *Greeting) appendFooter() {
-	greeting.message += printer.Color(footer, greeting.getMainColor())
+	greeting.message += color(footer, greeting.getMainColor())
 }
 
 func (greeting *Greeting) appendLogo() {
@@ -52,12 +51,12 @@ func (greeting *Greeting) appendMode() {
 	modeLength := len(greeting.ctx.Mode)
 
 	builder := strings.Builder{}
-	builder.WriteString(printer.Color(startLine, greeting.getMainColor()))
-	builder.WriteString(printer.Spaces(beforeSpaces))
+	builder.WriteString(color(startLine, greeting.getMainColor()))
+	builder.WriteString(spaces(beforeSpaces))
 	builder.WriteString("Mode: ")
-	builder.WriteString(printer.Color(greeting.ctx.Mode, greeting.getSpecificColor()))
-	builder.WriteString(printer.Spaces(afterSpaces - modeLength + 1))
-	builder.WriteString(printer.Color(endLine, greeting.getMainColor()))
+	builder.WriteString(color(greeting.ctx.Mode, greeting.getSpecificColor()))
+	builder.WriteString(spaces(afterSpaces - modeLength + 1))
+	builder.WriteString(color(endLine, greeting.getMainColor()))
 
 	greeting.message += builder.String()
 }
@@ -81,24 +80,24 @@ func (greeting *Greeting) getLogo() string {
 	builder.WriteString("\n")
 
 	// first line
-	builder.WriteString(printer.Color(startLine, greeting.getMainColor()))
-	builder.WriteString(printer.Color(firstLine, greeting.getSpecificColor()))
-	builder.WriteString(printer.Color(" "+endLine, greeting.getMainColor()))
+	builder.WriteString(color(startLine, greeting.getMainColor()))
+	builder.WriteString(color(firstLine, greeting.getSpecificColor()))
+	builder.WriteString(color(" "+endLine, greeting.getMainColor()))
 
 	// second line
-	builder.WriteString(printer.Color(startLine, greeting.getMainColor()))
-	builder.WriteString(printer.Color(secondLine, greeting.getSpecificColor()))
-	builder.WriteString(printer.Color(endLine, greeting.getMainColor()))
+	builder.WriteString(color(startLine, greeting.getMainColor()))
+	builder.WriteString(color(secondLine, greeting.getSpecificColor()))
+	builder.WriteString(color(endLine, greeting.getMainColor()))
 
 	// third line
-	builder.WriteString(printer.Color(startLine, greeting.getMainColor()))
-	builder.WriteString(printer.Color(thirdLine, greeting.getSpecificColor()))
-	builder.WriteString(printer.Color(" "+endLine, greeting.getMainColor()))
+	builder.WriteString(color(startLine, greeting.getMainColor()))
+	builder.WriteString(color(thirdLine, greeting.getSpecificColor()))
+	builder.WriteString(color(" "+endLine, greeting.getMainColor()))
 
 	// fourth line
-	builder.WriteString(printer.Color(startLine, greeting.getMainColor()))
-	builder.WriteString(printer.Color(fourthLine, greeting.getSpecificColor()))
-	builder.WriteString(printer.Color(endLine, greeting.getMainColor()))
+	builder.WriteString(color(startLine, greeting.getMainColor()))
+	builder.WriteString(color(fourthLine, greeting.getSpecificColor()))
+	builder.WriteString(color(endLine, greeting.getMainColor()))
 
 	return builder.String()
 }
