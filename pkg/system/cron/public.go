@@ -2,9 +2,9 @@ package cron
 
 import (
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/services/cron/runner"
-	"github.com/lowl11/boost/internal/services/cron/schedulers/cron_scheduler"
-	"github.com/lowl11/boost/internal/services/cron/schedulers/every_scheduler"
+	"github.com/lowl11/boost/internal/cron/runner"
+	"github.com/lowl11/boost/internal/cron/schedulers/cron_scheduler"
+	"github.com/lowl11/boost/internal/cron/schedulers/every_scheduler"
 	"time"
 )
 
@@ -24,8 +24,7 @@ func (cron *Cron) Run() {
 	time.Sleep(time.Millisecond * 250)
 
 	for _, scheduler := range cron.schedulers {
-		go runner.
-			New(scheduler).
+		go runner.New(scheduler).
 			ErrorHandler(cron.errorHandler).
 			FromStart(scheduler.GetStart()).
 			StartTicker()

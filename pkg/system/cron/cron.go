@@ -3,7 +3,7 @@ package cron
 import (
 	"github.com/lowl11/boost/data/funcs"
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/services/boost/counter"
+	"github.com/lowl11/boost/internal/services/counter"
 	"sync"
 )
 

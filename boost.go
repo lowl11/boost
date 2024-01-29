@@ -3,8 +3,7 @@ package boost
 import (
 	"github.com/lowl11/boost/internal/boosties/di_container"
 	"github.com/lowl11/boost/internal/fast_handler"
-	"github.com/lowl11/boost/internal/services/boost/healthcheck"
-	"github.com/lowl11/boost/internal/services/initializer"
+	"github.com/lowl11/boost/internal/services/healthcheck"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/cron"
 	"github.com/lowl11/boost/pkg/system/types"
@@ -85,7 +84,7 @@ type App struct {
 // New method creates new instance of Boost App
 func New(configs ...Config) *App {
 	// run initializer
-	initializer.Run()
+	runInitializer()
 
 	// register "Controller" interface type, it will be used by method "MapControllers()"
 	di_container.Get().SetControllerInterface(reflect.TypeOf(new(Controller)))

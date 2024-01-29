@@ -1,12 +1,34 @@
-package initializer
+package boost
 
 import (
+	"github.com/lowl11/boost/config"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/io/file"
 	"github.com/lowl11/boost/pkg/io/folder"
 )
 
-func initGitignore() {
+func runInitializer() {
+	if config.IsProduction() {
+		return
+	}
+
+	createFile := func(path string, body []byte) {
+		if !file.Exist(path) {
+			if err := file.New(path, body); err != nil {
+				log.Error(err, "Create "+path+" file error")
+			}
+		}
+	}
+
+	createFolder := func(path string) {
+		if !folder.Exist(path) {
+			if err := folder.Create(".", path); err != nil {
+				log.Error(err, "Create "+path+" folder error")
+			}
+		}
+	}
+
+	// create .gitignore file if not exists
 	createFile(".gitignore", []byte(`.idea
 .vs_code
 .vscode
@@ -17,16 +39,14 @@ logs
 .env
 cdn
 `))
-}
 
-func initProfiles() {
+	// create profiles folder if not exists
 	createFolder("profiles")
 	createFile("profiles/config.yml", []byte(`port: ":8080"`))
 	createFile("profiles/dev.yml", nil)
 	createFile("profiles/production.yml", nil)
-}
 
-func initControllers() {
+	// create controllers folder if not exists
 	if folder.Exist("controllers") {
 		return
 	}
@@ -56,24 +76,7 @@ func (controller Controller) RegisterEndpoints(router boost.Router) {
 	})
 }
 `))
-}
 
-func initServices() {
+	// create services folder if not exists
 	createFolder("services")
-}
-
-func createFile(path string, body []byte) {
-	if !file.Exist(path) {
-		if err := file.New(path, body); err != nil {
-			log.Error(err, "Create "+path+" file error")
-		}
-	}
-}
-
-func createFolder(path string) {
-	if !folder.Exist(path) {
-		if err := folder.Create(".", path); err != nil {
-			log.Error(err, "Create "+path+" folder error")
-		}
-	}
 }
