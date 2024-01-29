@@ -6,7 +6,7 @@ import (
 	"github.com/lowl11/boost/data/enums/modes"
 	"github.com/lowl11/boost/internal/boosties/di_container"
 	"github.com/lowl11/boost/internal/fast_handler"
-	"github.com/lowl11/boost/internal/services/greeting"
+	"github.com/lowl11/boost/internal/greeting"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/cron"
 	"github.com/lowl11/boost/pkg/system/types"

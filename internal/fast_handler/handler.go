@@ -1,7 +1,7 @@
 package fast_handler
 
 import (
-	"github.com/lowl11/boost/internal/services/counter"
+	"github.com/lowl11/boost/internal/fast_handler/counter"
 	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/boost/pkg/system/validator"
 	"github.com/valyala/fasthttp"
