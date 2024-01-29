@@ -1,12 +1,12 @@
-package jwt_helper
+package jwt_service
 
 import (
 	"encoding/json"
-	"errors"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/lowl11/boost/data/errors"
 )
 
-func Generate(object any, key []byte) (string, error) {
+func generate(object any, key []byte) (string, error) {
 	objectInBytes, err := json.Marshal(object)
 	if err != nil {
 		return "", err
@@ -32,7 +32,7 @@ func Generate(object any, key []byte) (string, error) {
 	return stringToken, nil
 }
 
-func Parse(key []byte, token string, destination any) error {
+func parse(key []byte, token string, destination any) error {
 	claimsMap, err := getMap(key, token)
 	if err != nil {
 		return err
@@ -46,7 +46,7 @@ func Parse(key []byte, token string, destination any) error {
 	return json.Unmarshal(claimsMapInBytes, &destination)
 }
 
-func ParseMap(key []byte, token string) (map[string]any, error) {
+func parseMap(key []byte, token string) (map[string]any, error) {
 	return getMap(key, token)
 }
 
