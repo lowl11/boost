@@ -1,18 +1,31 @@
-package runner
+package cron
 
 import (
 	"github.com/lowl11/boost/data/funcs"
+	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/io/exception"
 	"time"
 )
 
-func (runner *Runner) ErrorHandler(handler funcs.CronErrorHandler) *Runner {
+type runner struct {
+	scheduler    interfaces.Scheduler
+	errorHandler funcs.CronErrorHandler
+	fromStart    bool
+}
+
+func newRunner(scheduler interfaces.Scheduler) *runner {
+	return &runner{
+		scheduler: scheduler,
+	}
+}
+
+func (runner *runner) ErrorHandler(handler funcs.CronErrorHandler) *runner {
 	runner.errorHandler = handler
 	return runner
 }
 
-func (runner *Runner) StartTicker() {
+func (runner *runner) StartTicker() {
 	if runner.fromStart {
 		go func() {
 			time.Sleep(time.Millisecond * 500)
@@ -30,12 +43,12 @@ func (runner *Runner) StartTicker() {
 	}
 }
 
-func (runner *Runner) FromStart(fromStart bool) *Runner {
+func (runner *runner) FromStart(fromStart bool) *runner {
 	runner.fromStart = fromStart
 	return runner
 }
 
-func (runner *Runner) runAction() {
+func (runner *runner) runAction() {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Error(exception.CatchPanic(err), "PANIC RECOVERED")
