@@ -2,16 +2,22 @@ package config
 
 import (
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/boosties/configuration"
 	"github.com/lowl11/boost/internal/boosties/context"
+	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/io/file"
 	"os"
 	"regexp"
 	"strings"
 )
 
+var _configService *configService
+
+func init() {
+	load()
+}
+
 func Get(key string) interfaces.Param {
-	value := configuration.Get(key)
+	value := _configService.Get(key)
 	if value == "" {
 		value = os.Getenv(key)
 	}
@@ -48,10 +54,6 @@ func Env() string {
 	return envValue
 }
 
-func Load() {
-	configuration.Load()
-}
-
 func IsProduction() bool {
 	return Env() == "production"
 }
@@ -62,4 +64,11 @@ func IsTest() bool {
 
 func IsDev() bool {
 	return Env() == "dev"
+}
+
+func load() {
+	_configService = newService()
+	if err := _configService.Read(); err != nil {
+		log.Fatal("Load configuration error:", err)
+	}
 }

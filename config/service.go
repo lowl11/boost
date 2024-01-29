@@ -1,4 +1,4 @@
-package config_service
+package config
 
 import (
 	"github.com/lowl11/boost/internal/helpers/env_helper"
@@ -9,7 +9,40 @@ import (
 	"strings"
 )
 
-func (service *Service) Load() {
+const (
+	defaultBaseFolder              = "profiles/"
+	defaultEnvironment             = "dev"
+	defaultEnvironmentVariableName = "env"
+	defaultEnvironmentFileName     = ".env"
+
+	baseConfigName = "config.yml"
+)
+
+type configService struct {
+	variables    map[string]string
+	envVariables map[string]string
+
+	baseFolder              string
+	environment             string // dev, test, production or any other
+	environmentBase         string // config.yml - base file
+	environmentVariableName string // env, but can be environment for example
+	environmentFileName     string // .env, but maybe it will be another file
+}
+
+func newService() *configService {
+	return &configService{
+		variables: make(map[string]string),
+
+		baseFolder:      defaultBaseFolder,
+		environment:     defaultBaseFolder + defaultEnvironment,
+		environmentBase: defaultBaseFolder + baseConfigName,
+
+		environmentVariableName: defaultEnvironmentVariableName,
+		environmentFileName:     defaultEnvironmentFileName,
+	}
+}
+
+func (service *configService) Load() {
 	if service.envVariables == nil {
 		return
 	}
@@ -19,7 +52,7 @@ func (service *Service) Load() {
 	}
 }
 
-func (service *Service) Read() error {
+func (service *configService) Read() error {
 	// read .env file
 	envFileContent, err := env_helper.Read(service.environmentFileName)
 	if err != nil {
@@ -111,11 +144,11 @@ func (service *Service) Read() error {
 	return nil
 }
 
-func (service *Service) Get(key string) string {
+func (service *configService) Get(key string) string {
 	return service.variables[key]
 }
 
-func (service *Service) BaseFolder(baseFolder string) *Service {
+func (service *configService) BaseFolder(baseFolder string) *configService {
 	if baseFolder == "" {
 		return service
 	}
@@ -131,7 +164,7 @@ func (service *Service) BaseFolder(baseFolder string) *Service {
 	return service
 }
 
-func (service *Service) Environment(environment string) *Service {
+func (service *configService) Environment(environment string) *configService {
 	if environment == "" {
 		return service
 	}
@@ -140,7 +173,7 @@ func (service *Service) Environment(environment string) *Service {
 	return service
 }
 
-func (service *Service) EnvironmentVariableName(variableName string) *Service {
+func (service *configService) EnvironmentVariableName(variableName string) *configService {
 	if variableName == "" {
 		return service
 	}
@@ -149,7 +182,7 @@ func (service *Service) EnvironmentVariableName(variableName string) *Service {
 	return service
 }
 
-func (service *Service) EnvironmentFileName(fileName string) *Service {
+func (service *configService) EnvironmentFileName(fileName string) *configService {
 	if fileName == "" {
 		return service
 	}
