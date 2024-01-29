@@ -1,7 +1,7 @@
 package boost
 
 import (
-	"github.com/lowl11/boost/internal/boosties/di_container"
+	"github.com/lowl11/boost/internal/di_container"
 	"github.com/lowl11/boost/internal/fast_handler"
 	"github.com/lowl11/boost/internal/healthcheck"
 	"github.com/lowl11/boost/log"

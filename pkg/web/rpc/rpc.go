@@ -1,7 +1,7 @@
 package rpc
 
 import (
-	"github.com/lowl11/boost/internal/boosties/grpc_server"
+	"github.com/lowl11/boost/pkg/web/grpc_server"
 	"google.golang.org/grpc"
 )
 

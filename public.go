@@ -4,7 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/lowl11/boost/data/enums/colors"
 	"github.com/lowl11/boost/data/enums/modes"
-	"github.com/lowl11/boost/internal/boosties/di_container"
+	"github.com/lowl11/boost/internal/di_container"
 	"github.com/lowl11/boost/internal/fast_handler"
 	"github.com/lowl11/boost/internal/greeting"
 	"github.com/lowl11/boost/log"

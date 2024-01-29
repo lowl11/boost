@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/internal/boosties/context"
+	"github.com/lowl11/boost/internal/context"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/io/file"
 	"os"

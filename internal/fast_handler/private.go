@@ -5,7 +5,7 @@ import (
 	"github.com/lowl11/boost/config"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/errors"
-	"github.com/lowl11/boost/internal/boosties/context"
+	"github.com/lowl11/boost/internal/context"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/io/exception"
 	"github.com/lowl11/boost/pkg/system/types"
@@ -103,8 +103,7 @@ func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
 	handlersChain = append(handlersChain, endpointMiddlewares...)
 
 	// create new boost context
-	boostCtx = context.
-		New(ctx, routeCtx.Action, handlersChain, handler.validate).
+	boostCtx = context.New(ctx, routeCtx.Action, handlersChain, handler.validate).
 		SetParams(routeCtx.Params)
 
 	// call chain of handlers/middlewares

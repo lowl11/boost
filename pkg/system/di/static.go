@@ -2,7 +2,7 @@ package di
 
 import (
 	"github.com/lowl11/boost/data/enums/di_modes"
-	"github.com/lowl11/boost/internal/boosties/di_container"
+	"github.com/lowl11/boost/internal/di_container"
 	"reflect"
 )
 
