@@ -4,11 +4,12 @@ import (
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/stdlib"
 	"github.com/jmoiron/sqlx"
+	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/container"
 	"time"
 )
 
-func NewPool(connectionString string, options ...func(connection *sqlx.DB)) (*sqlx.DB, error) {
+func Connect(connectionString string, options ...func(connection *sqlx.DB)) (*sqlx.DB, error) {
 	pgxConfig, _ := pgx.ParseConfig(connectionString)
 
 	connection, err := sqlx.Open("pgx", stdlib.RegisterConnConfig(pgxConfig))
@@ -26,6 +27,15 @@ func NewPool(connectionString string, options ...func(connection *sqlx.DB)) (*sq
 
 	container.Set("connection", connection)
 	return connection, nil
+}
+
+func MustConnect(connectionString string, options ...func(connection *sqlx.DB)) *sqlx.DB {
+	connection, err := Connect(connectionString, options...)
+	if err != nil {
+		log.Fatal("Connect to Database error:", err)
+	}
+
+	return connection
 }
 
 func WithMaxConnections(maxOpenConnections int) func(db *sqlx.DB) {
