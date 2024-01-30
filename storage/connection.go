@@ -5,7 +5,7 @@ import (
 	"github.com/jackc/pgx/v4/stdlib"
 	"github.com/jmoiron/sqlx"
 	"github.com/lowl11/boost/log"
-	"github.com/lowl11/boost/pkg/system/container"
+	"github.com/lowl11/boost/pkg/system/di"
 	"time"
 )
 
@@ -25,7 +25,6 @@ func Connect(connectionString string, options ...func(connection *sqlx.DB)) (*sq
 		return nil, err
 	}
 
-	container.Set("connection", connection)
 	return connection, nil
 }
 
@@ -38,6 +37,27 @@ func MustConnect(connectionString string, options ...func(connection *sqlx.DB)) 
 	return connection
 }
 
+func RegisterConnect(connectionString string, options ...func(connection *sqlx.DB)) {
+	di.AddSingleton[sqlx.DB](func() *sqlx.DB {
+		return MustConnect(connectionString, options...)
+	})
+}
+
+func Ping() error {
+	connection := di.Get[sqlx.DB]()
+	if connection == nil {
+		return nil
+	}
+
+	return connection.Ping()
+}
+
+func MustPing() {
+	if err := Ping(); err != nil {
+		panic(err)
+	}
+}
+
 func Close(connection ...*sqlx.DB) {
 	if len(connection) > 0 {
 		if err := connection[0].Close(); err != nil {
@@ -47,7 +67,7 @@ func Close(connection ...*sqlx.DB) {
 		return
 	}
 
-	containerConnection := container.Type[sqlx.DB]("connection")
+	containerConnection := di.Get[sqlx.DB]()
 	if containerConnection == nil {
 		return
 	}
