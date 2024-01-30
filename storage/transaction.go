@@ -10,7 +10,7 @@ import (
 
 func BeginTransaction(ctx context.Context, connection *sqlx.DB) (context.Context, error) {
 	tx, err := connection.BeginTxx(ctx, &sql.TxOptions{
-		Isolation: 0,
+		Isolation: sql.LevelDefault,
 		ReadOnly:  false,
 	})
 	if err != nil {

@@ -28,25 +28,25 @@ func NewPool(connectionString string, options ...func(connection *sqlx.DB)) (*sq
 	return connection, nil
 }
 
-func MaxConnectionsOption(maxOpenConnections int) func(db *sqlx.DB) {
+func WithMaxConnectionsOption(maxOpenConnections int) func(db *sqlx.DB) {
 	return func(db *sqlx.DB) {
 		db.SetMaxOpenConns(maxOpenConnections)
 	}
 }
 
-func MaxIdleConnectionsOption(maxIdleConnections int) func(db *sqlx.DB) {
+func WithMaxIdleConnectionsOption(maxIdleConnections int) func(db *sqlx.DB) {
 	return func(db *sqlx.DB) {
 		db.SetMaxIdleConns(maxIdleConnections)
 	}
 }
 
-func MaxLifetime(lifetime time.Duration) func(db *sqlx.DB) {
+func WithMaxLifetime(lifetime time.Duration) func(db *sqlx.DB) {
 	return func(db *sqlx.DB) {
 		db.SetConnMaxLifetime(lifetime)
 	}
 }
 
-func MaxIdleLifetime(lifetime time.Duration) func(db *sqlx.DB) {
+func WithMaxIdleLifetime(lifetime time.Duration) func(db *sqlx.DB) {
 	return func(db *sqlx.DB) {
 		db.SetConnMaxIdleTime(lifetime)
 	}
