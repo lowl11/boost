@@ -38,6 +38,23 @@ func MustConnect(connectionString string, options ...func(connection *sqlx.DB)) 
 	return connection
 }
 
+func Close(connection ...*sqlx.DB) {
+	if len(connection) > 0 {
+		if err := connection[0].Close(); err != nil {
+			log.Error("Close Database connection error:", err)
+		}
+
+		return
+	}
+
+	containerConnection := container.Type[sqlx.DB]("connection")
+	if containerConnection == nil {
+		return
+	}
+
+	Close(containerConnection)
+}
+
 func WithMaxConnections(maxOpenConnections int) func(db *sqlx.DB) {
 	return func(db *sqlx.DB) {
 		db.SetMaxOpenConns(maxOpenConnections)
