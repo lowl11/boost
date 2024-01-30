@@ -2,13 +2,17 @@ package storage
 
 import (
 	"context"
+	"database/sql"
 	"github.com/jmoiron/sqlx"
 	"github.com/lowl11/boost/log"
 	"strings"
 )
 
 func BeginTransaction(ctx context.Context, connection *sqlx.DB) (context.Context, error) {
-	tx, err := connection.BeginTxx(ctx, nil)
+	tx, err := connection.BeginTxx(ctx, &sql.TxOptions{
+		Isolation: 0,
+		ReadOnly:  false,
+	})
 	if err != nil {
 		return nil, err
 	}
