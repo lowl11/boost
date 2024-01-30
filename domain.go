@@ -3,6 +3,7 @@ package boost
 import (
 	"github.com/google/uuid"
 	"github.com/lowl11/boost/data/interfaces"
+	"github.com/lowl11/boost/pkg/system/cron"
 )
 
 type (
@@ -80,4 +81,12 @@ type Group interface {
 // Basically used for registering custom Controllers for DI (Dependency Injection)
 type Controller interface {
 	RegisterEndpoints(Router)
+}
+
+type ListenerController interface {
+	BindEvents(Listener)
+}
+
+type CronController interface {
+	BindCron(cron.CronRouter)
 }
