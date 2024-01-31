@@ -15,7 +15,10 @@ func Transaction() types.MiddlewareFunc {
 
 		connection := di.Get[sqlx.DB]()
 		if connection == nil {
-			return errors.New("Used Transaction() middleware but wasn't set connection")
+			return errors.
+				New("Used Transaction() middleware but wasn't set connection").
+				SetType("Storage_NoConnection").
+				AddContext("from", "Transaction Middleware")
 		}
 
 		nativeCtx = storage.MustBeginTransaction(nativeCtx, connection)

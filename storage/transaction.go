@@ -8,6 +8,19 @@ import (
 	"strings"
 )
 
+func TransactionFromContext(ctx context.Context) *sqlx.Tx {
+	if ctx == nil {
+		return nil
+	}
+
+	txValue := ctx.Value("boost_transaction")
+	if txValue == nil {
+		return nil
+	}
+
+	return txValue.(*sqlx.Tx)
+}
+
 func BeginTransaction(ctx context.Context, connection *sqlx.DB) (context.Context, error) {
 	tx, err := connection.BeginTxx(ctx, &sql.TxOptions{
 		Isolation: sql.LevelDefault,
