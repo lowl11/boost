@@ -48,3 +48,7 @@ func (c *consumerGroup) StartListening(topic string, groupHandler sarama.Consume
 		}
 	}
 }
+
+func (c *consumerGroup) Close() error {
+	return c.consumer.Close()
+}

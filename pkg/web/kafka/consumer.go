@@ -106,3 +106,7 @@ func (c *consumer) handleConsumerFunc(wg *sync.WaitGroup, topic string, partitio
 		}
 	}
 }
+
+func (c *consumer) Close() error {
+	return c.consumer.Close()
+}

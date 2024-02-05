@@ -9,11 +9,13 @@ type Option func(config *sarama.Config)
 type Consumer interface {
 	StartListening(topic string, handler Handler) error
 	StartListeningAsync(topic string, handler Handler)
+	Close() error
 }
 
 type ConsumerGroup interface {
 	StartListening(topic string, groupHandler sarama.ConsumerGroupHandler) error
 	StartListeningAsync(topic string, groupHandler sarama.ConsumerGroupHandler)
+	Close() error
 }
 
 type SyncProducer interface {
