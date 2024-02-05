@@ -21,6 +21,10 @@ func main() {
             Status(http.StatusOK).
             String("pong")
     })
+
+    app.GET("/hello", func(ctx boost.Context) error {
+        return ctx.Ok("world")
+    })
     
     app.Run(":8080")	
 }
@@ -82,6 +86,11 @@ func main() {
         <tr>
             <td>RabbitMQ / MessageBus</td>
             <td>Message bus pattern + RMQ support</td>
+            <td>:white_check_mark:</td>
+        </tr>
+        <tr>
+            <td>Kafka</td>
+            <td>Kafka producer & consumers</td>
             <td>:white_check_mark:</td>
         </tr>
         <tr>
