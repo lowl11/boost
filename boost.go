@@ -104,7 +104,7 @@ func New(configs ...Config) *App {
 	// create validator
 	validate, err := validator.New()
 	if err != nil {
-		log.Fatal(err, "Create validator error")
+		log.Fatal("Create validator error:", err)
 	}
 
 	// turn off model validations

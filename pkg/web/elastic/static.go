@@ -19,7 +19,7 @@ func Init(host, username, password string) error {
 
 func MustInit(host, username, password string) {
 	if err := Init(host, username, password); err != nil {
-		log.Fatal(err, "Initialize Elasticsearch error")
+		log.Fatal("Initialize Elasticsearch error:", err)
 	}
 }
 
