@@ -7,7 +7,12 @@ import (
 )
 
 func Get[T any](params ...any) *T {
-	return di_container.Get().Get(reflect.TypeOf(new(T)), params...).(*T)
+	object := di_container.Get().Get(reflect.TypeOf(new(T)), params...)
+	if object == nil {
+		return nil
+	}
+
+	return object.(*T)
 }
 
 func AddTransient[T any](constructor any, dependencies ...any) {
