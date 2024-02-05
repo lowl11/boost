@@ -30,18 +30,19 @@ func (config *Config) saramaConfig() *sarama.Config {
 	}
 
 	saramaConfig := sarama.NewConfig()
-	saramaConfig.Producer.Return.Successes = true
 
-	if config.username != "" {
-		saramaConfig.Net.SASL.Enable = true
-		saramaConfig.Net.SASL.User = config.username
-		saramaConfig.Net.SASL.Password = config.password
-		saramaConfig.Net.SASL.Handshake = true
-		if config.saslMechanism == "" {
-			saramaConfig.Net.SASL.Mechanism = sarama.SASLTypePlaintext
-		} else {
-			saramaConfig.Net.SASL.Mechanism = sarama.SASLMechanism(config.saslMechanism)
-		}
+	// default configs
+	saramaConfig.Producer.Return.Successes = true
+	saramaConfig.Consumer.Return.Errors = true
+
+	// apply options
+	for _, opt := range config.opts {
+		opt(saramaConfig)
+	}
+
+	// default offset
+	if saramaConfig.Consumer.Offsets.Initial == 0 {
+		saramaConfig.Consumer.Offsets.Initial = sarama.OffsetNewest
 	}
 
 	return saramaConfig
@@ -57,10 +58,32 @@ func (config *Config) SetErrorHandler(handler ErrorHandler) *Config {
 	return config
 }
 
+func (config *Config) WithAuth(username, password string, mechanism ...string) *Config {
+	config.opts = append(config.opts, func(config *sarama.Config) {
+		config.Net.SASL.Enable = true
+		config.Net.SASL.User = username
+		config.Net.SASL.Password = password
+		config.Net.SASL.Handshake = true
+		if len(mechanism) == 0 || mechanism[0] == "" {
+			config.Net.SASL.Mechanism = sarama.SASLTypePlaintext
+		} else {
+			config.Net.SASL.Mechanism = sarama.SASLMechanism(mechanism[0])
+		}
+	})
+	return config
+}
+
 func (config *Config) WithAutocommit(interval time.Duration) *Config {
 	config.opts = append(config.opts, func(config *sarama.Config) {
 		config.Consumer.Offsets.AutoCommit.Enable = true
 		config.Consumer.Offsets.AutoCommit.Interval = interval
+	})
+	return config
+}
+
+func (config *Config) WithOffset(offset int64) *Config {
+	config.opts = append(config.opts, func(config *sarama.Config) {
+		config.Consumer.Offsets.Initial = offset
 	})
 	return config
 }

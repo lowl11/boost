@@ -11,6 +11,11 @@ type Consumer interface {
 	StartListeningAsync(topic string, handler Handler)
 }
 
+type ConsumerGroup interface {
+	StartListening(topic string, groupHandler sarama.ConsumerGroupHandler) error
+	StartListeningAsync(topic string, groupHandler sarama.ConsumerGroupHandler)
+}
+
 type SyncProducer interface {
 	Produce(messages ...Message) error
 }
