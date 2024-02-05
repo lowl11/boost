@@ -116,7 +116,7 @@ func New(configs ...Config) *App {
 	app := &App{
 		config:      config,
 		handler:     fast_handler.New(validate),
-		destroyer:   destroyer.New(),
+		destroyer:   destroyer.Get(),
 		healthcheck: healthcheck.New(),
 	}
 

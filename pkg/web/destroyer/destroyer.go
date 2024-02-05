@@ -10,8 +10,15 @@ type Destroyer struct {
 	mutex     sync.Mutex
 }
 
-func New() *Destroyer {
-	return &Destroyer{
+var instance *Destroyer
+
+func Get() *Destroyer {
+	if instance != nil {
+		return instance
+	}
+
+	instance = &Destroyer{
 		functions: make([]types.DestroyFunc, 0),
 	}
+	return instance
 }

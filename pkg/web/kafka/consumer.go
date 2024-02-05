@@ -6,6 +6,7 @@ import (
 	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/io/exception"
+	"github.com/lowl11/boost/pkg/web/destroyer"
 	"sync"
 )
 
@@ -21,7 +22,11 @@ func NewConsumer(ctx context.Context, config *Config) (Consumer, error) {
 		return nil, err
 	}
 
-	// todo: implement close of consumer
+	destroyer.Get().AddFunction(func() {
+		if err = kafkaConsumer.Close(); err != nil {
+			log.Error("Close Kafka consumer error:", err)
+		}
+	})
 
 	return &consumer{
 		ctx:      ctx,

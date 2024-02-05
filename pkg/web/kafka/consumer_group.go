@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/IBM/sarama"
 	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/web/destroyer"
 )
 
 type consumerGroup struct {
@@ -18,7 +19,11 @@ func NewConsumerGroup(ctx context.Context, cfg *Config, group string) (ConsumerG
 		return nil, err
 	}
 
-	// todo: implement of close kafka consumer
+	destroyer.Get().AddFunction(func() {
+		if err = kafkaConsumer.Close(); err != nil {
+			log.Error("Close Kafka consumer error:", err)
+		}
+	})
 
 	return &consumerGroup{
 		ctx:      ctx,
