@@ -61,7 +61,7 @@ func RollbackTransaction(ctx context.Context) error {
 
 func MustRollbackTransaction(ctx context.Context) {
 	if err := RollbackTransaction(ctx); err != nil {
-		log.Error(err, "Rollback transaction error")
+		log.Error("Rollback transaction error:", err)
 	}
 }
 
@@ -84,7 +84,7 @@ func CommitTransaction(ctx context.Context) error {
 
 func MustCommitTransaction(ctx context.Context) {
 	if err := CommitTransaction(ctx); err != nil {
-		log.Error(err, "Commit transaction error")
+		log.Error("Commit transaction error:", err)
 	}
 }
 

@@ -78,7 +78,7 @@ func (service *Service) SetProxy(proxyURL string) *Service {
 
 	parsedURL, err := url.Parse(proxyURL)
 	if err != nil {
-		log.Error(err, errorParseURL)
+		log.Error("Parse URL error:", err)
 		return service
 	}
 

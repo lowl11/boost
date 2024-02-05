@@ -24,7 +24,7 @@ func NewRepo() Repository {
 
 func (repo repository) CloseRows(rows *sqlx.Rows) {
 	if err := rows.Close(); err != nil {
-		log.Error(err, "Closing rows error")
+		log.Error("Closing rows error:", err)
 	}
 }
 
@@ -52,7 +52,7 @@ func rollback(transaction *sqlx.Tx) {
 			err.Error(),
 			"transaction has already been committed or rolled back",
 		) {
-			log.Error(err, "Rollback transaction error")
+			log.Error("Rollback transaction error:", err)
 		}
 	}
 }

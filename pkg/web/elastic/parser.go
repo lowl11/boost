@@ -44,7 +44,7 @@ func parseObject(object any) (map[string]mappingField, error) {
 
 				props, err := parseObject(reflect.New(fxFieldType.Type()).Elem().Interface())
 				if err != nil {
-					log.Error(err, "Parse nested document error")
+					log.Error("Parse nested document error:", err)
 					continue
 				}
 

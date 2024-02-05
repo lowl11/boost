@@ -255,7 +255,7 @@ func (req *Reqy) execute(method, url string, ctx context.Context) error {
 		!strings.Contains(types.ToString(responseBody), "<!DOCTYPE html>") &&
 		!strings.Contains(types.ToString(responseBody), "ERROR = ") {
 		if err = req.unmarshal(responseBody, &req.result); err != nil {
-			log.Error(err, "Unmarshal result error")
+			log.Error("Unmarshal result error:", err)
 		}
 	}
 

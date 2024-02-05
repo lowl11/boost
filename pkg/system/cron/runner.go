@@ -50,8 +50,8 @@ func (runner *runner) FromStart(fromStart bool) *runner {
 
 func (runner *runner) runAction() {
 	defer func() {
-		if err := recover(); err != nil {
-			log.Error(exception.CatchPanic(err), "PANIC RECOVERED")
+		if err := exception.CatchPanic(recover()); err != nil {
+			log.Error("PANIC RECOVERED:", err)
 		}
 	}()
 
@@ -60,10 +60,10 @@ func (runner *runner) runAction() {
 	if err := jobAction(); err != nil {
 		if runner.errorHandler != nil {
 			if innerError := runner.errorHandler(err); innerError != nil {
-				log.Error(innerError, "Cron error handler error")
+				log.Error("Cron error handler error:", innerError)
 			}
 		}
 
-		log.Error(err, "Execute job action error")
+		log.Error("Execute job action error:", err)
 	}
 }

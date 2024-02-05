@@ -168,7 +168,7 @@ func (ctx *Context) Validate(object any) error {
 func (ctx *Context) FormFile(key string) []byte {
 	file, err := ctx.inner.FormFile(key)
 	if err != nil {
-		log.Error(err, "Parse form-data file")
+		log.Error("Parse form-data file error:", err)
 		return nil
 	}
 

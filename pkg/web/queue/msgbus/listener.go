@@ -143,12 +143,12 @@ func (listener *Listener) listen(messages <-chan amqp.Delivery, event Event) {
 
 func (listener *Listener) async(event Event, message amqp.Delivery) {
 	if err := event.Action(newContext(&message)); err != nil {
-		log.Error(err, "Event action error")
+		log.Error("Event action error:", err)
 		return
 	}
 
 	if err := listener.rmqService.Ack(message.DeliveryTag); err != nil {
-		log.Error(err, "Acknowledge message error")
+		log.Error("Acknowledge message error:", err)
 	}
 }
 

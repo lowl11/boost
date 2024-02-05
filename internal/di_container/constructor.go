@@ -86,7 +86,7 @@ func call(tq *tQueue, constructor any, services map[reflect.Type]*serviceInfo) a
 		}
 
 		if err != nil {
-			log.Error(err, "Get instance error")
+			log.Error("Get instance error:", err)
 		}
 	}
 
