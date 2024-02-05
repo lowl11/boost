@@ -132,7 +132,7 @@ func (app *App) RunListener(amqpConnectionURL string) {
 	// close RMQ connection
 	app.destroyer.AddFunction(func() {
 		if err := app.listener.Close(); err != nil {
-			log.Error(err, "Close RabbitMQ connection error")
+			log.Error("Close RabbitMQ connection error:", err)
 			return
 		}
 		log.Info("RabbitMQ connection successfully closed!")

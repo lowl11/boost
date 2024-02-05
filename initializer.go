@@ -15,7 +15,7 @@ func runInitializer() {
 	createFile := func(path string, body []byte) {
 		if !file.Exist(path) {
 			if err := file.New(path, body); err != nil {
-				log.Error(err, "Create "+path+" file error")
+				log.Error("Create "+path+" file error:", err)
 			}
 		}
 	}
@@ -23,7 +23,7 @@ func runInitializer() {
 	createFolder := func(path string) {
 		if !folder.Exist(path) {
 			if err := folder.Create(".", path); err != nil {
-				log.Error(err, "Create "+path+" folder error")
+				log.Error("Create "+path+" folder error:", err)
 			}
 		}
 	}
