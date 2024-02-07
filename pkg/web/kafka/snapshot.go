@@ -11,6 +11,8 @@ var (
 	_snapshotLocks = sync.Map{}
 )
 
+// Snapshot - goes by every single record in topic which was created before Now.
+// Function works for every topic in a thread safe way (i.e. "one topic" - "one mutex").
 func Snapshot(ctx context.Context, cfg *Config, handler Handler, topic string, wait time.Duration) error {
 	mx, ok := _snapshotLocks.Load(topic)
 	if ok && mx != nil {

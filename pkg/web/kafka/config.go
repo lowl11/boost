@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Config is object necessary for running Kafka consumer & producer
 type Config struct {
 	hosts         []string
 	errorHandler  ErrorHandler
@@ -48,16 +49,20 @@ func (config *Config) saramaConfig() *sarama.Config {
 	return saramaConfig
 }
 
+// SetHosts set Kafka hosts
 func (config *Config) SetHosts(hosts []string) *Config {
 	config.hosts = hosts
 	return config
 }
 
+// SetErrorHandler sets error handler for handler errors.
+// For consumer - Handler function type error catch method.
 func (config *Config) SetErrorHandler(handler ErrorHandler) *Config {
 	config.errorHandler = handler
 	return config
 }
 
+// WithAuth enables authorization for Kafka (via SASL)
 func (config *Config) WithAuth(username, password string, mechanism ...string) *Config {
 	config.opts = append(config.opts, func(config *sarama.Config) {
 		config.Net.SASL.Enable = true
@@ -73,6 +78,8 @@ func (config *Config) WithAuth(username, password string, mechanism ...string) *
 	return config
 }
 
+// WithAutocommit fires autocommit mode with some interval.
+// By default, interval is 1 second
 func (config *Config) WithAutocommit(interval time.Duration) *Config {
 	config.opts = append(config.opts, func(config *sarama.Config) {
 		config.Consumer.Offsets.AutoCommit.Enable = true
@@ -81,6 +88,7 @@ func (config *Config) WithAutocommit(interval time.Duration) *Config {
 	return config
 }
 
+// WithOffset sets start/initial offset for Consumer & ConsumerGroup
 func (config *Config) WithOffset(offset int64) *Config {
 	config.opts = append(config.opts, func(config *sarama.Config) {
 		config.Consumer.Offsets.Initial = offset
@@ -88,11 +96,14 @@ func (config *Config) WithOffset(offset int64) *Config {
 	return config
 }
 
+// With is dynamic option func.
+// Developer make anything to Config object with this option.
 func (config *Config) With(optionFunc Option) *Config {
 	config.opts = append(config.opts, optionFunc)
 	return config
 }
 
+// Copy copies Config object to new one but with the same data
 func (config *Config) Copy() *Config {
 	cp := *config
 	return &cp
