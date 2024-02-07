@@ -3,10 +3,23 @@ package kafka
 import (
 	"context"
 	"github.com/lowl11/boost/pkg/io/async"
+	"sync"
 	"time"
 )
 
+var (
+	_snapshotLocks = sync.Map{}
+)
+
 func Snapshot(ctx context.Context, cfg *Config, handler Handler, topic string, wait time.Duration) error {
+	mx, ok := _snapshotLocks.Load(topic)
+	if ok && mx != nil {
+		mx.(*sync.Mutex).Lock()
+		defer mx.(*sync.Mutex).Unlock()
+	} else {
+		_snapshotLocks.Store(topic, &sync.Mutex{})
+	}
+
 	cfg = cfg.
 		Copy().
 		WithAutocommit(time.Second).
