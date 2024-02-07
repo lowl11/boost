@@ -7,11 +7,10 @@ import (
 )
 
 func (destroyer *Destroyer) runFunc(action types.DestroyFunc) {
-	defer func() {
-		if err := exception.CatchPanic(recover()); err != nil {
-			log.Error("Catch panic from destroy action:", err)
-		}
-	}()
-
-	action()
+	if err := exception.Try(func() error {
+		action()
+		return nil
+	}); err != nil {
+		log.Error("Catch panic from destroy action:", err)
+	}
 }

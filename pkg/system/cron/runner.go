@@ -49,21 +49,20 @@ func (runner *runner) FromStart(fromStart bool) *runner {
 }
 
 func (runner *runner) runAction() {
-	defer func() {
-		if err := exception.CatchPanic(recover()); err != nil {
-			log.Error("PANIC RECOVERED:", err)
-		}
-	}()
+	if err := exception.Try(func() error {
+		jobAction := runner.scheduler.Action()
 
-	jobAction := runner.scheduler.Action()
-
-	if err := jobAction(); err != nil {
-		if runner.errorHandler != nil {
-			if innerError := runner.errorHandler(err); innerError != nil {
-				log.Error("Cron error handler error:", innerError)
+		if err := jobAction(); err != nil {
+			if runner.errorHandler != nil {
+				if innerError := runner.errorHandler(err); innerError != nil {
+					log.Error("Cron error handler error:", innerError)
+				}
 			}
-		}
 
-		log.Error("Execute job action error:", err)
+			log.Error("Execute job action error:", err)
+		}
+		return nil
+	}); err != nil {
+		log.Error("PANIC RECOVERED:", err)
 	}
 }
