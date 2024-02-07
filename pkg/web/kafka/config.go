@@ -92,3 +92,8 @@ func (config *Config) With(optionFunc Option) *Config {
 	config.opts = append(config.opts, optionFunc)
 	return config
 }
+
+func (config *Config) Copy() *Config {
+	cp := *config
+	return &cp
+}
