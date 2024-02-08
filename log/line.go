@@ -30,12 +30,30 @@ func (service *line) AddInfo(logMessageFunc func(args ...any), args ...any) {
 	}
 }
 
+func (service *line) AddFormatInfo(logMessageFunc func(format string, args ...any), format string, args ...any) {
+	service.mutex.Lock()
+	defer service.mutex.Unlock()
+
+	service.logChannel <- func() {
+		logMessageFunc(format, args...)
+	}
+}
+
 func (service *line) AddInfoCustom(logMessageFunc func(args ...any), args ...any) {
 	service.customMutex.Lock()
 	defer service.customMutex.Unlock()
 
 	service.customLogChannel <- func() {
 		logMessageFunc(args...)
+	}
+}
+
+func (service *line) AddInfoFormatCustom(logMessageFunc func(format string, args ...any), format string, args ...any) {
+	service.customMutex.Lock()
+	defer service.customMutex.Unlock()
+
+	service.customLogChannel <- func() {
+		logMessageFunc(format, args...)
 	}
 }
 
@@ -54,6 +72,15 @@ func (service *line) AddErrorCustom(logMessageFunc func(args ...any), args ...an
 
 	service.customLogChannel <- func() {
 		logMessageFunc(args...)
+	}
+}
+
+func (service *line) AddErrorFormatCustom(logMessageFunc func(format string, args ...any), format string, args ...any) {
+	service.customMutex.Lock()
+	defer service.customMutex.Unlock()
+
+	service.customLogChannel <- func() {
+		logMessageFunc(format, args...)
 	}
 }
 

@@ -41,6 +41,20 @@ func (logger *fileLogger) Debug(args ...any) {
 	logger.writer.Println(message)
 }
 
+func (logger *fileLogger) Debugf(format string, args ...any) {
+	logger.updateFile()
+	var message string
+
+	if !logging.GetConfig().JsonMode {
+		logger.writer.SetPrefix(buildPrefix(debugLevel))
+		message = buildFormatMessage(format, args...)
+	} else {
+		message = buildFormatJSON(jsonDebugLevel, format, args...)
+	}
+
+	logger.writer.Println(message)
+}
+
 func (logger *fileLogger) Info(args ...any) {
 	logger.updateFile()
 	var message string
@@ -50,6 +64,20 @@ func (logger *fileLogger) Info(args ...any) {
 		message = buildMessage(args...)
 	} else {
 		message = buildJSON(jsonInfoLevel, args...)
+	}
+
+	logger.writer.Println(message)
+}
+
+func (logger *fileLogger) Infof(format string, args ...any) {
+	logger.updateFile()
+	var message string
+
+	if !logging.GetConfig().JsonMode {
+		logger.writer.SetPrefix(buildPrefix(infoLevel))
+		message = buildFormatMessage(format, args...)
+	} else {
+		message = buildFormatJSON(jsonInfoLevel, format, args...)
 	}
 
 	logger.writer.Println(message)
@@ -69,6 +97,20 @@ func (logger *fileLogger) Warn(args ...any) {
 	logger.writer.Println(message)
 }
 
+func (logger *fileLogger) Warnf(format string, args ...any) {
+	logger.updateFile()
+	var message string
+
+	if !logging.GetConfig().JsonMode {
+		logger.writer.SetPrefix(buildPrefix(warnLevel))
+		message = buildFormatMessage(format, args...)
+	} else {
+		message = buildFormatJSON(jsonWarnLevel, format, args...)
+	}
+
+	logger.writer.Println(message)
+}
+
 func (logger *fileLogger) Error(args ...any) {
 	logger.updateFile()
 	var message string
@@ -83,6 +125,20 @@ func (logger *fileLogger) Error(args ...any) {
 	logger.writer.Println(message)
 }
 
+func (logger *fileLogger) Errorf(format string, args ...any) {
+	logger.updateFile()
+	var message string
+
+	if !logging.GetConfig().JsonMode {
+		logger.writer.SetPrefix(buildPrefix(errorLevel))
+		message = buildFormatMessage(format, args...)
+	} else {
+		message = buildFormatJSON(jsonErrorLevel, format, args...)
+	}
+
+	logger.writer.Println(message)
+}
+
 func (logger *fileLogger) Fatal(args ...any) {
 	logger.updateFile()
 	var message string
@@ -92,6 +148,20 @@ func (logger *fileLogger) Fatal(args ...any) {
 		message = buildMessage(args...)
 	} else {
 		message = buildJSON(jsonFatalLevel, args...)
+	}
+
+	logger.writer.Println(message)
+}
+
+func (logger *fileLogger) Fatalf(format string, args ...any) {
+	logger.updateFile()
+	var message string
+
+	if !logging.GetConfig().JsonMode {
+		logger.writer.SetPrefix(buildPrefix(fatalLevel))
+		message = buildFormatMessage(format, args...)
+	} else {
+		message = buildFormatJSON(jsonFatalLevel, format, args...)
 	}
 
 	logger.writer.Println(message)

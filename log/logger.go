@@ -152,6 +152,24 @@ func (logger *logger) Debug(args ...any) {
 	}
 }
 
+func (logger *logger) Debugf(format string, args ...any) {
+	logger.mutex.Lock()
+	defer logger.mutex.Unlock()
+
+	// skip log by level
+	if checkLevel(logger.level, _DEBUG) {
+		return
+	}
+
+	for _, loggerItem := range logger.loggers {
+		loggerItem.Debugf(format, args...)
+	}
+
+	for _, customLogger := range logger.customLoggers {
+		logger.line.AddFormatInfo(customLogger.Debugf, format, args...)
+	}
+}
+
 func (logger *logger) Info(args ...any) {
 	if len(args) == 0 {
 		return
@@ -171,6 +189,24 @@ func (logger *logger) Info(args ...any) {
 
 	for _, customLogger := range logger.customLoggers {
 		logger.line.AddInfo(customLogger.Info, args...)
+	}
+}
+
+func (logger *logger) Infof(format string, args ...any) {
+	logger.mutex.Lock()
+	defer logger.mutex.Unlock()
+
+	// skip log by level
+	if checkLevel(logger.level, _INFO) {
+		return
+	}
+
+	for _, loggerItem := range logger.loggers {
+		loggerItem.Infof(format, args...)
+	}
+
+	for _, customLogger := range logger.customLoggers {
+		logger.line.AddFormatInfo(customLogger.Infof, format, args...)
 	}
 }
 
@@ -196,6 +232,24 @@ func (logger *logger) Warn(args ...any) {
 	}
 }
 
+func (logger *logger) Warnf(format string, args ...any) {
+	logger.mutex.Lock()
+	defer logger.mutex.Unlock()
+
+	// skip log by level
+	if checkLevel(logger.level, _WARN) {
+		return
+	}
+
+	for _, loggerItem := range logger.loggers {
+		loggerItem.Warnf(format, args...)
+	}
+
+	for _, customLogger := range logger.customLoggers {
+		logger.line.AddInfoFormatCustom(customLogger.Warnf, format, args...)
+	}
+}
+
 func (logger *logger) Error(args ...any) {
 	logger.mutex.Lock()
 	defer logger.mutex.Unlock()
@@ -211,6 +265,24 @@ func (logger *logger) Error(args ...any) {
 
 	for _, customLogger := range logger.customLoggers {
 		logger.line.AddErrorCustom(customLogger.Error, args...)
+	}
+}
+
+func (logger *logger) Errorf(format string, args ...any) {
+	logger.mutex.Lock()
+	defer logger.mutex.Unlock()
+
+	// skip log by level
+	if checkLevel(logger.level, _ERROR) {
+		return
+	}
+
+	for _, loggerItem := range logger.loggers {
+		loggerItem.Errorf(format, args...)
+	}
+
+	for _, customLogger := range logger.customLoggers {
+		logger.line.AddErrorFormatCustom(customLogger.Errorf, format, args...)
 	}
 }
 
@@ -231,5 +303,28 @@ func (logger *logger) Fatal(args ...any) {
 	} else {
 		time.Sleep(logger.exitDuration)
 	}
+
+	// todo: implement graceful shutdown for .Fatal methods
+	os.Exit(1)
+}
+
+func (logger *logger) Fatalf(format string, args ...any) {
+	logger.mutex.Lock()
+	defer logger.mutex.Unlock()
+
+	for _, loggerItem := range logger.loggers {
+		loggerItem.Fatalf(format, args...)
+	}
+
+	for _, customLogger := range logger.customLoggers {
+		logger.line.AddErrorFormatCustom(customLogger.Fatalf, format, args...)
+	}
+
+	if logger.isCustomDuration {
+		time.Sleep(logger.customDuration)
+	} else {
+		time.Sleep(logger.exitDuration)
+	}
+
 	os.Exit(1)
 }
