@@ -7,8 +7,10 @@ import (
 	"github.com/lowl11/boost/internal/di_container"
 	"github.com/lowl11/boost/internal/fast_handler"
 	"github.com/lowl11/boost/internal/greeting"
+	"github.com/lowl11/boost/internal/healthcheck"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/cron"
+	"github.com/lowl11/boost/pkg/system/di"
 	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/boost/pkg/web/queue/msgbus"
 	"github.com/lowl11/boost/pkg/web/rpc"
@@ -172,6 +174,10 @@ func (app *App) Destroy(destroyFunc types.DestroyFunc) {
 // Healthcheck add new application service to healthcheck
 func (app *App) Healthcheck(name, url string) {
 	app.healthcheck.Register(name, url)
+}
+
+func (app *App) UseStat(endpoint string) {
+	app.GET(endpoint, staticEndpointStat(di.Get[healthcheck.Healthcheck]()))
 }
 
 // ANY add new route to App with method ANY.
