@@ -8,7 +8,6 @@ import (
 func Memory() float64 {
 	var mem runtime.MemStats
 	runtime.ReadMemStats(&mem)
-	fmt.Printf("Memory Usage: %.2f MB\n", float64(mem.Alloc)/1024/1024)
 	return float64(mem.Alloc) / 1024 / 1024
 }
 
