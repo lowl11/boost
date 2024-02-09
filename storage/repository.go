@@ -10,16 +10,21 @@ import (
 type Repository interface {
 	CloseRows(rows *sqlx.Rows)
 	Transaction(transactionActions func(tx *sqlx.Tx) error) error
+	Connection() *sqlx.DB
 }
 
 type repository struct {
-	Connection *sqlx.DB
+	connection *sqlx.DB
 }
 
 func NewRepo() Repository {
 	return repository{
-		Connection: di.Get[sqlx.DB](),
+		connection: di.Get[sqlx.DB](),
 	}
+}
+
+func (repo repository) Connection() *sqlx.DB {
+	return repo.connection
 }
 
 func (repo repository) CloseRows(rows *sqlx.Rows) {
@@ -29,7 +34,7 @@ func (repo repository) CloseRows(rows *sqlx.Rows) {
 }
 
 func (repo repository) Transaction(transactionActions func(tx *sqlx.Tx) error) error {
-	transaction, err := repo.Connection.Beginx()
+	transaction, err := repo.connection.Beginx()
 	if err != nil {
 		return err
 	}
