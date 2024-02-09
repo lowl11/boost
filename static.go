@@ -3,15 +3,19 @@ package boost
 import (
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/healthcheck"
+	"github.com/lowl11/boost/internal/stat"
 	"github.com/lowl11/boost/pkg/system/types"
 )
 
 func registerStaticEndpoints(app routing, healthcheck *healthcheck.Healthcheck) {
-	// register healthcheck endpoints
+	// register healthcheck endpoint
 	app.GET("/health", staticEndpointHealthcheck(healthcheck))
 
-	// register ping/pong endpoints
+	// register ping/pong endpoint
 	app.GET("/ping", staticEndpointPingPong())
+
+	// register stat endpoint
+	app.GET("/stat", staticEndpointStat(healthcheck))
 }
 
 func staticEndpointHealthcheck(healthcheck *healthcheck.Healthcheck) types.HandlerFunc {
@@ -20,12 +24,18 @@ func staticEndpointHealthcheck(healthcheck *healthcheck.Healthcheck) types.Handl
 			return ctx.Error(err)
 		}
 
-		return ctx.String("OK")
+		return ctx.Ok("OK")
 	}
 }
 
 func staticEndpointPingPong() types.HandlerFunc {
 	return func(ctx interfaces.Context) error {
-		return ctx.String("pong")
+		return ctx.Ok("pong")
+	}
+}
+
+func staticEndpointStat(healthcheck *healthcheck.Healthcheck) types.HandlerFunc {
+	return func(ctx interfaces.Context) error {
+		return ctx.Ok(stat.Format(healthcheck))
 	}
 }

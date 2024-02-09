@@ -120,6 +120,8 @@ func New(configs ...Config) *App {
 		healthcheck: healthcheck.New(),
 	}
 
+	di_container.Get().RegisterImplementation(app.healthcheck)
+
 	// default middlewares
 	app.Use(
 		middlewares.Secure(),
