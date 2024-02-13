@@ -21,11 +21,6 @@ func (validator *Validator) Struct(object any) error {
 		return nil
 	}
 
-	err := errors.
-		New("Model validation error").
-		SetType(errorType).
-		SetHttpCode(http.StatusUnprocessableEntity)
-
 	validateError := validator.Validate.Struct(object)
 	if validateError == nil {
 		return nil
@@ -33,7 +28,7 @@ func (validator *Validator) Struct(object any) error {
 
 	validationErrors, ok := validateError.(baseValidator.ValidationErrors)
 	if !ok {
-		return err.SetError(err)
+		return ErrorModelValidation()
 	}
 
 	if len(validationErrors) == 0 {
@@ -45,7 +40,7 @@ func (validator *Validator) Struct(object any) error {
 		validations = append(validations, validationError.Error())
 	}
 
-	return err.AddContext(contextKey, validations)
+	return ErrorModelValidation(validations...)
 }
 
 func (validator *Validator) Var(variable any, tag string) error {
