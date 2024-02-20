@@ -1,6 +1,8 @@
 package storage
 
 import (
+	"context"
+	"database/sql"
 	"github.com/jmoiron/sqlx"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/di"
@@ -11,6 +13,18 @@ type Repository interface {
 	CloseRows(rows *sqlx.Rows)
 	Transaction(transactionActions func(tx *sqlx.Tx) error) error
 	Connection() *sqlx.DB
+	DB(ctx context.Context) DB
+}
+
+type DB interface {
+	sqlx.ExecerContext
+	sqlx.QueryerContext
+	sqlx.PreparerContext
+	NamedExecContext
+}
+
+type NamedExecContext interface {
+	NamedExecContext(ctx context.Context, query string, arg interface{}) (sql.Result, error)
 }
 
 type repository struct {
@@ -24,6 +38,15 @@ func NewRepo() Repository {
 }
 
 func (repo repository) Connection() *sqlx.DB {
+	return repo.connection
+}
+
+func (repo repository) DB(ctx context.Context) DB {
+	tx := getTransaction(ctx)
+	if tx != nil {
+		return tx
+	}
+
 	return repo.connection
 }
 
