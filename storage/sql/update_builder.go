@@ -1,0 +1,91 @@
+package sql
+
+import (
+	"github.com/lowl11/boost/internal/storages"
+	"github.com/lowl11/boost/pkg/system/types"
+	"strings"
+)
+
+type updateBuilder struct {
+	tableName string
+	where     Where
+	setPairs  []Pair
+}
+
+func newUpdateBuilder(tableName ...string) *updateBuilder {
+	builder := &updateBuilder{
+		where:    newWhere(),
+		setPairs: make([]Pair, 0),
+	}
+
+	if len(tableName) > 0 {
+		builder.tableName = tableName[0]
+	}
+
+	return builder
+}
+
+func (builder *updateBuilder) String() string {
+	query := strings.Builder{}
+
+	query.WriteString("UPDATE ")
+	query.WriteString(builder.tableName)
+	query.WriteString("\n")
+
+	if len(builder.setPairs) > 0 {
+		isParam := types.ToString(builder.setPairs[0].Value) == ""
+
+		query.WriteString("SET\n")
+		for index, pair := range builder.setPairs {
+			query.WriteString("\t")
+			query.WriteString(pair.Column)
+			query.WriteString(" = ")
+
+			if isParam {
+				query.WriteString(":" + pair.Column)
+			} else {
+				query.WriteString(storages.ToString(pair.Value))
+			}
+			if index < len(builder.setPairs)-1 {
+				query.WriteString(",\n")
+			}
+		}
+		query.WriteString("\n")
+	}
+
+	whereClause := builder.where.(Query).String()
+	if len(whereClause) != 0 {
+		query.WriteString("WHERE \n\t")
+		query.WriteString(whereClause)
+		query.WriteString("\n")
+	}
+
+	return query.String()
+}
+
+func (builder *updateBuilder) GetParam() (string, bool) {
+	var isParam bool
+	if len(builder.setPairs) > 0 {
+		isParam = types.ToString(builder.setPairs[0].Value) == ""
+	}
+	return builder.String(), isParam
+}
+
+func (builder *updateBuilder) From(tableName string) UpdateBuilder {
+	builder.tableName = tableName
+	return builder
+}
+
+func (builder *updateBuilder) Set(pairs ...Pair) UpdateBuilder {
+	builder.setPairs = pairs
+	return builder
+}
+
+func (builder *updateBuilder) Where(whereFunc func(builder Where)) UpdateBuilder {
+	return builder.applyWhere(whereFunc)
+}
+
+func (builder *updateBuilder) applyWhere(whereFunc func(builder Where)) UpdateBuilder {
+	whereFunc(builder.where)
+	return builder
+}
