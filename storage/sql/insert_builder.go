@@ -37,8 +37,10 @@ func (builder *insertBuilder) String() string {
 	isMultiple := len(builder.multiplePairs) > 0
 
 	var isNamedValues bool
-	if builder.pairs[0].Value == nil {
-		isNamedValues = true
+	if len(builder.pairs) > 0 {
+		if builder.pairs[0].Value == nil {
+			isNamedValues = true
+		}
 	}
 
 	if !isMultiple {
@@ -83,9 +85,11 @@ func (builder *insertBuilder) String() string {
 		query.WriteString(")\n")
 	}
 
-	query.WriteString("ON CONFLICT ")
-	query.WriteString(builder.conflict)
-	query.WriteString("\n")
+	if len(builder.conflict) > 0 {
+		query.WriteString("ON CONFLICT ")
+		query.WriteString(builder.conflict)
+		query.WriteString("\n")
+	}
 
 	return query.String()
 }
