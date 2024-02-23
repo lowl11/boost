@@ -266,7 +266,7 @@ func (builder *selectBuilder) setLimit(limit int) *selectBuilder {
 func (builder *selectBuilder) addJoin(joinType, tableName, aliasName, joinColumn, mainColumn string) *selectBuilder {
 	builder.joins = append(builder.joins, newJoin(joinType).
 		Table(tableName).
-		Alias(aliasName).
+		Alias("\""+aliasName+"\"").
 		JoinColumn(joinColumn).
 		MainColumn(mainColumn))
 	return builder

@@ -13,8 +13,12 @@ func BuildWhere(alias, field, sign string, value any) string {
 		if !strings.Contains(field, ".") {
 			_, _ = fmt.Fprintf(&builder, "%s.%s %s %s", alias, field, sign, valueString)
 		} else {
-			_, after, _ := strings.Cut(field, ".")
-			_, _ = fmt.Fprintf(&builder, "%s.%s %s %s", alias, after, sign, valueString)
+			before, after, _ := strings.Cut(field, ".")
+			if strings.Contains(alias, before) {
+				_, _ = fmt.Fprintf(&builder, "%s.%s %s %s", alias, after, sign, valueString)
+			} else {
+				_, _ = fmt.Fprintf(&builder, "\"%s\".%s %s %s", before, after, sign, valueString)
+			}
 		}
 	} else {
 		_, _ = fmt.Fprintf(&builder, "%s %s %s", field, sign, valueString)
