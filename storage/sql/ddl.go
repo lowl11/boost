@@ -1,13 +1,5 @@
 package sql
 
-func CreateTable(tableName ...string) CreateTableBuilder {
-	return newCreateTable(tableName...)
-}
-
-func AlterTable(tableName ...string) AlterTableBuilder {
-	return newAlterTableBuilder(tableName...)
-}
-
 func DropTable(tableName ...string) DropTableBuilder {
 	return newDropTableBuilder(tableName...)
 }
