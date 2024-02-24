@@ -2,7 +2,18 @@ package sql
 
 import (
 	"context"
+	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/log"
+	"github.com/lowl11/flex"
+	"net/http"
+	"reflect"
+)
+
+var (
+	RecordNotFound = errors.
+		New("record not found").
+		SetHttpCode(http.StatusNotFound).
+		SetType("Storage_RecordNotFound")
 )
 
 var (
@@ -52,7 +63,11 @@ func (s *scanner) Scan(result any) error {
 		defer repo.CloseRows(rows)
 
 		if !rows.Next() {
-			return nil
+			return RecordNotFound
+		}
+
+		if flex.Type(flex.Type(reflect.TypeOf(result)).Unwrap()).IsPrimitive() {
+			return rows.Scan(result)
 		}
 
 		return rows.StructScan(result)
