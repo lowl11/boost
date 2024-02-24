@@ -1,6 +1,9 @@
 package sql
 
-import "strings"
+import (
+	"context"
+	"strings"
+)
 
 type deleteBuilder struct {
 	tableName string
@@ -52,4 +55,8 @@ func (builder *deleteBuilder) Where(whereFunc func(builder Where)) DeleteBuilder
 func (builder *deleteBuilder) applyWhere(whereFunc func(builder Where)) DeleteBuilder {
 	whereFunc(builder.where)
 	return builder
+}
+
+func (builder *deleteBuilder) Exec(ctx context.Context, args ...any) error {
+	return newParamExecutor(ctx, builder.String()).Exec(args...)
 }

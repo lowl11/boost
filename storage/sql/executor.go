@@ -1,9 +1,12 @@
 package sql
 
-import "context"
+import (
+	"context"
+	"github.com/lowl11/boost/log"
+)
 
 type Executor interface {
-	Exec() error
+	Exec(args ...any) error
 }
 
 type executor struct {
@@ -20,12 +23,30 @@ func newExecutor(ctx context.Context, query string, entity any) *executor {
 	}
 }
 
-func (e *executor) Exec() error {
+func newParamExecutor(ctx context.Context, query string) *executor {
+	return &executor{
+		ctx:   ctx,
+		query: query,
+	}
+}
+
+func (e *executor) Exec(args ...any) error {
 	repo := getRepo()
 
-	_, err := repo.DB(e.ctx).NamedExecContext(e.ctx, e.query, e.entity)
-	if err != nil {
-		return err
+	if _logEnabled {
+		log.Debug(e.query)
+	}
+
+	if e.entity == nil {
+		_, err := repo.DB(e.ctx).ExecContext(e.ctx, e.query, args...)
+		if err != nil {
+			return err
+		}
+	} else {
+		_, err := repo.DB(e.ctx).NamedExecContext(e.ctx, e.query, e.entity)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

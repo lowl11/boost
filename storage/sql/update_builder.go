@@ -1,6 +1,7 @@
 package sql
 
 import (
+	"context"
 	"github.com/lowl11/boost/internal/storages"
 	"github.com/lowl11/boost/pkg/system/types"
 	"strings"
@@ -10,6 +11,7 @@ type updateBuilder struct {
 	tableName string
 	where     Where
 	setPairs  []Pair
+	entity    any
 }
 
 func newUpdateBuilder(tableName ...string) *updateBuilder {
@@ -88,4 +90,34 @@ func (builder *updateBuilder) Where(whereFunc func(builder Where)) UpdateBuilder
 func (builder *updateBuilder) applyWhere(whereFunc func(builder Where)) UpdateBuilder {
 	whereFunc(builder.where)
 	return builder
+}
+
+func (builder *updateBuilder) Entity(entity any) UpdateBuilder {
+	table, _, columns := storages.Eat(entity)
+	pairs := func(entity any) []Pair {
+		pairs := make([]Pair, 0, len(columns))
+		for _, column := range columns {
+			if strings.Contains(column, ".") {
+				_, after, found := strings.Cut(column, ".")
+				if found {
+					column = after
+				}
+			}
+			column = strings.ReplaceAll(column, "\"", "")
+			pairs = append(pairs, Pair{
+				Column: column,
+				Value:  ":" + column,
+			})
+		}
+		return pairs
+	}(entity)
+
+	builder.entity = entity
+	return builder.
+		From(table).
+		Set(pairs...)
+}
+
+func (builder *updateBuilder) Exec(ctx context.Context) error {
+	return newExecutor(ctx, builder.String(), builder.entity).Exec()
 }

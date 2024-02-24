@@ -30,6 +30,8 @@ type SelectBuilder interface {
 type DeleteBuilder interface {
 	Query
 
+	Exec(ctx context.Context, args ...any) error
+
 	From(tableName string) DeleteBuilder
 	Where(func(Where)) DeleteBuilder
 }
@@ -37,10 +39,13 @@ type DeleteBuilder interface {
 type UpdateBuilder interface {
 	Query
 
+	Exec(ctx context.Context) error
+
 	GetParam() (string, bool)
 	From(tableName string) UpdateBuilder
 	Set(pairs ...Pair) UpdateBuilder
 	Where(func(Where)) UpdateBuilder
+	Entity(entity any) UpdateBuilder
 }
 
 type InsertBuilder interface {
