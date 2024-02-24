@@ -30,6 +30,10 @@ func newParamExecutor(ctx context.Context, query string) *executor {
 	}
 }
 
+func Exec(ctx context.Context, query string, entity any, args ...any) error {
+	return newExecutor(ctx, query, entity).Exec(args...)
+}
+
 func (e *executor) Exec(args ...any) error {
 	repo := getRepo()
 

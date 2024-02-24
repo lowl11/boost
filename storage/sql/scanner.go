@@ -28,6 +28,14 @@ type Scanner interface {
 	Scan(any) error
 }
 
+func Scan(ctx context.Context, query string, result any, args ...any) error {
+	return newScanner(query, ctx, args...).Scan(result)
+}
+
+func ScanSingle(ctx context.Context, query string, result any, args ...any) error {
+	return newScanner(query, ctx, args...).Single().Scan(result)
+}
+
 type scanner struct {
 	ctx      context.Context
 	args     []any
