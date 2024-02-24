@@ -1,6 +1,7 @@
 package sql
 
 import (
+	"context"
 	"github.com/lowl11/boost/internal/storages"
 	"strings"
 )
@@ -10,6 +11,7 @@ type insertBuilder struct {
 	pairs         []Pair
 	conflict      string
 	multiplePairs [][]Pair
+	entity        any
 }
 
 func newInsertBuilder(pairs ...Pair) *insertBuilder {
@@ -124,4 +126,34 @@ func (builder *insertBuilder) OnConflict(query string) InsertBuilder {
 func (builder *insertBuilder) Values(pairs ...Pair) InsertBuilder {
 	builder.multiplePairs = append(builder.multiplePairs, pairs)
 	return builder
+}
+
+func (builder *insertBuilder) Entity(entity any) InsertBuilder {
+	table, _, columns := storages.Eat(entity)
+	pairs := func(entity any) []Pair {
+		pairs := make([]Pair, 0, len(columns))
+		for _, column := range columns {
+			if strings.Contains(column, ".") {
+				_, after, found := strings.Cut(column, ".")
+				if found {
+					column = after
+				}
+			}
+			column = strings.ReplaceAll(column, "\"", "")
+			pairs = append(pairs, Pair{
+				Column: column,
+				Value:  ":" + column,
+			})
+		}
+		return pairs
+	}(entity)
+
+	builder.entity = entity
+	return builder.
+		Pairs(pairs...).
+		To(table)
+}
+
+func (builder *insertBuilder) Exec(ctx context.Context) error {
+	return newExecutor(ctx, builder.String(), builder.entity).Exec()
 }

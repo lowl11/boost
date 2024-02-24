@@ -43,6 +43,14 @@ func (builder *selectBuilder) List(ctx context.Context, args ...any) Scanner {
 	return newScanner(builder.String(), ctx, args...)
 }
 
+func (builder *selectBuilder) Scan(ctx context.Context, result any, args ...any) error {
+	return newScanner(builder.String(), ctx, args...).Scan(result)
+}
+
+func (builder *selectBuilder) ScanSingle(ctx context.Context, result any, args ...any) error {
+	return newScanner(builder.String(), ctx, args...).Single().Scan(result)
+}
+
 func (builder *selectBuilder) String() string {
 	// builder
 	query := strings.Builder{}

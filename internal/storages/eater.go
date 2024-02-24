@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func Eat[T any](entity T) (string, string, []string) {
+func Eat(entity any) (string, string, []string) {
 	var tableName string
 	var aliasName string
 

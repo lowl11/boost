@@ -7,6 +7,8 @@ type SelectBuilder interface {
 
 	Single(ctx context.Context, args ...any) Scanner
 	List(ctx context.Context, args ...any) Scanner
+	Scan(ctx context.Context, result any, args ...any) error
+	ScanSingle(ctx context.Context, result any, args ...any) error
 
 	Select(columns ...string) SelectBuilder
 	From(tableName string) SelectBuilder
@@ -44,10 +46,13 @@ type UpdateBuilder interface {
 type InsertBuilder interface {
 	Query
 
+	Exec(ctx context.Context) error
+
 	GetParamStatus() (string, bool)
 	To(tableName string) InsertBuilder
 	OnConflict(query string) InsertBuilder
 	Values(pairs ...Pair) InsertBuilder
+	Entity(entity any) InsertBuilder
 }
 
 func Select(columns ...string) SelectBuilder {
