@@ -21,10 +21,15 @@ type DB interface {
 	sqlx.QueryerContext
 	sqlx.PreparerContext
 	NamedExecContext
+	SelectContext
 }
 
 type NamedExecContext interface {
 	NamedExecContext(ctx context.Context, query string, arg interface{}) (sql.Result, error)
+}
+
+type SelectContext interface {
+	SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
 }
 
 type repository struct {

@@ -1,7 +1,12 @@
 package sql
 
+import "context"
+
 type SelectBuilder interface {
 	Query
+
+	Single(ctx context.Context, args ...any) Scanner
+	List(ctx context.Context, args ...any) Scanner
 
 	Select(columns ...string) SelectBuilder
 	From(tableName string) SelectBuilder

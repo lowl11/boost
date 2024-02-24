@@ -1,6 +1,7 @@
 package sql
 
 import (
+	"context"
 	"github.com/lowl11/boost/internal/storages"
 	"strings"
 )
@@ -32,6 +33,14 @@ func newSelectBuilder(columns ...string) *selectBuilder {
 	}
 	builder.refreshColumns()
 	return builder
+}
+
+func (builder *selectBuilder) Single(ctx context.Context, args ...any) Scanner {
+	return newScanner(builder.String(), ctx, args...).Single()
+}
+
+func (builder *selectBuilder) List(ctx context.Context, args ...any) Scanner {
+	return newScanner(builder.String(), ctx, args...)
 }
 
 func (builder *selectBuilder) String() string {
