@@ -11,6 +11,7 @@ type SelectBuilder interface {
 	ScanSingle(ctx context.Context, result any, args ...any) error
 
 	Select(columns ...string) SelectBuilder
+	Distinct() SelectBuilder
 	From(tableName string) SelectBuilder
 	As(aliasName string) SelectBuilder
 	Join(tableName, aliasName, joinColumn, mainColumn string) SelectBuilder

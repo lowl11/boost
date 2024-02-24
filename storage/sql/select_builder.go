@@ -19,6 +19,7 @@ type selectBuilder struct {
 	groupByColumns  []string
 	offset          int
 	limit           int
+	isDistinct      bool
 }
 
 func newSelectBuilder(columns ...string) *selectBuilder {
@@ -57,7 +58,11 @@ func (builder *selectBuilder) String() string {
 	query.Grow(300)
 
 	// select
-	query.WriteString("SELECT\n\t")
+	if !builder.isDistinct {
+		query.WriteString("SELECT\n\t")
+	} else {
+		query.WriteString("SELECT DISTINCT\n\t")
+	}
 
 	// append table
 	if len(builder.columns) == 0 {
@@ -138,6 +143,11 @@ func (builder *selectBuilder) String() string {
 
 func (builder *selectBuilder) Select(columns ...string) SelectBuilder {
 	return builder.setColumns(columns...)
+}
+
+func (builder *selectBuilder) Distinct() SelectBuilder {
+	builder.isDistinct = true
+	return builder
 }
 
 func (builder *selectBuilder) From(tableName string) SelectBuilder {
