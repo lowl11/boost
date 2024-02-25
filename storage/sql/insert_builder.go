@@ -7,13 +7,25 @@ import (
 	"strings"
 )
 
+type InsertBuilder interface {
+	Query
+
+	Exec(ctx context.Context) error
+
+	GetParamStatus() (string, bool)
+	To(tableName string) InsertBuilder
+	OnConflict(query string) InsertBuilder
+	Values(pairs ...Pair) InsertBuilder
+	Entity(entity any) InsertBuilder
+	EntityList(list []any) InsertBuilder
+}
+
 type insertBuilder struct {
 	tableName     string
 	pairs         []Pair
 	conflict      string
 	multiplePairs [][]Pair
 	entity        any
-	entityList    []any
 }
 
 func newInsertBuilder(pairs ...Pair) *insertBuilder {

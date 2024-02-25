@@ -5,6 +5,15 @@ import (
 	"strings"
 )
 
+type DeleteBuilder interface {
+	Query
+
+	Exec(ctx context.Context, args ...any) error
+
+	From(tableName string) DeleteBuilder
+	Where(func(Where)) DeleteBuilder
+}
+
 type deleteBuilder struct {
 	tableName string
 	where     Where

@@ -6,6 +6,32 @@ import (
 	"strings"
 )
 
+type SelectBuilder interface {
+	Query
+
+	Single(ctx context.Context, args ...any) Scanner
+	List(ctx context.Context, args ...any) Scanner
+	Scan(ctx context.Context, result any, args ...any) error
+	ScanSingle(ctx context.Context, result any, args ...any) error
+
+	Select(columns ...string) SelectBuilder
+	Distinct() SelectBuilder
+	From(tableName string) SelectBuilder
+	As(aliasName string) SelectBuilder
+	Join(tableName, aliasName, joinColumn, mainColumn string) SelectBuilder
+	LeftJoin(tableName, aliasName, joinColumn, mainColumn string) SelectBuilder
+	RightJoin(tableName, aliasName, joinColumn, mainColumn string) SelectBuilder
+	Where(func(Where)) SelectBuilder
+	OrderBy(columns ...string) SelectBuilder
+	OrderByDescending(columns ...string) SelectBuilder
+	Having(func(Aggregate)) SelectBuilder
+	GroupBy(columns ...string) SelectBuilder
+	GroupByAggregate(func(Aggregate)) SelectBuilder
+	Offset(offset int) SelectBuilder
+	Limit(limit int) SelectBuilder
+	Page(pageSize, pageNumber int) SelectBuilder
+}
+
 type selectBuilder struct {
 	columns         []string
 	tableName       string

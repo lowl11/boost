@@ -7,6 +7,18 @@ import (
 	"strings"
 )
 
+type UpdateBuilder interface {
+	Query
+
+	Exec(ctx context.Context, args ...any) error
+
+	GetParam() (string, bool)
+	From(tableName string) UpdateBuilder
+	Set(pairs ...Pair) UpdateBuilder
+	Where(func(Where)) UpdateBuilder
+	Entity(entity any) UpdateBuilder
+}
+
 type updateBuilder struct {
 	tableName string
 	where     Where
@@ -118,6 +130,6 @@ func (builder *updateBuilder) Entity(entity any) UpdateBuilder {
 		Set(pairs...)
 }
 
-func (builder *updateBuilder) Exec(ctx context.Context) error {
-	return newExecutor(ctx, builder.String(), builder.entity).Exec()
+func (builder *updateBuilder) Exec(ctx context.Context, args ...any) error {
+	return newExecutor(ctx, builder.String(), builder.entity).Exec(args...)
 }
