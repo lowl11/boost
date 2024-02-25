@@ -38,7 +38,7 @@ func MustConnect(connectionString string, options ...func(connection *sqlx.DB)) 
 }
 
 func RegisterConnect(connectionString string, options ...func(connection *sqlx.DB)) {
-	di.AddSingleton[sqlx.DB](func() *sqlx.DB {
+	di.Register[sqlx.DB](func() *sqlx.DB {
 		return MustConnect(connectionString, options...)
 	})
 }
