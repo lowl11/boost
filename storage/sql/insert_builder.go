@@ -3,6 +3,7 @@ package sql
 import (
 	"context"
 	"github.com/lowl11/boost/internal/storages"
+	"github.com/lowl11/flex"
 	"strings"
 )
 
@@ -12,6 +13,7 @@ type insertBuilder struct {
 	conflict      string
 	multiplePairs [][]Pair
 	entity        any
+	entityList    []any
 }
 
 func newInsertBuilder(pairs ...Pair) *insertBuilder {
@@ -152,6 +154,48 @@ func (builder *insertBuilder) Entity(entity any) InsertBuilder {
 	return builder.
 		Pairs(pairs...).
 		To(table)
+}
+
+func (builder *insertBuilder) EntityList(list []any) InsertBuilder {
+	if len(list) == 0 {
+		return builder
+	}
+
+	table, _, columns := storages.Eat(list[0])
+
+	getPairs := func(columns []string, entity any) []Pair {
+		pairs := make([]Pair, 0, len(columns))
+		fStr := flex.Struct(entity)
+		for _, column := range columns {
+			if strings.Contains(column, ".") {
+				_, after, found := strings.Cut(column, ".")
+				if found {
+					column = after
+				}
+			}
+			column = strings.ReplaceAll(column, "\"", "")
+			pairs = append(pairs, Pair{
+				Column: column,
+				Value:  fStr.FieldValueByTag("db", column),
+			})
+		}
+		return pairs
+	}
+
+	for _, entity := range list {
+		builder.Values(getPairs(columns, entity)...)
+	}
+
+	if builder.pairs == nil {
+		builder.pairs = make([]Pair, 0, len(columns))
+	}
+	for _, col := range columns {
+		builder.pairs = append(builder.pairs, Pair{
+			Column: col,
+		})
+	}
+	builder.tableName = table
+	return builder
 }
 
 func (builder *insertBuilder) Exec(ctx context.Context) error {

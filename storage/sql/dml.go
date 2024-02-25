@@ -59,6 +59,7 @@ type InsertBuilder interface {
 	OnConflict(query string) InsertBuilder
 	Values(pairs ...Pair) InsertBuilder
 	Entity(entity any) InsertBuilder
+	EntityList(list []any) InsertBuilder
 }
 
 func Select(columns ...string) SelectBuilder {
