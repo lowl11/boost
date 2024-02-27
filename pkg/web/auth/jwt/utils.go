@@ -1,4 +1,4 @@
-package jwt_service
+package jwt
 
 import (
 	"encoding/json"

@@ -1,4 +1,4 @@
-package jwt_service
+package jwt
 
 import (
 	"github.com/lowl11/boost/pkg/system/types"

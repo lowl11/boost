@@ -1,4 +1,4 @@
-package jwt_service
+package jwt
 
 // GetToken generate token by given object
 func (jwtService JWT) GetToken(object any) (string, error) {

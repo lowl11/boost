@@ -4,6 +4,8 @@ import (
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/stdlib"
 	"github.com/jmoiron/sqlx"
+	"github.com/lowl11/boost"
+	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/di"
 	"time"
@@ -41,12 +43,20 @@ func RegisterConnect(connectionString string, options ...func(connection *sqlx.D
 	di.Register[sqlx.DB](func() *sqlx.DB {
 		return MustConnect(connectionString, options...)
 	})
+
+	di.Get[boost.App]().Destroy(func() {
+		if err := di.Get[sqlx.DB]().Close(); err != nil {
+			log.Error("Close Database connection error:", err)
+		}
+	})
 }
 
 func Ping() error {
 	connection := di.Get[sqlx.DB]()
 	if connection == nil {
-		return nil
+		return errors.
+			New("No database connection").
+			SetType("Storage_NoConnection")
 	}
 
 	return connection.Ping()
