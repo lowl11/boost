@@ -12,11 +12,19 @@ func (connection *Connection) GetListenerChannel() (*amqp.Channel, error) {
 
 func (connection *Connection) Close() error {
 	if connection.dispatcherChannel != nil {
-		_ = connection.dispatcherChannel.Close()
+		if !connection.dispatcherChannel.IsClosed() {
+			_ = connection.dispatcherChannel.Close()
+		}
 	}
 
 	if connection.listenerChannel != nil {
-		_ = connection.listenerChannel.Close()
+		if !connection.listenerChannel.IsClosed() {
+			_ = connection.listenerChannel.Close()
+		}
+	}
+
+	if connection.connection.IsClosed() {
+		return nil
 	}
 
 	return connection.connection.Close()
