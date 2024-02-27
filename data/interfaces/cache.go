@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type CacheRepository interface {
+type Cache interface {
 	All(context.Context) (map[string][]byte, error)
 	Search(context.Context, string) ([]string, error)
 	Set(context.Context, string, any, ...time.Duration) error

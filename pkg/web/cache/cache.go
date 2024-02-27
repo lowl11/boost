@@ -5,7 +5,7 @@ import (
 	"github.com/lowl11/boost/data/interfaces"
 )
 
-func getCacheRepository(cacheType string, cfg ...any) (interfaces.CacheRepository, error) {
+func getCacheRepository(cacheType string, cfg ...any) (interfaces.Cache, error) {
 	switch cacheType {
 	case caches.Memory:
 		return newMemRepo(), nil

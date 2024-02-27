@@ -24,8 +24,8 @@ type (
 
 	ILogger = interfaces.ILogger
 
-	// CacheRepository is interface for using cache
-	CacheRepository = interfaces.CacheRepository
+	// Cache is interface for using cache
+	Cache = interfaces.Cache
 
 	// Message Bus
 	Listener     = interfaces.Listener

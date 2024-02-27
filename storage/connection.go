@@ -4,7 +4,6 @@ import (
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/stdlib"
 	"github.com/jmoiron/sqlx"
-	"github.com/lowl11/boost"
 	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/di"
@@ -42,12 +41,6 @@ func MustConnect(connectionString string, options ...func(connection *sqlx.DB)) 
 func RegisterConnect(connectionString string, options ...func(connection *sqlx.DB)) {
 	di.Register[sqlx.DB](func() *sqlx.DB {
 		return MustConnect(connectionString, options...)
-	})
-
-	di.Get[boost.App]().Destroy(func() {
-		if err := di.Get[sqlx.DB]().Close(); err != nil {
-			log.Error("Close Database connection error:", err)
-		}
 	})
 }
 

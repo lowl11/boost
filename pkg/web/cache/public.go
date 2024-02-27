@@ -10,7 +10,7 @@ type RedisConfig struct {
 	DB       int
 }
 
-func New(cacheType string, cfg ...any) (interfaces.CacheRepository, error) {
+func New(cacheType string, cfg ...any) (interfaces.Cache, error) {
 	cacheRepo, err := getCacheRepository(cacheType, cfg...)
 	if err != nil {
 		return nil, err
