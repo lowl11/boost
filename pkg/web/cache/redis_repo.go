@@ -76,6 +76,17 @@ func (repo redisRepo) Search(ctx context.Context, pattern string) ([]string, err
 	return keys, nil
 }
 
+func (repo redisRepo) Refresh(ctx context.Context, key string, expiration time.Duration) error {
+	if err := repo.client.Expire(ctx, key, expiration).Err(); err != nil {
+		return errors.
+			New("Refresh expiration of key").
+			SetType("Redis_RefreshExpire").
+			SetError(err)
+	}
+
+	return nil
+}
+
 func (repo redisRepo) Set(ctx context.Context, key string, x any, expiration ...time.Duration) error {
 	expires := _redisDefaultExpiration
 	if len(expiration) > 0 {

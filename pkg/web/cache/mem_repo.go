@@ -55,6 +55,16 @@ func (repo memRepo) Search(ctx context.Context, pattern string) ([]string, error
 	return matchKeys, nil
 }
 
+func (repo memRepo) Refresh(_ context.Context, key string, expiration time.Duration) error {
+	value, ok := repo.client.Get(key)
+	if !ok {
+		return nil
+	}
+
+	repo.client.Set(key, value, expiration)
+	return nil
+}
+
 func (repo memRepo) Set(_ context.Context, key string, x any, expiration ...time.Duration) error {
 	expires := _memDefaultExpiration
 	if len(expiration) > 0 {
