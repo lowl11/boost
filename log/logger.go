@@ -12,6 +12,8 @@ const (
 	defaultExitDuration = 250
 )
 
+var _logger *logger
+
 type logger struct {
 	loggers       []interfaces.ILogger
 	customLoggers []interfaces.ILogger
