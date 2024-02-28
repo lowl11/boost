@@ -41,3 +41,8 @@ func Mask(phone string) string {
 
 	return phone
 }
+
+func trimFirstRune(s string) string {
+	_, i := utf8.DecodeRuneInString(s)
+	return s[i:]
+}

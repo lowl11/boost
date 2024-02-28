@@ -1,6 +1,7 @@
 package rpc
 
 import (
+	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/web/grpc_server"
 	"google.golang.org/grpc"
 )
@@ -30,4 +31,16 @@ func New(config ...Config) *App {
 	return &App{
 		server: grpc_server.New(cfg.Options...),
 	}
+}
+
+func (app *App) Run(port string) error {
+	return app.server.Start(port)
+}
+
+func (app *App) Close() {
+	log.Error(app.server.Close(), "Shutdown gRPC server error")
+}
+
+func (app *App) RegisterService(desc *grpc.ServiceDesc, impl interface{}) {
+	app.server.RegisterService(desc, impl)
 }
