@@ -19,6 +19,11 @@ func toString(anyValue any, memory bool) string {
 		return ""
 	}
 
+	// already string type
+	if stringValue, isStr := anyValue.(string); isStr {
+		return stringValue
+	}
+
 	// try cast to error
 	if _, ok := anyValue.(error); ok {
 		return anyValue.(error).Error()
