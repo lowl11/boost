@@ -22,7 +22,7 @@ func Title(text string) string {
 		return ""
 	}
 
-	text = strings.ToLower(text)
+	text = strings.TrimSpace(strings.ToLower(text))
 	runes := []rune(text)
 	runes[0] = unicode.ToUpper(runes[0])
 	return string(runes)
@@ -43,12 +43,18 @@ func EveryTitle(text string) string {
 // Input: John Smith
 // Output: john_smith
 func Username(username string) string {
-	username = strings.TrimSpace(username)
-	username = strings.ToLower(username)
+	username = strings.ToLower(strings.TrimSpace(username))
 	username = _manySpacesReg.ReplaceAllString(username, " ")
 	username = strings.ReplaceAll(username, " ", "_")
-	username = OnlyLetter(username)
+	username = OnlyLetter(username, '_')
 	return username
+}
+
+func Name(name string) string {
+	name = _manySpacesReg.ReplaceAllString(name, " ")
+	name = EveryTitle(name)
+	name = OnlyLetter(name, ' ')
+	return name
 }
 
 // OnlyLetter keeps only latin letters & underscore ("_")
@@ -56,10 +62,10 @@ func Username(username string) string {
 //
 // Input: john_smith_jr.
 // Output: john_smith_jr
-func OnlyLetter(text string) string {
+func OnlyLetter(text string, except rune) string {
 	var output []rune
 	for _, char := range text {
-		if unicode.IsLetter(char) || char == '_' {
+		if unicode.IsLetter(char) || char == except {
 			output = append(output, char)
 		}
 	}
