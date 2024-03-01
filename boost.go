@@ -173,7 +173,7 @@ func (app *App) Run(port string) {
 
 	// check DI registers
 	if err := di_container.Get().Check(); err != nil {
-		log.Fatal(err, "Dependency Injection error")
+		log.Fatal("Dependency Injection error:", err)
 	}
 
 	// register static endpoints
@@ -213,7 +213,7 @@ func (app *App) RunRPC(port string) {
 
 	// check DI registers
 	if err := di_container.Get().Check(); err != nil {
-		log.Fatal(err, "Dependency Injection error")
+		log.Fatal("Dependency Injection error:", err)
 	}
 
 	// print greeting text
@@ -237,7 +237,7 @@ func (app *App) RunCron() {
 
 	// check DI registers
 	if err := di_container.Get().Check(); err != nil {
-		log.Fatal(err, "Dependency Injection error")
+		log.Fatal("Dependency Injection error:", err)
 	}
 
 	// print greeting text
@@ -259,7 +259,7 @@ func (app *App) RunListener(amqpConnectionURL string) {
 
 	// check DI registers
 	if err := di_container.Get().Check(); err != nil {
-		log.Fatal(err, "Dependency Injection error")
+		log.Fatal("Dependency Injection error:", err)
 	}
 
 	// count listener binds (for greeting print)
