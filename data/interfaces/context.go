@@ -3,7 +3,6 @@ package interfaces
 import (
 	"context"
 	"github.com/valyala/fasthttp"
-	"time"
 )
 
 // Context is interface of context which comes to Boost Handler
@@ -57,7 +56,7 @@ type Context interface {
 	Set(key string, value any)
 
 	// SetCookie sets new cookie key=value to response
-	SetCookie(key, value string, expiresAt time.Time, httpOnly bool) Context
+	SetCookie(key, value string, opts ...func(cookie *fasthttp.Cookie)) Context
 	// SetHeader sets new header key=value to response
 	SetHeader(key, value string) Context
 
