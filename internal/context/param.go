@@ -2,6 +2,7 @@ package context
 
 import (
 	"github.com/google/uuid"
+	"github.com/lowl11/boost/pkg/system/types"
 	"strconv"
 	"strings"
 )
@@ -62,4 +63,8 @@ func (param Param) MustUUID() uuid.UUID {
 	}
 
 	return uuidValue
+}
+
+func (param Param) Bytes() []byte {
+	return types.ToBytes(param.value)
 }

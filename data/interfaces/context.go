@@ -44,6 +44,7 @@ type Context interface {
 	Validate(object any) error
 	// FormFile returns content of file in bytes
 	FormFile(key string) []byte
+	FormValue(key string) Param
 
 	// IsTLS returns flag is TLS
 	IsTLS() bool

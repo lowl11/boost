@@ -22,4 +22,6 @@ type Param interface {
 	UUID() (uuid.UUID, error)
 	// MustUUID returns parsed UUID value, if throws error will return empty [16]byte{}
 	MustUUID() uuid.UUID
+
+	Bytes() []byte
 }

@@ -235,6 +235,10 @@ func (ctx *Context) FormFile(key string) []byte {
 	return fileInBytes
 }
 
+func (ctx *Context) FormValue(key string) interfaces.Param {
+	return NewParam(types.ToString(ctx.inner.FormValue(key)))
+}
+
 func (ctx *Context) IsWebSocket() bool {
 	headerUpgrade := types.BytesToString(ctx.inner.Request.Header.Peek("Upgrade"))
 	return strings.EqualFold(headerUpgrade, "websocket")
