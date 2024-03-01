@@ -15,18 +15,8 @@ func Get[T any](params ...any) *T {
 	return object.(*T)
 }
 
-func AddTransient[T any](constructor any, dependencies ...any) {
+func RegisterTransient[T any](constructor any, dependencies ...any) {
 	di_container.Get().Register(reflect.TypeOf(new(T)), constructor, di_modes.Transient, dependencies...)
-}
-
-func RegisterScoped[T any](constructor any, dependencies ...any) {
-	di_container.Get().Register(reflect.TypeOf(new(T)), constructor, di_modes.Scoped, dependencies...)
-}
-
-// AddSingleton registers objects in "singleton" mode.
-// Deprecated: will be removed since 0.6.0 and higher
-func AddSingleton[T any](constructor any, dependencies ...any) {
-	di_container.Get().Register(reflect.TypeOf(new(T)), constructor, di_modes.Singleton, dependencies...)
 }
 
 // Register registers object in "singleton" mode
