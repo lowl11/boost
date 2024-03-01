@@ -18,6 +18,7 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"time"
 )
 
 type Context struct {
@@ -262,10 +263,12 @@ func (ctx *Context) SetHeader(key, value string) interfaces.Context {
 	return ctx
 }
 
-func (ctx *Context) SetCookie(key, value string) interfaces.Context {
+func (ctx *Context) SetCookie(key, value string, expiresAt time.Time, httpOnly bool) interfaces.Context {
 	newCookie := &fasthttp.Cookie{}
 	newCookie.SetKey(key)
 	newCookie.SetValue(value)
+	newCookie.SetHTTPOnly(httpOnly)
+	newCookie.SetExpire(expiresAt)
 	ctx.Response().Header.SetCookie(newCookie)
 	return ctx
 }
