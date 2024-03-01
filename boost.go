@@ -87,7 +87,6 @@ type App struct {
 	config      Config
 	handler     *fast_handler.Handler
 	rpcServer   *rpc.App
-	destroyer   *destroyer.Destroyer
 	cron        *cron.Cron
 	healthcheck *healthcheck.Healthcheck
 	listener    Listener
@@ -128,7 +127,6 @@ func New(configs ...Config) *App {
 	app := &App{
 		config:      config,
 		handler:     fast_handler.New(validate),
-		destroyer:   destroyer.Get(),
 		healthcheck: healthcheck.New(),
 	}
 
@@ -266,7 +264,7 @@ func (app *App) RunListener(amqpConnectionURL string) {
 	app.handler.GetCounter().ListenerBind(app.listener.EventsCount())
 
 	// close RMQ connection
-	app.destroyer.AddFunction(func() {
+	destroyer.Get().AddFunction(func() {
 		if err := app.listener.Close(); err != nil {
 			log.Error("Close RabbitMQ connection error:", err)
 			return
@@ -298,11 +296,7 @@ func (app *App) Listener() Listener {
 
 // Destroy adds function which will be called in shutdown
 func (app *App) Destroy(destroyFunc types.DestroyFunc) {
-	if destroyFunc == nil {
-		return
-	}
-
-	app.destroyer.AddFunction(destroyFunc)
+	destroyer.Get().AddFunction(destroyFunc)
 }
 
 // Healthcheck add new application service to healthcheck
@@ -391,17 +385,17 @@ func (app *App) Use(middlewareFunc ...MiddlewareFunc) {
 		return
 	}
 
-	middlewares := make([]types.MiddlewareFunc, 0, len(middlewareFunc))
+	appMiddlewares := make([]types.MiddlewareFunc, 0, len(middlewareFunc))
 
 	for _, mFunc := range middlewareFunc {
 		if mFunc == nil {
 			continue
 		}
 
-		middlewares = append(middlewares, mFunc)
+		appMiddlewares = append(appMiddlewares, mFunc)
 	}
 
-	app.handler.RegisterGlobalMiddlewares(middlewares...)
+	app.handler.RegisterGlobalMiddlewares(appMiddlewares...)
 }
 
 func (app *App) useGroup(groupID uuid.UUID, middlewareFunc ...MiddlewareFunc) {
@@ -409,17 +403,17 @@ func (app *App) useGroup(groupID uuid.UUID, middlewareFunc ...MiddlewareFunc) {
 		return
 	}
 
-	middlewares := make([]types.MiddlewareFunc, 0, len(middlewareFunc))
+	groupMiddlewares := make([]types.MiddlewareFunc, 0, len(middlewareFunc))
 
 	for _, mFunc := range middlewareFunc {
 		if mFunc == nil {
 			continue
 		}
 
-		middlewares = append(middlewares, mFunc)
+		groupMiddlewares = append(groupMiddlewares, mFunc)
 	}
 
-	app.handler.RegisterGroupMiddlewares(groupID, middlewares...)
+	app.handler.RegisterGroupMiddlewares(groupID, groupMiddlewares...)
 }
 
 // shutdown handle signal for shutting down App
@@ -433,7 +427,7 @@ func (app *App) shutdown() {
 	<-signalChannel
 
 	// run destroy actions
-	app.destroyer.Destroy()
+	destroyer.Get().Destroy()
 
 	// exist from the app
 	os.Exit(0)
