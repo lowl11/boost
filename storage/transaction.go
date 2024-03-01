@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func TransactionFromContext(ctx context.Context) *sqlx.Tx {
+func ReadTx(ctx context.Context) *sqlx.Tx {
 	if ctx == nil {
 		return nil
 	}
@@ -21,7 +21,7 @@ func TransactionFromContext(ctx context.Context) *sqlx.Tx {
 	return txValue.(*sqlx.Tx)
 }
 
-func BeginTransaction(ctx context.Context, connection *sqlx.DB) (context.Context, error) {
+func BeginTx(ctx context.Context, connection *sqlx.DB) (context.Context, error) {
 	tx, err := connection.BeginTxx(ctx, &sql.TxOptions{
 		Isolation: sql.LevelDefault,
 		ReadOnly:  false,
@@ -33,8 +33,8 @@ func BeginTransaction(ctx context.Context, connection *sqlx.DB) (context.Context
 	return context.WithValue(ctx, "boostef_transaction", tx), nil
 }
 
-func MustBeginTransaction(ctx context.Context, connection *sqlx.DB) context.Context {
-	newCtx, err := BeginTransaction(ctx, connection)
+func MustBeginTx(ctx context.Context, connection *sqlx.DB) context.Context {
+	newCtx, err := BeginTx(ctx, connection)
 	if err != nil {
 		return ctx
 	}
@@ -42,8 +42,8 @@ func MustBeginTransaction(ctx context.Context, connection *sqlx.DB) context.Cont
 	return newCtx
 }
 
-func RollbackTransaction(ctx context.Context) error {
-	tx := getTransaction(ctx)
+func RollbackTx(ctx context.Context) error {
+	tx := ReadTx(ctx)
 	if tx == nil {
 		return nil
 	}
@@ -59,14 +59,14 @@ func RollbackTransaction(ctx context.Context) error {
 	return nil
 }
 
-func MustRollbackTransaction(ctx context.Context) {
-	if err := RollbackTransaction(ctx); err != nil {
+func MustRollbackTx(ctx context.Context) {
+	if err := RollbackTx(ctx); err != nil {
 		log.Error("Rollback transaction error:", err)
 	}
 }
 
-func CommitTransaction(ctx context.Context) error {
-	tx := getTransaction(ctx)
+func CommitTx(ctx context.Context) error {
+	tx := ReadTx(ctx)
 	if tx == nil {
 		return nil
 	}
@@ -82,25 +82,8 @@ func CommitTransaction(ctx context.Context) error {
 	return nil
 }
 
-func MustCommitTransaction(ctx context.Context) {
-	if err := CommitTransaction(ctx); err != nil {
+func MustCommitTx(ctx context.Context) {
+	if err := CommitTx(ctx); err != nil {
 		log.Error("Commit transaction error:", err)
 	}
-}
-
-func GetTransaction(ctx context.Context) *sqlx.Tx {
-	return getTransaction(ctx)
-}
-
-func getTransaction(ctx context.Context) *sqlx.Tx {
-	if ctx == nil {
-		return nil
-	}
-
-	txValue := ctx.Value("boostef_transaction")
-	if txValue == nil {
-		return nil
-	}
-
-	return txValue.(*sqlx.Tx)
 }

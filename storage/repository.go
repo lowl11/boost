@@ -47,7 +47,7 @@ func (repo repository) Connection() *sqlx.DB {
 }
 
 func (repo repository) DB(ctx context.Context) DB {
-	tx := getTransaction(ctx)
+	tx := ReadTx(ctx)
 	if tx != nil {
 		return tx
 	}

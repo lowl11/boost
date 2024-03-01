@@ -21,17 +21,17 @@ func Transaction() types.MiddlewareFunc {
 				AddContext("from", "Transaction Middleware")
 		}
 
-		nativeCtx = storage.MustBeginTransaction(nativeCtx, connection)
+		nativeCtx = storage.MustBeginTx(nativeCtx, connection)
 		ctx.SetContext(nativeCtx)
-		defer storage.MustRollbackTransaction(nativeCtx)
+		defer storage.MustRollbackTx(nativeCtx)
 
 		err := ctx.Next()
 		if err != nil {
-			storage.MustRollbackTransaction(nativeCtx)
+			storage.MustRollbackTx(nativeCtx)
 			return err
 		}
 
-		storage.MustCommitTransaction(nativeCtx)
+		storage.MustCommitTx(nativeCtx)
 		return nil
 	}
 }
