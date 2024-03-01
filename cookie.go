@@ -5,11 +5,17 @@ import (
 	"time"
 )
 
-func CookieOption(expiresAt time.Time, httpOnly bool, domain string) func(cookie *fasthttp.Cookie) {
+func CookieOption(expiresAt time.Time, httpOnly bool, path string) func(cookie *fasthttp.Cookie) {
 	return func(cookie *fasthttp.Cookie) {
 		CookieWithExpireAt(expiresAt)
 		CookieWithHttpOnly(httpOnly)
-		CookieWithDomain(domain)
+		CookieWithPath(path)
+	}
+}
+
+func CookieWithPath(path string) func(cookie *fasthttp.Cookie) {
+	return func(cookie *fasthttp.Cookie) {
+		cookie.SetPath(path)
 	}
 }
 
