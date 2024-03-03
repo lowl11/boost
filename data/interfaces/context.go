@@ -12,6 +12,8 @@ type Context interface {
 	Request() *fasthttp.Request
 	// Response returns Fast HTTP response object
 	Response() *fasthttp.Response
+	// Writer returns io.Writer interface implementation to write response
+	Writer() io.Writer
 
 	// Method returns request method
 	Method() string
@@ -61,6 +63,8 @@ type Context interface {
 	SetCookie(key, value string, opts ...func(cookie *fasthttp.Cookie)) Context
 	// SetHeader sets new header key=value to response
 	SetHeader(key, value string) Context
+	// SetContentType sets Content-Type header to response
+	SetContentType(contentType string) Context
 
 	// Status sets HTTP status code to response
 	Status(status int) Context
@@ -75,6 +79,8 @@ type Context interface {
 	JSON(body any) error
 	// XML writes response body of given object converted to XML
 	XML(body any) error
+	// HTML writes html to response
+	HTML(body string) error
 	// ThrowError writes response body of given error to JSON object
 	ThrowError(err error) error
 	// Redirect redirects to the given URL
@@ -121,6 +127,4 @@ type Context interface {
 	// Error returns response with given error status, error object.
 	// Note: if given err will not be defined as Boost Error, default status code is 500
 	Error(err error) error
-
-	Writer() io.Writer
 }

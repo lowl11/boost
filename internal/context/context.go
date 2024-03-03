@@ -323,6 +323,12 @@ func (ctx *Context) XML(body any) error {
 	return nil
 }
 
+func (ctx *Context) HTML(body string) error {
+	ctx.writer.Write(content_types.HTML, ctx.status, types.ToBytes(body))
+
+	return nil
+}
+
 func (ctx *Context) ThrowError(err error) error {
 	return ctx.returnError(err)
 }
@@ -482,4 +488,8 @@ func (ctx *Context) returnError(err error) error {
 
 func (ctx *Context) Writer() io.Writer {
 	return ctx.writer.request
+}
+
+func (ctx *Context) SetContentType(contentType string) interfaces.Context {
+	return ctx.SetHeader("Content-Type", contentType)
 }
