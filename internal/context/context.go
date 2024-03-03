@@ -479,3 +479,7 @@ func (ctx *Context) returnError(err error) error {
 
 	return err
 }
+
+func (ctx *Context) Writer() io.Writer {
+	return ctx.writer.request
+}

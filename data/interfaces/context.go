@@ -3,6 +3,7 @@ package interfaces
 import (
 	"context"
 	"github.com/valyala/fasthttp"
+	"io"
 )
 
 // Context is interface of context which comes to Boost Handler
@@ -120,4 +121,6 @@ type Context interface {
 	// Error returns response with given error status, error object.
 	// Note: if given err will not be defined as Boost Error, default status code is 500
 	Error(err error) error
+
+	Writer() io.Writer
 }
