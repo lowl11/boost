@@ -11,8 +11,8 @@ type Config struct {
 	Oauth2DefaultClientID    string
 	PersistAuthorization     string
 	DocExpansion             string
-	DeepLinking              string
-	DefaultModelsExpandDepth string
+	DeepLinking              bool
+	DefaultModelsExpandDepth int
 }
 
 func SetConfig(cfg Config) {
