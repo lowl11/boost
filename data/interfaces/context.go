@@ -28,6 +28,8 @@ type Context interface {
 	QueryParam(name string) Param
 	// QueryParams returns all query params
 	QueryParams() map[string]Param
+	// FileName returns name of file if it was requests in route
+	FileName() string
 	// Header returns header value from given name
 	Header(name string) string
 	// Headers returns all map of headers
@@ -51,6 +53,8 @@ type Context interface {
 
 	// IsTLS returns flag is TLS
 	IsTLS() bool
+	// IsFile returns true if route has file name
+	IsFile() bool
 	// IsWebSocket returns flag is request websocket
 	IsWebSocket() bool
 

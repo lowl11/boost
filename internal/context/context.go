@@ -1,6 +1,7 @@
 package context
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"encoding/xml"
@@ -74,6 +75,10 @@ func (ctx *Context) Response() *fasthttp.Response {
 	return &ctx.inner.Response
 }
 
+func (ctx *Context) Writer() io.Writer {
+	return ctx.writer.request
+}
+
 func (ctx *Context) Method() string {
 	return types.BytesToString(ctx.inner.Method())
 }
@@ -144,6 +149,24 @@ func (ctx *Context) QueryParams() map[string]interfaces.Param {
 	})
 
 	return params
+}
+
+func (ctx *Context) FileName() string {
+	url := ctx.Request().RequestURI()
+	index := bytes.LastIndexFunc(url, func(r rune) bool {
+		return r == '/'
+	})
+
+	if index < 0 {
+		return ""
+	}
+
+	last := types.ToString(url[index+1:])
+	if !strings.Contains(last, ".") {
+		return ""
+	}
+
+	return last
 }
 
 func (ctx *Context) Header(name string) string {
@@ -248,6 +271,10 @@ func (ctx *Context) IsTLS() bool {
 	return ctx.inner.IsTLS()
 }
 
+func (ctx *Context) IsFile() bool {
+	return ctx.FileName() != ""
+}
+
 func (ctx *Context) Set(key string, value any) {
 	ctx.keyContainer.Store(key, value)
 }
@@ -264,6 +291,10 @@ func (ctx *Context) Get(key string) any {
 func (ctx *Context) SetHeader(key, value string) interfaces.Context {
 	ctx.Response().Header.Set(key, value)
 	return ctx
+}
+
+func (ctx *Context) SetContentType(contentType string) interfaces.Context {
+	return ctx.SetHeader("Content-Type", contentType)
 }
 
 func (ctx *Context) SetCookie(key, value string, opts ...func(cookie *fasthttp.Cookie)) interfaces.Context {
@@ -484,12 +515,4 @@ func (ctx *Context) returnError(err error) error {
 	)
 
 	return err
-}
-
-func (ctx *Context) Writer() io.Writer {
-	return ctx.writer.request
-}
-
-func (ctx *Context) SetContentType(contentType string) interfaces.Context {
-	return ctx.SetHeader("Content-Type", contentType)
 }

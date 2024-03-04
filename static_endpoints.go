@@ -5,6 +5,7 @@ import (
 	"github.com/lowl11/boost/internal/healthcheck"
 	"github.com/lowl11/boost/internal/stat"
 	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/web/swagger"
 )
 
 func registerStaticEndpoints(app routing, healthcheck *healthcheck.Healthcheck) {
@@ -16,6 +17,20 @@ func registerStaticEndpoints(app routing, healthcheck *healthcheck.Healthcheck) 
 
 	// register stat endpoint
 	app.GET("/stat", staticEndpointStat(healthcheck))
+
+	// swagger
+	app.GET("/swagger*", staticEndpointSwagger())
+}
+
+func staticEndpointSwagger() types.HandlerFunc {
+	return func(ctx interfaces.Context) error {
+		if ctx.IsFile() {
+			file := swagger.ReadFile(ctx.FileName())
+			return ctx.HTML(file)
+		}
+
+		return ctx.HTML(swagger.Template())
+	}
 }
 
 func staticEndpointHealthcheck(healthcheck *healthcheck.Healthcheck) types.HandlerFunc {

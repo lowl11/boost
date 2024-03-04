@@ -5,3 +5,4 @@ profiles
 .DS_Store
 cdn
 .env
+docs
