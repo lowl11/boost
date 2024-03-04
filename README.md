@@ -118,7 +118,5 @@ func main() {
 
 ### TODO
 
-- Swagger support
 - gateway (proxy router)
 - Rate limiter
-- DB ORM
