@@ -6,9 +6,11 @@ import (
 )
 
 func Template() string {
-	cacheTmpl, ok := _cache.Load("__boost_swagger_template__")
-	if ok {
-		return cacheTmpl.(string)
+	if _cacheOn {
+		cacheTmpl, ok := _cache.Load("__boost_swagger_template__")
+		if ok {
+			return cacheTmpl.(string)
+		}
 	}
 
 	tmpl, err := newTemplate(*getConfig())

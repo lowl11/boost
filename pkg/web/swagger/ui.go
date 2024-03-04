@@ -7,13 +7,20 @@ import (
 )
 
 var (
-	_cache = sync.Map{}
+	_cache   = sync.Map{}
+	_cacheOn = true
 )
 
+func TurnOffCache() {
+	_cacheOn = false
+}
+
 func ReadFile(name string) string {
-	cacheValue, ok := _cache.Load(name)
-	if ok {
-		return cacheValue.(string)
+	if _cacheOn {
+		cacheValue, ok := _cache.Load(name)
+		if ok {
+			return cacheValue.(string)
+		}
 	}
 
 	content, err := file.Read("docs/" + name)
