@@ -16,6 +16,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"time"
 )
 
 const (
@@ -42,6 +43,7 @@ type Handler struct {
 	validate          *validator.Validator
 	corsConfig        CorsConfig
 	panicHandler      types.PanicHandler
+	needBoost         bool
 }
 
 func New(validate *validator.Validator) *Handler {
@@ -123,6 +125,10 @@ func (handler *Handler) SetCorsConfig(config CorsConfig) {
 
 func (handler *Handler) SetPanicHandler(panicHandler types.PanicHandler) {
 	handler.panicHandler = panicHandler
+}
+
+func (handler *Handler) NeedBoost() {
+	handler.needBoost = true
 }
 
 func getServer() *fasthttp.Server {
@@ -209,8 +215,21 @@ func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
 	handlersChain = append(handlersChain, endpointMiddlewares...)
 
 	// create new boost context
-	boostCtx = context.New(ctx, routeCtx.Action, handlersChain, handler.validate).
+	boostCtx = context.
+		New(ctx, routeCtx.Action, handlersChain, handler.validate).
 		SetParams(routeCtx.Params)
+
+	if handler.needBoost {
+		// cache-control
+		boostCtx.SetHeader("Cache-Control", "max-age=3600")
+
+		// expires
+		expiresTime := time.Now().AddDate(1, 0, 0)
+		boostCtx.SetHeader("Expires", expiresTime.UTC().Format(time.RFC1123))
+
+		// keep alive
+		boostCtx.SetHeader("Connection", "keep-alive")
+	}
 
 	// call chain of handlers/middlewares
 	err := boostCtx.Next()

@@ -432,3 +432,7 @@ func (app *App) shutdown() {
 	// exist from the app
 	os.Exit(0)
 }
+
+func (app *App) NeedBoost() {
+	app.handler.NeedBoost()
+}
