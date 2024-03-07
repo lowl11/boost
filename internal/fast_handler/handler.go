@@ -135,8 +135,11 @@ func getServer() *fasthttp.Server {
 	server := &fasthttp.Server{
 		ErrorHandler: writeUnknownError,
 	}
+	
 	server.MaxConnsPerIP = 10
 	server.MaxRequestsPerConn = 10
+	server.Concurrency = 256 * 1024
+
 	return &fasthttp.Server{
 		ErrorHandler: writeUnknownError,
 	}
