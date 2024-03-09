@@ -314,21 +314,33 @@ func (ctx *Context) Status(status int) interfaces.Context {
 }
 
 func (ctx *Context) Empty() error {
-	ctx.writer.Write(content_types.Text, ctx.status, nil)
+	contentType := types.ToString(ctx.Response().Header.Peek("Content-Type"))
+	if contentType == "" {
+		contentType = content_types.Text
+	}
 
+	ctx.writer.Write(contentType, ctx.status, nil)
 	return nil
 }
 
 func (ctx *Context) String(message string) error {
-	ctx.writer.Write(content_types.Text, ctx.status, types.StringToBytes(message))
+	contentType := types.ToString(ctx.Response().Header.Peek("Content-Type"))
+	if contentType == "" {
+		contentType = content_types.Text
+	}
 
+	ctx.writer.Write(contentType, ctx.status, types.StringToBytes(message))
 	return nil
 
 }
 
 func (ctx *Context) Bytes(body []byte) error {
-	ctx.writer.Write(content_types.Bytes, ctx.status, body)
+	contentType := types.ToString(ctx.Response().Header.Peek("Content-Type"))
+	if contentType == "" {
+		contentType = content_types.Bytes
+	}
 
+	ctx.writer.Write(contentType, ctx.status, body)
 	return nil
 }
 
@@ -339,7 +351,6 @@ func (ctx *Context) JSON(body any) error {
 	}
 
 	ctx.writer.Write(content_types.JSON, ctx.status, bodyInBytes)
-
 	return nil
 }
 
@@ -350,13 +361,11 @@ func (ctx *Context) XML(body any) error {
 	}
 
 	ctx.writer.Write(content_types.XML, ctx.status, bodyInBytes)
-
 	return nil
 }
 
 func (ctx *Context) HTML(body string) error {
 	ctx.writer.Write(content_types.HTML, ctx.status, types.ToBytes(body))
-
 	return nil
 }
 

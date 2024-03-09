@@ -8,6 +8,6 @@ type DependencyContainer interface {
 	Register(t reflect.Type, constructor any, mode int, dependencies ...any)
 	RegisterImplementation(impl any)
 	MapControllers(constructors ...any)
-	Get(t reflect.Type, params ...any) any
+	Get(t reflect.Type) any
 	Check() error
 }

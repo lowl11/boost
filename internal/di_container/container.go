@@ -155,7 +155,7 @@ func (c *container) MapControllers(constructors ...any) {
 	}
 }
 
-func (c *container) Get(t reflect.Type, params ...any) any {
+func (c *container) Get(t reflect.Type) any {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 

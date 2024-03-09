@@ -6,13 +6,32 @@ import (
 	"reflect"
 )
 
-func Get[T any](params ...any) *T {
-	object := di_container.Get().Get(reflect.TypeOf(new(T)), params...)
+func Get[T any]() *T {
+	object := di_container.Get().Get(reflect.TypeOf(new(T)))
 	if object == nil {
 		return nil
 	}
 
-	return object.(*T)
+	typed, ok := object.(*T)
+	if !ok {
+		return nil
+	}
+
+	return typed
+}
+
+func Interface[T any]() T {
+	object := di_container.Get().Get(reflect.TypeOf(new(T)))
+	if object == nil {
+		return *new(T)
+	}
+
+	typed, ok := object.(T)
+	if !ok {
+		return *new(T)
+	}
+
+	return typed
 }
 
 func RegisterTransient[T any](constructor any, dependencies ...any) {
