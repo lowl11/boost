@@ -1,6 +1,9 @@
 package boost
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"github.com/lowl11/boost/pkg/web/socket"
+)
 
 type group struct {
 	id     uuid.UUID
@@ -43,4 +46,8 @@ func (group *group) DELETE(path string, action HandlerFunc) Route {
 
 func (group *group) Use(middlewareFunc ...MiddlewareFunc) {
 	group.router.useGroup(group.id, middlewareFunc...)
+}
+
+func (group *group) Websocket(path string, handler *socket.Handler) {
+	websocketHandler(group, path, handler)
 }

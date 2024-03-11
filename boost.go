@@ -335,30 +335,7 @@ func (app *App) PUT(path string, action HandlerFunc) Route {
 }
 
 func (app *App) Websocket(path string, handler *socket.Handler) {
-	app.GET(path, socket.New(func(conn *socket.Conn) {
-		for {
-			messageType, message, err := conn.ReadMessage()
-			if err != nil {
-				log.Error("Websocket read message error:", err)
-				continue
-			}
-
-			if err = handler.Run(conn, messageType, message); err != nil {
-				log.Error("Run websocket handler error:", err)
-				continue
-			}
-		}
-	})).Use(func(ctx interfaces.Context) error {
-		if ctx.Header("Connection") == "Upgrade" && ctx.Header("Upgrade") == "websocket" {
-			ctx.FastHttpContext().SetUserValue("allowed", true)
-			return ctx.Next()
-		}
-
-		return errors.
-			New("Websocket required upgrade").
-			SetType("Socket_RequiredUpgrade").
-			SetHttpCode(http.StatusUpgradeRequired)
-	})
+	websocketHandler(app, path, handler)
 }
 
 // DELETE add new route to App with method DELETE
@@ -465,4 +442,31 @@ func (app *App) shutdown() {
 
 func (app *App) NeedBoost() {
 	app.handler.NeedBoost()
+}
+
+func websocketHandler(router routing, path string, handler *socket.Handler) {
+	router.GET(path, socket.New(func(conn *socket.Conn) {
+		for {
+			messageType, message, err := conn.ReadMessage()
+			if err != nil {
+				log.Error("Websocket read message error:", err)
+				continue
+			}
+
+			if err = handler.Run(conn, messageType, message); err != nil {
+				log.Error("Run websocket handler error:", err)
+				continue
+			}
+		}
+	})).Use(func(ctx interfaces.Context) error {
+		if ctx.Header("Connection") == "Upgrade" && ctx.Header("Upgrade") == "websocket" {
+			ctx.FastHttpContext().SetUserValue("allowed", true)
+			return ctx.Next()
+		}
+
+		return errors.
+			New("Websocket required upgrade").
+			SetType("Socket_RequiredUpgrade").
+			SetHttpCode(http.StatusUpgradeRequired)
+	})
 }

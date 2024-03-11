@@ -4,6 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/pkg/system/cron"
+	"github.com/lowl11/boost/pkg/web/socket"
 )
 
 type (
@@ -47,6 +48,7 @@ type routing interface {
 	POST(path string, action HandlerFunc) Route
 	PUT(path string, action HandlerFunc) Route
 	DELETE(path string, action HandlerFunc) Route
+	Websocket(path string, handler *socket.Handler)
 }
 
 type groupRouting interface {
