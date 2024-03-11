@@ -64,6 +64,11 @@ func main() {
             <td>:white_check_mark:</td>
         </tr>
         <tr>
+            <td>Websocket</td>
+            <td>Handle websocket requests/connections</td>
+            <td>:white_check_mark:</td>
+        </tr>
+        <tr>
             <td>Request body validator</td>
             <td>Validating incoming request body (JSON) based on go-playground validator</td>
             <td>:white_check_mark:</td>
@@ -104,8 +109,13 @@ func main() {
             <td>:white_check_mark:</td>
         </tr>
         <tr>
-            <td>Database (external)</td>
-            <td>Query builder & ORM repositories</td>
+            <td>Database</td>
+            <td>Powerful query builders with run</td>
+            <td>:white_check_mark:</td>
+        </tr>
+        <tr>
+            <td>Swagger</td>
+            <td>Default static swagger route</td>
             <td>:white_check_mark:</td>
         </tr>
     </tbody>
