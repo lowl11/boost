@@ -18,4 +18,5 @@ type Listener interface {
 type EventContext interface {
 	Body() []byte
 	Parse(object any) error
+	Context() context.Context
 }

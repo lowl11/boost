@@ -8,7 +8,7 @@ import (
 
 // NewDispatcher creates new dispatcher instance for message bus
 func NewDispatcher(amqpConnectionURL string) (Dispatcher, error) {
-	dispatcher, err := msgbus.NewDispatcher(amqpConnectionURL)
+	dispatcher, err := msgbus.NewDispatcher(di.Get[App]().Context(), amqpConnectionURL)
 	if err != nil {
 		return nil, err
 	}

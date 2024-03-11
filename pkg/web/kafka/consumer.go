@@ -5,8 +5,9 @@ import (
 	"github.com/IBM/sarama"
 	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/io/async"
 	"github.com/lowl11/boost/pkg/io/exception"
-	"github.com/lowl11/boost/pkg/web/destroyer"
+	"github.com/lowl11/boost/pkg/system/cancel"
 	"sync"
 )
 
@@ -22,12 +23,6 @@ func NewConsumer(ctx context.Context, config *Config) (Consumer, error) {
 		return nil, err
 	}
 
-	destroyer.Get().AddFunction(func() {
-		if err = kafkaConsumer.Close(); err != nil {
-			log.Error("Close Kafka consumer error:", err)
-		}
-	})
-
 	return &consumer{
 		ctx:      ctx,
 		cfg:      config,
@@ -36,9 +31,13 @@ func NewConsumer(ctx context.Context, config *Config) (Consumer, error) {
 }
 
 func (c *consumer) StartListeningAsync(topic string, handler Handler) {
-	if err := c.StartListening(topic, handler); err != nil {
-		log.Fatal("Start listening async error:", err)
-	}
+	async.Run(c.ctx, func(ctx context.Context) error {
+		if err := c.StartListening(topic, handler); err != nil {
+			return err
+		}
+
+		return nil
+	})
 }
 
 func (c *consumer) StartListening(topic string, handler Handler) error {
@@ -61,7 +60,8 @@ func (c *consumer) StartListening(topic string, handler Handler) error {
 		go c.handleConsumerFunc(goroutines[partition], topic, int32(partition), handler)
 	}
 
-	return nil
+	<-c.ctx.Done()
+	return c.consumer.Close()
 }
 
 func (c *consumer) handleConsumerFunc(wg *sync.WaitGroup, topic string, partitionNum int32, handler Handler) {
@@ -100,13 +100,16 @@ func (c *consumer) handleConsumerFunc(wg *sync.WaitGroup, topic string, partitio
 		}
 	}()
 
+	cancel.Get().Add()
+	defer cancel.Get().Done()
+
 	for {
 		select {
 		case kafkaError := <-partConsumer.Errors():
 			log.Error("Kafka consumer error:", kafkaError.Error(), ". Partition:", kafkaError.Partition)
 			return
 		case <-c.ctx.Done():
-			log.Info("Stopping consumer by context with partition #", partitionNum+1)
+			log.Info("Kafka consumer closed partition #", partitionNum+1)
 			return
 		}
 	}

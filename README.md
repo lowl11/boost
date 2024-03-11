@@ -74,11 +74,6 @@ func main() {
             <td>:white_check_mark:</td>
         </tr>
         <tr>
-            <td>Destroyer</td>
-            <td>Close connections or destroy something at the end of application</td>
-            <td>:white_check_mark:</td>
-        </tr>
-        <tr>
             <td>Cache</td>
             <td>Memory & Redis cache client</td>
             <td>:white_check_mark:</td>

@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/lowl11/boost/data/enums/redis_types"
 	"github.com/lowl11/boost/errors"
+	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/system/cancel"
 	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/redis/go-redis/v9"
 	"time"
@@ -24,7 +26,7 @@ type redisRepo struct {
 	client *redis.Client
 }
 
-func newRedisRepo(cfg redisConfigInstance) (*redisRepo, error) {
+func newRedisRepo(ctx context.Context, cfg redisConfigInstance) (*redisRepo, error) {
 	if cfg.URL == "" {
 		return nil, errors.New("URL is required").
 			SetType("Redis_URLRequired")
@@ -39,6 +41,18 @@ func newRedisRepo(cfg redisConfigInstance) (*redisRepo, error) {
 	if err := pingRedis(client); err != nil {
 		return nil, err
 	}
+
+	cancel.Get().Add()
+
+	go func() {
+		defer cancel.Get().Done()
+		<-ctx.Done()
+		if err := client.Close(); err != nil {
+			log.Error("Close redis connection error:", err)
+			return
+		}
+		log.Info("Redis closed")
+	}()
 
 	return &redisRepo{
 		client: client,

@@ -1,6 +1,7 @@
 package boost
 
 import (
+	baseContext "context"
 	"github.com/google/uuid"
 	"github.com/lowl11/boost/data/enums/colors"
 	"github.com/lowl11/boost/data/enums/modes"
@@ -9,14 +10,15 @@ import (
 	"github.com/lowl11/boost/internal/greeting"
 	"github.com/lowl11/boost/internal/healthcheck"
 	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/system/cancel"
 	"github.com/lowl11/boost/pkg/system/cron"
 	"github.com/lowl11/boost/pkg/system/di"
 	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/boost/pkg/system/validator"
-	"github.com/lowl11/boost/pkg/web/destroyer"
 	"github.com/lowl11/boost/pkg/web/middlewares"
 	"github.com/lowl11/boost/pkg/web/queue/msgbus"
 	"github.com/lowl11/boost/pkg/web/rpc"
+
 	"net/http"
 	"os"
 	"os/signal"
@@ -90,6 +92,9 @@ type App struct {
 	cron        *cron.Cron
 	healthcheck *healthcheck.Healthcheck
 	listener    Listener
+
+	ctx          baseContext.Context
+	appCtxCancel func()
 }
 
 // New method creates new instance of Boost App
@@ -123,11 +128,16 @@ func New(configs ...Config) *App {
 		validate.TurnOff()
 	}
 
+	appContext, appCtxCancel := baseContext.WithCancel(baseContext.Background())
+
 	// create Boost App instance
 	app := &App{
 		config:      config,
 		handler:     fast_handler.New(validate),
 		healthcheck: healthcheck.New(),
+
+		ctx:          appContext,
+		appCtxCancel: appCtxCancel,
 	}
 
 	di_container.Get().RegisterImplementation(app.healthcheck)
@@ -152,6 +162,10 @@ func New(configs ...Config) *App {
 	di_container.Get().SetAppType(reflect.TypeOf(app))
 
 	return app
+}
+
+func (app *App) Context() baseContext.Context {
+	return app.ctx
 }
 
 // Run starts listening TCP with given port
@@ -186,11 +200,11 @@ func (app *App) Run(port string) {
 		SpecificColor(colors.Green).
 		Print()
 
-	// catch shutdown signal
-	go app.shutdown()
-
 	// run server app
-	log.Fatal(app.handler.Run(port))
+	app.handler.RunAsync(app.ctx, port)
+
+	// shutdown app
+	app.shutdown()
 }
 
 func (app *App) RunFlag() {
@@ -263,15 +277,6 @@ func (app *App) RunListener(amqpConnectionURL string) {
 	// count listener binds (for greeting print)
 	app.handler.GetCounter().ListenerBind(app.listener.EventsCount())
 
-	// close RMQ connection
-	destroyer.Get().AddFunction(func() {
-		if err := app.listener.Close(); err != nil {
-			log.Error("Close RabbitMQ connection error:", err)
-			return
-		}
-		log.Info("RabbitMQ connection successfully closed!")
-	})
-
 	// print greeting text
 	greeting.New(app.handler.GetCounter(), greeting.Context{
 		Mode: modes.Listener,
@@ -281,22 +286,19 @@ func (app *App) RunListener(amqpConnectionURL string) {
 		Print()
 
 	// run server
-	log.Fatal(app.listener.Run(amqpConnectionURL))
+	if err := app.listener.Run(amqpConnectionURL); err != nil {
+		log.Fatal(err)
+	}
 }
 
 // Listener returns message bus listener.
 // Method return only single instance of listener i.e. singleton
 func (app *App) Listener() Listener {
 	if app.listener == nil {
-		app.listener = msgbus.NewListener()
+		app.listener = msgbus.NewListener(app.ctx)
 	}
 
 	return app.listener
-}
-
-// Destroy adds function which will be called in shutdown
-func (app *App) Destroy(destroyFunc types.DestroyFunc) {
-	destroyer.Get().AddFunction(destroyFunc)
 }
 
 // Healthcheck add new application service to healthcheck
@@ -418,16 +420,14 @@ func (app *App) useGroup(groupID uuid.UUID, middlewareFunc ...MiddlewareFunc) {
 
 // shutdown handle signal for shutting down App
 func (app *App) shutdown() {
-	// create a channel to receive signals
 	signalChannel := make(chan os.Signal, 1)
-
-	// notify the signal channel when a SIGINT or SIGTERM signal is received
 	signal.Notify(signalChannel, os.Interrupt, os.Kill, syscall.SIGTERM)
-
 	<-signalChannel
 
-	// run destroy actions
-	destroyer.Get().Destroy()
+	log.Info("Gracefully shutdown...")
+	app.appCtxCancel()
+	cancel.Get().Wait()
+	log.Info("App shutdown")
 
 	// exist from the app
 	os.Exit(0)

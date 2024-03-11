@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/lowl11/boost/data/enums/exchanges"
 	"github.com/lowl11/boost/data/interfaces"
+	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/system/cancel"
 	"github.com/lowl11/boost/pkg/system/validator"
 	"github.com/lowl11/boost/pkg/web/queue/rabbitmq/rmq"
 	"github.com/lowl11/boost/pkg/web/queue/rabbitmq/rmq_connection"
@@ -36,7 +38,7 @@ type Dispatcher struct {
 	messageBusErrorsExchangeName string
 }
 
-func NewDispatcher(url string, cfg ...DispatcherConfig) (interfaces.Dispatcher, error) {
+func NewDispatcher(ctx context.Context, url string, cfg ...DispatcherConfig) (interfaces.Dispatcher, error) {
 	validate, err := validator.New()
 	if err != nil {
 		return nil, err
@@ -55,13 +57,27 @@ func NewDispatcher(url string, cfg ...DispatcherConfig) (interfaces.Dispatcher, 
 		config = defaultDispatcherConfig()
 	}
 
-	return &Dispatcher{
+	dispatcher := &Dispatcher{
 		validate:   validate,
 		rmqService: rmq.New(),
 
 		messageBusExchangeName:       config.MessageBusExchangeName,
 		messageBusErrorsExchangeName: config.MessageBusErrorsExchangeName,
-	}, nil
+	}
+
+	cancel.Get().Add()
+
+	go func() {
+		defer cancel.Get().Done()
+		<-ctx.Done()
+		if err = dispatcher.Close(); err != nil {
+			log.Error("Close dispatcher error:", err)
+			return
+		}
+		log.Info("Dispatcher closed")
+	}()
+
+	return dispatcher, nil
 }
 
 func (dispatcher *Dispatcher) Close() error {

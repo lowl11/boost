@@ -1,7 +1,7 @@
 package fast_handler
 
 import (
-	"fmt"
+	baseContext "context"
 	"github.com/google/uuid"
 	"github.com/lowl11/boost/config"
 	"github.com/lowl11/boost/data/interfaces"
@@ -10,9 +10,12 @@ import (
 	"github.com/lowl11/boost/internal/fast_handler/counter"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/io/exception"
+	"github.com/lowl11/boost/pkg/system/cancel"
 	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/boost/pkg/system/validator"
 	"github.com/valyala/fasthttp"
+
+	"fmt"
 	"net"
 	"net/http"
 	"strings"
@@ -57,7 +60,15 @@ func New(validate *validator.Validator) *Handler {
 	}
 }
 
-func (handler *Handler) Run(port string) error {
+func (handler *Handler) RunAsync(ctx baseContext.Context, port string) {
+	go func() {
+		if err := handler.Run(ctx, port); err != nil {
+			log.Fatal("Run server error:", err)
+		}
+	}()
+}
+
+func (handler *Handler) Run(ctx baseContext.Context, port string) error {
 	// prepare server
 	handler.server.Handler = handler.handler
 
@@ -71,7 +82,20 @@ func (handler *Handler) Run(port string) error {
 	handler.tryUpdateCORS()
 
 	// run server
-	return handler.server.Serve(listener)
+	go func() {
+		if err = handler.server.Serve(listener); err != nil {
+			log.Fatal("Run server error:", err)
+		}
+	}()
+
+	cancel.Get().Add()
+	defer cancel.Get().Done()
+	<-ctx.Done()
+	if err = handler.server.Shutdown(); err != nil {
+		log.Error("Shutdown server error:", err)
+	}
+	log.Info("Server shutdown")
+	return nil
 }
 
 func (handler *Handler) RegisterRoute(method, path string, action types.HandlerFunc, groupID string) interfaces.Route {
@@ -135,7 +159,7 @@ func getServer() *fasthttp.Server {
 	server := &fasthttp.Server{
 		ErrorHandler: writeUnknownError,
 	}
-	
+
 	server.MaxConnsPerIP = 10
 	server.MaxRequestsPerConn = 10
 	server.Concurrency = 256 * 1024

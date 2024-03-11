@@ -90,5 +90,6 @@ func (repo memRepo) Delete(_ context.Context, key string) error {
 }
 
 func (repo memRepo) Close() error {
+	repo.client.Flush()
 	return nil
 }

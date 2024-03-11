@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"context"
 	"github.com/lowl11/boost/data/enums/caches"
 	"github.com/lowl11/boost/data/interfaces"
 )
@@ -11,8 +12,8 @@ type RedisConfig struct {
 	DB       int
 }
 
-func New(cacheType string, cfg ...any) (interfaces.Cache, error) {
-	cacheRepo, err := getCacheRepository(cacheType, cfg...)
+func New(ctx context.Context, cacheType string, cfg ...any) (interfaces.Cache, error) {
+	cacheRepo, err := getCacheRepository(ctx, cacheType, cfg...)
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +21,7 @@ func New(cacheType string, cfg ...any) (interfaces.Cache, error) {
 	return cacheRepo, nil
 }
 
-func getCacheRepository(cacheType string, cfg ...any) (interfaces.Cache, error) {
+func getCacheRepository(ctx context.Context, cacheType string, cfg ...any) (interfaces.Cache, error) {
 	switch cacheType {
 	case caches.Memory:
 		return newMemRepo(), nil
@@ -35,7 +36,7 @@ func getCacheRepository(cacheType string, cfg ...any) (interfaces.Cache, error) 
 			redisConfig = rdsCfg
 		}
 
-		return newRedisRepo(redisConfigInstance{
+		return newRedisRepo(ctx, redisConfigInstance{
 			URL:      redisConfig.URL,
 			Password: redisConfig.Password,
 			DB:       redisConfig.DB,

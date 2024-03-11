@@ -1,23 +1,28 @@
 package msgbus
 
 import (
+	baseContext "context"
 	"github.com/lowl11/boost/data/enums/exchanges"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/system/cancel"
 	"github.com/lowl11/boost/pkg/web/queue/rabbitmq/rmq"
 	"github.com/lowl11/boost/pkg/web/queue/rabbitmq/rmq_connection"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"time"
 )
 
 type ListenerConfig struct {
 	MessageBusExchangeName       string
 	MessageBusErrorsExchangeName string
+	Timeout                      time.Duration
 }
 
 func defaultListenerConfig() ListenerConfig {
 	return ListenerConfig{
 		MessageBusExchangeName:       defaultMessageBusExchangeName,
 		MessageBusErrorsExchangeName: defaultMessageBusErrorsExchangeName,
+		Timeout:                      0,
 	}
 }
 
@@ -29,9 +34,13 @@ type Listener struct {
 
 	messageBusExchangeName       string
 	messageBusErrorsExchangeName string
+
+	timeout time.Duration
+
+	ctx baseContext.Context
 }
 
-func NewListener(cfg ...ListenerConfig) interfaces.Listener {
+func NewListener(ctx baseContext.Context, cfg ...ListenerConfig) interfaces.Listener {
 	var config ListenerConfig
 	if len(cfg) > 0 {
 		config = cfg[0]
@@ -44,7 +53,14 @@ func NewListener(cfg ...ListenerConfig) interfaces.Listener {
 
 		messageBusExchangeName:       config.MessageBusExchangeName,
 		messageBusErrorsExchangeName: config.MessageBusErrorsExchangeName,
+
+		ctx: ctx,
 	}
+}
+
+func (listener *Listener) SetTimeout(timeout time.Duration) interfaces.Listener {
+	listener.timeout = timeout
+	return listener
 }
 
 func (listener *Listener) Run(amqpConnectionURL string) error {
@@ -67,9 +83,15 @@ func (listener *Listener) Run(amqpConnectionURL string) error {
 		go listener.listen(messages, event)
 	}
 
-	infinite := make(chan struct{})
-	<-infinite
-	return listener.rmqService.Close()
+	cancel.Get().Add()
+	defer cancel.Get().Done()
+	<-listener.ctx.Done()
+
+	if err := listener.Close(); err != nil {
+		log.Error("Close listener error:", err)
+	}
+	log.Info("Listener closed")
+	return nil
 }
 
 func (listener *Listener) Close() error {
@@ -142,9 +164,18 @@ func (listener *Listener) listen(messages <-chan amqp.Delivery, event Event) {
 }
 
 func (listener *Listener) async(event Event, message amqp.Delivery) {
-	if err := event.Action(newContext(&message)); err != nil {
+	var ctx baseContext.Context
+	var ctxCancel func()
+	if listener.timeout != 0 {
+		ctx, ctxCancel = baseContext.WithTimeout(baseContext.Background(), listener.timeout)
+	} else {
+		ctx = baseContext.Background()
+		ctxCancel = func() {}
+	}
+	defer ctxCancel()
+
+	if err := event.Action(newContext(ctx, &message)); err != nil {
 		log.Error("Event action error:", err)
-		return
 	}
 
 	if err := listener.rmqService.Ack(message.DeliveryTag); err != nil {

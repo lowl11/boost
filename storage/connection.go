@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"context"
 	"database/sql"
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/stdlib"
@@ -8,7 +9,6 @@ import (
 	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/system/di"
-	"github.com/lowl11/boost/pkg/web/destroyer"
 	"time"
 )
 
@@ -40,19 +40,20 @@ func MustConnect(connectionString string, options ...func(connection *sqlx.DB)) 
 	return connection
 }
 
-func RegisterConnect(connectionString string, options ...func(connection *sqlx.DB)) {
+func RegisterConnect(ctx context.Context, connectionString string, options ...func(connection *sqlx.DB)) {
 	di.Register[sqlx.DB](func() *sqlx.DB {
 		return MustConnect(connectionString, options...)
 	})
 
-	destroyer.Get().AddFunction(func() {
+	go func() {
+		<-ctx.Done()
 		connection := di.Get[sql.DB]()
 		if connection != nil {
 			if err := connection.Close(); err != nil {
 				log.Error("Close database connection error:", err)
 			}
 		}
-	})
+	}()
 }
 
 func Ping() error {

@@ -59,9 +59,6 @@ func (cron *Cron) Run() {
 			FromStart(scheduler.GetStart()).
 			StartTicker()
 	}
-
-	infinite := make(chan bool, 1)
-	<-infinite
 }
 
 func (cron *Cron) RunAsync() {
