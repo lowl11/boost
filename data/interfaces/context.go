@@ -14,6 +14,7 @@ type Context interface {
 	Response() *fasthttp.Response
 	// Writer returns io.Writer interface implementation to write response
 	Writer() io.Writer
+	FastHttpContext() *fasthttp.RequestCtx
 
 	// Method returns request method
 	Method() string

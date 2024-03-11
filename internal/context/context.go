@@ -79,6 +79,10 @@ func (ctx *Context) Writer() io.Writer {
 	return ctx.writer.request
 }
 
+func (ctx *Context) FastHttpContext() *fasthttp.RequestCtx {
+	return ctx.inner
+}
+
 func (ctx *Context) Method() string {
 	return types.BytesToString(ctx.inner.Method())
 }
