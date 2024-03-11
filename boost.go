@@ -5,6 +5,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/lowl11/boost/data/enums/colors"
 	"github.com/lowl11/boost/data/enums/modes"
+	"github.com/lowl11/boost/data/interfaces"
+	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/internal/di_container"
 	"github.com/lowl11/boost/internal/fast_handler"
 	"github.com/lowl11/boost/internal/greeting"
@@ -18,6 +20,7 @@ import (
 	"github.com/lowl11/boost/pkg/web/middlewares"
 	"github.com/lowl11/boost/pkg/web/queue/msgbus"
 	"github.com/lowl11/boost/pkg/web/rpc"
+	"github.com/lowl11/boost/pkg/web/socket"
 
 	"net/http"
 	"os"
@@ -329,6 +332,33 @@ func (app *App) POST(path string, action HandlerFunc) Route {
 // PUT add new route to App with method PUT
 func (app *App) PUT(path string, action HandlerFunc) Route {
 	return app.handler.RegisterRoute(http.MethodPut, path, action, emptyGroup)
+}
+
+func (app *App) Websocket(path string, handler *socket.Handler) {
+	app.GET(path, socket.New(func(conn *socket.Conn) {
+		for {
+			messageType, message, err := conn.ReadMessage()
+			if err != nil {
+				log.Error("Websocket read message error:", err)
+				continue
+			}
+
+			if err = handler.Run(conn, messageType, message); err != nil {
+				log.Error("Run websocket handler error:", err)
+				continue
+			}
+		}
+	})).Use(func(ctx interfaces.Context) error {
+		if ctx.Header("Connection") == "Upgrade" && ctx.Header("Upgrade") == "websocket" {
+			ctx.FastHttpContext().SetUserValue("allowed", true)
+			return ctx.Next()
+		}
+
+		return errors.
+			New("Websocket required upgrade").
+			SetType("Socket_RequiredUpgrade").
+			SetHttpCode(http.StatusUpgradeRequired)
+	})
 }
 
 // DELETE add new route to App with method DELETE

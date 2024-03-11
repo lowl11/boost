@@ -1,17 +1,17 @@
 package socket
 
 import (
-	"errors"
+	"github.com/fasthttp/websocket"
 	"github.com/lowl11/boost/data/interfaces"
+	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/io/exception"
 	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/valyala/fasthttp"
+
 	"io"
 	"sync"
 	"time"
-
-	"github.com/fasthttp/websocket"
-	"github.com/valyala/fasthttp"
 )
 
 // Config ...
@@ -156,10 +156,9 @@ func New(handler func(*Conn), config ...Config) types.HandlerFunc {
 	}
 }
 
-// Conn https://godoc.org/github.com/gorilla/websocket#pkg-index
 type Conn struct {
 	*websocket.Conn
-	locals  map[string]interface{}
+	locals  map[string]any
 	params  map[string]string
 	cookies map[string]string
 	headers map[string]string
@@ -296,13 +295,21 @@ const (
 var (
 	// ErrBadHandshake is returned when the server response to opening handshake is
 	// invalid.
-	ErrBadHandshake = errors.New("websocket: bad handshake")
+	ErrBadHandshake = errors.
+			New("Bad handshake").
+			SetType("Socket_BadHandshake")
+
 	// ErrCloseSent is returned when the application writes a message to the
 	// connection after sending a close message.
-	ErrCloseSent = errors.New("websocket: close sent")
+	ErrCloseSent = errors.
+			New("close sent").
+			SetType("Socket_CloseSent")
+
 	// ErrReadLimit is returned when reading a message that is larger than the
 	// read limit set for the connection.
-	ErrReadLimit = errors.New("websocket: read limit exceeded")
+	ErrReadLimit = errors.
+			New("Read limit exceeded").
+			SetType("Socket_ReadLimitExceeded")
 )
 
 // FormatCloseMessage formats closeCode and text as a WebSocket close message.
