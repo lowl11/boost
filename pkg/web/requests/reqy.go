@@ -338,7 +338,8 @@ type basicAuth struct {
 }
 
 type reqyResponse struct {
-	raw *http.Response
+	raw     *http.Response
+	cookies map[string]string
 
 	body       []byte
 	statusCode int
@@ -376,6 +377,38 @@ func (response *reqyResponse) Status() string {
 
 func (response *reqyResponse) StatusCode() int {
 	return response.statusCode
+}
+
+func (response *reqyResponse) Header(key string) string {
+	return response.raw.Header.Get(key)
+}
+
+func (response *reqyResponse) Headers() map[string]string {
+	headers := make(map[string]string)
+	for key, value := range response.raw.Header {
+		headers[key] = strings.Join(value, ",")
+	}
+	return headers
+}
+
+func (response *reqyResponse) Cookie(key string) string {
+	return response.Cookies()[key]
+}
+
+func (response *reqyResponse) Cookies() map[string]string {
+	if response.cookies != nil {
+		return response.cookies
+	}
+
+	for _, c := range response.raw.Cookies() {
+		response.cookies[c.Name] = c.Value
+	}
+
+	return response.cookies
+}
+
+func (response *reqyResponse) ContentType() string {
+	return response.Header("Content-Type")
 }
 
 func fillHeaders(request *http.Request, headers map[string]string) {
