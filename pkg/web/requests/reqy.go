@@ -187,6 +187,14 @@ func (req *Reqy) DELETE(url string) (*reqyResponse, error) {
 	return req.response, nil
 }
 
+func (req *Reqy) Do(method, url string) (*reqyResponse, error) {
+	if err := req.do(method, url, req.getContext()); err != nil {
+		return nil, err
+	}
+
+	return req.response, nil
+}
+
 func (req *Reqy) do(method, url string, ctx context.Context) error {
 	if req.retryCount > 0 { // call retry times
 		if req.retryWaitTime == 0 {
