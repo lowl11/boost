@@ -334,8 +334,8 @@ func (app *App) PUT(path string, action HandlerFunc) Route {
 	return app.handler.RegisterRoute(http.MethodPut, path, action, emptyGroup)
 }
 
-func (app *App) Websocket(path string, handler *socket.Handler) {
-	websocketHandler(app, path, handler)
+func (app *App) Websocket(path string, handler socket.HandlerFunc) {
+	websocketHandler(app, path, socket.NewHandler(handler))
 }
 
 // DELETE add new route to App with method DELETE

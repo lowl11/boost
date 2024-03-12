@@ -48,7 +48,7 @@ type routing interface {
 	POST(path string, action HandlerFunc) Route
 	PUT(path string, action HandlerFunc) Route
 	DELETE(path string, action HandlerFunc) Route
-	Websocket(path string, handler *socket.Handler)
+	Websocket(path string, handler socket.HandlerFunc)
 }
 
 type groupRouting interface {

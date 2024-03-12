@@ -48,6 +48,6 @@ func (group *group) Use(middlewareFunc ...MiddlewareFunc) {
 	group.router.useGroup(group.id, middlewareFunc...)
 }
 
-func (group *group) Websocket(path string, handler *socket.Handler) {
-	websocketHandler(group, path, handler)
+func (group *group) Websocket(path string, handler socket.HandlerFunc) {
+	websocketHandler(group, path, socket.NewHandler(handler))
 }
