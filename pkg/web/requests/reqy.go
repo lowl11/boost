@@ -38,7 +38,7 @@ type Reqy struct {
 	cache *http.Request
 
 	// result data
-	response      *reqyResponse
+	response      *Response
 	result        any
 	sendError     error
 	waitForResult bool
@@ -115,7 +115,7 @@ func (req *Reqy) Body() any {
 	return req.body
 }
 
-func (req *Reqy) Response() *reqyResponse {
+func (req *Reqy) Response() *Response {
 	return req.response
 }
 
@@ -155,7 +155,7 @@ func (req *Reqy) Error() error {
 	return req.sendError
 }
 
-func (req *Reqy) GET(url string) (*reqyResponse, error) {
+func (req *Reqy) GET(url string) (*Response, error) {
 	if err := req.do(http.MethodGet, url, req.getContext()); err != nil {
 		return nil, err
 	}
@@ -163,7 +163,7 @@ func (req *Reqy) GET(url string) (*reqyResponse, error) {
 	return req.response, nil
 }
 
-func (req *Reqy) POST(url string) (*reqyResponse, error) {
+func (req *Reqy) POST(url string) (*Response, error) {
 	if err := req.do(http.MethodPost, url, req.getContext()); err != nil {
 		return nil, err
 	}
@@ -171,7 +171,7 @@ func (req *Reqy) POST(url string) (*reqyResponse, error) {
 	return req.response, nil
 }
 
-func (req *Reqy) PUT(url string) (*reqyResponse, error) {
+func (req *Reqy) PUT(url string) (*Response, error) {
 	if err := req.do(http.MethodPut, url, req.getContext()); err != nil {
 		return nil, err
 	}
@@ -179,7 +179,7 @@ func (req *Reqy) PUT(url string) (*reqyResponse, error) {
 	return req.response, nil
 }
 
-func (req *Reqy) DELETE(url string) (*reqyResponse, error) {
+func (req *Reqy) DELETE(url string) (*Response, error) {
 	if err := req.do(http.MethodDelete, url, req.getContext()); err != nil {
 		return nil, err
 	}
@@ -187,7 +187,7 @@ func (req *Reqy) DELETE(url string) (*reqyResponse, error) {
 	return req.response, nil
 }
 
-func (req *Reqy) Do(method, url string) (*reqyResponse, error) {
+func (req *Reqy) Do(method, url string) (*Response, error) {
 	if err := req.do(method, url, req.getContext()); err != nil {
 		return nil, err
 	}
@@ -337,7 +337,7 @@ type basicAuth struct {
 	Password string
 }
 
-type reqyResponse struct {
+type Response struct {
 	raw     *http.Response
 	cookies map[string]string
 
@@ -346,44 +346,44 @@ type reqyResponse struct {
 	status     string
 }
 
-func newResponse(raw *http.Response) *reqyResponse {
-	return &reqyResponse{
+func newResponse(raw *http.Response) *Response {
+	return &Response{
 		raw: raw,
 	}
 }
 
-func (response *reqyResponse) Raw() *http.Response {
+func (response *Response) Raw() *http.Response {
 	return response.raw
 }
 
-func (response *reqyResponse) setBody(body []byte) *reqyResponse {
+func (response *Response) setBody(body []byte) *Response {
 	response.body = body
 	return response
 }
 
-func (response *reqyResponse) Body() []byte {
+func (response *Response) Body() []byte {
 	return response.body
 }
 
-func (response *reqyResponse) setStatus(status string, code int) *reqyResponse {
+func (response *Response) setStatus(status string, code int) *Response {
 	response.status = status
 	response.statusCode = code
 	return response
 }
 
-func (response *reqyResponse) Status() string {
+func (response *Response) Status() string {
 	return response.status
 }
 
-func (response *reqyResponse) StatusCode() int {
+func (response *Response) StatusCode() int {
 	return response.statusCode
 }
 
-func (response *reqyResponse) Header(key string) string {
+func (response *Response) Header(key string) string {
 	return response.raw.Header.Get(key)
 }
 
-func (response *reqyResponse) Headers() map[string]string {
+func (response *Response) Headers() map[string]string {
 	headers := make(map[string]string)
 	for key, value := range response.raw.Header {
 		headers[key] = strings.Join(value, ",")
@@ -391,11 +391,11 @@ func (response *reqyResponse) Headers() map[string]string {
 	return headers
 }
 
-func (response *reqyResponse) Cookie(key string) string {
+func (response *Response) Cookie(key string) string {
 	return response.Cookies()[key]
 }
 
-func (response *reqyResponse) Cookies() map[string]string {
+func (response *Response) Cookies() map[string]string {
 	if response.cookies != nil {
 		return response.cookies
 	}
@@ -407,7 +407,7 @@ func (response *reqyResponse) Cookies() map[string]string {
 	return response.cookies
 }
 
-func (response *reqyResponse) ContentType() string {
+func (response *Response) ContentType() string {
 	return response.Header("Content-Type")
 }
 
