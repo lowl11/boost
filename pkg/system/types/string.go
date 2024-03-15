@@ -34,6 +34,11 @@ func toString(anyValue any, memory bool) string {
 		return BytesToString(bytesBuffer)
 	}
 
+	// try get Stringer interface
+	if stringer, ok := anyValue.(fmt.Stringer); ok {
+		return stringer.String()
+	}
+
 	// try cast uuid
 	if flex.Type(reflect.TypeOf(anyValue)).IsUUID() {
 		uuidValue, ok := anyValue.(uuid.UUID)
