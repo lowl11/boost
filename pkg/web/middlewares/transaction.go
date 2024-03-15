@@ -2,14 +2,14 @@ package middlewares
 
 import (
 	"github.com/jmoiron/sqlx"
+	"github.com/lowl11/boost/data/domain"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/pkg/system/di"
-	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/boost/storage"
 )
 
-func Transaction() types.MiddlewareFunc {
+func Transaction() domain.MiddlewareFunc {
 	return func(ctx interfaces.Context) error {
 		nativeCtx := ctx.Context()
 

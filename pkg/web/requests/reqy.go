@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"github.com/lowl11/boost/log"
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 	"io"
 	"net/http"
 	"strings"
@@ -260,8 +260,8 @@ func (req *Reqy) execute(method, url string, ctx context.Context) error {
 
 	// try to unmarshal response body if response code is success
 	if req.waitForResult && response.StatusCode < http.StatusBadRequest &&
-		!strings.Contains(types.ToString(responseBody), "<!DOCTYPE html>") &&
-		!strings.Contains(types.ToString(responseBody), "ERROR = ") {
+		!strings.Contains(types.String(responseBody), "<!DOCTYPE html>") &&
+		!strings.Contains(types.String(responseBody), "ERROR = ") {
 		if err = req.unmarshal(responseBody, &req.result); err != nil {
 			log.Error("Unmarshal result error:", err)
 		}
@@ -326,7 +326,7 @@ func (req *Reqy) unmarshal(body []byte, result any) error {
 	}
 
 	//if req.response.raw.Header.Get("Content-Type") != content_types.JSON {
-	//req.result = type_helper.ToString(body, false)
+	//req.result = type_helper.String(body, false)
 	//}
 
 	return json.Unmarshal(body, &result)

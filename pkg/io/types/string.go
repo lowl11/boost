@@ -10,7 +10,7 @@ import (
 	"unsafe"
 )
 
-func ToString(value any) string {
+func String(value any) string {
 	return toString(value, false)
 }
 
@@ -86,26 +86,6 @@ func toString(anyValue any, memory bool) string {
 
 func BytesToString(buffer []byte) string {
 	return *(*string)(unsafe.Pointer(&buffer))
-}
-
-func GetString(setValue string) string {
-	if setValue == "" {
-		return ""
-	}
-
-	return setValue
-}
-
-func StringFromError(err error, defaultMessage string) string {
-	if err == nil {
-		return defaultMessage
-	}
-
-	return err.Error()
-}
-
-func StringToBool(value string) bool {
-	return value == "true"
 }
 
 func isString(value any) bool {

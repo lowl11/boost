@@ -2,7 +2,7 @@ package kafka
 
 import (
 	"github.com/IBM/sarama"
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 )
 
 type message struct {
@@ -79,7 +79,7 @@ func (msg *message) SetHeaders(headers map[string]string) Message {
 func messageFromConsumer(msg *sarama.ConsumerMessage) Message {
 	headers := make(map[string]string, len(msg.Headers))
 	for _, header := range msg.Headers {
-		headers[types.ToString(header.Key)] = types.ToString(header.Value)
+		headers[types.String(header.Key)] = types.String(header.Value)
 	}
 
 	return &message{

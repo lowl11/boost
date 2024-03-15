@@ -1,11 +1,11 @@
 package msgbus
 
 import (
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/data/domain"
 )
 
 type Event struct {
 	Name   string
-	Action types.ListenerAction
+	Action domain.ListenerAction
 	Object any
 }

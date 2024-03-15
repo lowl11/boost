@@ -2,7 +2,6 @@ package boost
 
 import (
 	"github.com/lowl11/boost/pkg/system/logging"
-	"github.com/lowl11/boost/pkg/system/types"
 )
 
 func initLogger(config Config) {
@@ -11,8 +10,8 @@ func initLogger(config Config) {
 		LogLevel: uint(config.LogLevel),
 	}
 
-	logConfig.FolderName = types.GetString(config.LogFolderName)
-	logConfig.FileName = types.GetString(config.LogFilePattern)
+	logConfig.FolderName = config.LogFolderName
+	logConfig.FileName = config.LogFilePattern
 
 	if config.CustomLoggers != nil && len(config.CustomLoggers) > 0 {
 		logConfig.CustomLoggers = config.CustomLoggers

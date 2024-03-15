@@ -5,12 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"encoding/xml"
+	"github.com/lowl11/boost/data/domain"
 	"github.com/lowl11/boost/data/enums/content_types"
 	"github.com/lowl11/boost/data/enums/headers"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/log"
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 	"github.com/lowl11/boost/pkg/system/validator"
 	"github.com/valyala/fasthttp"
 	"io"
@@ -30,25 +31,25 @@ type Context struct {
 	keyContainer sync.Map
 	params       map[string]string
 
-	action            types.HandlerFunc
+	action            domain.HandlerFunc
 	goingToCallAction atomic.Bool
 	actionCalled      atomic.Bool
 
-	nextHandler        types.HandlerFunc
-	handlersChain      []types.HandlerFunc
+	nextHandler        domain.HandlerFunc
+	handlersChain      []domain.HandlerFunc
 	handlersChainIndex int
 
 	userCtx      context.Context
-	panicHandler types.PanicHandler
+	panicHandler domain.PanicHandler
 }
 
 func New(
 	inner *fasthttp.RequestCtx,
-	action types.HandlerFunc,
-	handlersChain []types.HandlerFunc,
+	action domain.HandlerFunc,
+	handlersChain []domain.HandlerFunc,
 	validate *validator.Validator,
 ) *Context {
-	var nextHandler types.HandlerFunc
+	var nextHandler domain.HandlerFunc
 	if len(handlersChain) > 0 {
 		nextHandler = handlersChain[0]
 	}
@@ -165,7 +166,7 @@ func (ctx *Context) FileName() string {
 		return ""
 	}
 
-	last := types.ToString(url[index+1:])
+	last := types.String(url[index+1:])
 	if !strings.Contains(last, ".") {
 		return ""
 	}
@@ -263,7 +264,7 @@ func (ctx *Context) FormFile(key string) []byte {
 }
 
 func (ctx *Context) FormValue(key string) interfaces.Param {
-	return NewParam(types.ToString(ctx.inner.FormValue(key)))
+	return NewParam(types.String(ctx.inner.FormValue(key)))
 }
 
 func (ctx *Context) IsWebSocket() bool {
@@ -318,7 +319,7 @@ func (ctx *Context) Status(status int) interfaces.Context {
 }
 
 func (ctx *Context) Empty() error {
-	contentType := types.ToString(ctx.Response().Header.Peek("Content-Type"))
+	contentType := types.String(ctx.Response().Header.Peek("Content-Type"))
 	if contentType == "" {
 		contentType = content_types.Text
 	}
@@ -328,7 +329,7 @@ func (ctx *Context) Empty() error {
 }
 
 func (ctx *Context) String(message string) error {
-	contentType := types.ToString(ctx.Response().Header.Peek("Content-Type"))
+	contentType := types.String(ctx.Response().Header.Peek("Content-Type"))
 	if contentType == "" {
 		contentType = content_types.Text
 	}
@@ -339,7 +340,7 @@ func (ctx *Context) String(message string) error {
 }
 
 func (ctx *Context) Bytes(body []byte) error {
-	contentType := types.ToString(ctx.Response().Header.Peek("Content-Type"))
+	contentType := types.String(ctx.Response().Header.Peek("Content-Type"))
 	if contentType == "" {
 		contentType = content_types.Bytes
 	}
@@ -486,7 +487,7 @@ func (ctx *Context) NotFoundString(message string) error {
 
 func (ctx *Context) returnOKObject(value any) error {
 	if types.IsPrimitive(value) {
-		return ctx.String(types.ToString(value))
+		return ctx.String(types.String(value))
 	}
 
 	return ctx.JSON(value)

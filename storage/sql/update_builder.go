@@ -3,7 +3,7 @@ package sql
 import (
 	"context"
 	"github.com/lowl11/boost/internal/storages"
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 	"strings"
 )
 
@@ -47,7 +47,7 @@ func (builder *updateBuilder) String() string {
 	query.WriteString("\n")
 
 	if len(builder.setPairs) > 0 {
-		isParam := types.ToString(builder.setPairs[0].Value) == ""
+		isParam := types.String(builder.setPairs[0].Value) == ""
 
 		query.WriteString("SET\n")
 		for index, pair := range builder.setPairs {
@@ -80,7 +80,7 @@ func (builder *updateBuilder) String() string {
 func (builder *updateBuilder) GetParam() (string, bool) {
 	var isParam bool
 	if len(builder.setPairs) > 0 {
-		isParam = types.ToString(builder.setPairs[0].Value) == ""
+		isParam = types.String(builder.setPairs[0].Value) == ""
 	}
 	return builder.String(), isParam
 }

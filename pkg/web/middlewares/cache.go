@@ -1,20 +1,21 @@
 package middlewares
 
 import (
+	"github.com/lowl11/boost/data/domain"
 	"github.com/lowl11/boost/data/interfaces"
+	"github.com/lowl11/boost/pkg/io/types"
 	"github.com/lowl11/boost/pkg/system/di"
-	"github.com/lowl11/boost/pkg/system/types"
 	"time"
 )
 
-func Cache(expire time.Duration) types.MiddlewareFunc {
+func Cache(expire time.Duration) domain.MiddlewareFunc {
 	return func(ctx interfaces.Context) error {
 		c := di.Interface[interfaces.Cache]()
 		if c == nil {
 			return ctx.Next()
 		}
 
-		key := "rest" + types.ToString(ctx.Request().URI().RequestURI())
+		key := "rest" + types.String(ctx.Request().URI().RequestURI())
 
 		content, err := c.Get(ctx.Context(), key)
 		if err != nil {
@@ -36,7 +37,7 @@ func Cache(expire time.Duration) types.MiddlewareFunc {
 				return ctx.Next()
 			}
 
-			if err = c.Set(ctx.Context(), key, types.ToString(ctx.Response().Body()), expire); err != nil {
+			if err = c.Set(ctx.Context(), key, types.String(ctx.Response().Body()), expire); err != nil {
 				return ctx.Error(err)
 			}
 		}

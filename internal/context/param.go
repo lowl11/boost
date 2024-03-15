@@ -2,7 +2,7 @@ package context
 
 import (
 	"github.com/google/uuid"
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 	"strconv"
 	"strings"
 )

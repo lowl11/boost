@@ -1,7 +1,6 @@
 package cron
 
 import (
-	"github.com/lowl11/boost/data/funcs"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/io/exception"
@@ -10,7 +9,7 @@ import (
 
 type runner struct {
 	scheduler    interfaces.Scheduler
-	errorHandler funcs.CronErrorHandler
+	errorHandler interfaces.CronErrorHandler
 	fromStart    bool
 }
 
@@ -20,7 +19,7 @@ func newRunner(scheduler interfaces.Scheduler) *runner {
 	}
 }
 
-func (runner *runner) ErrorHandler(handler funcs.CronErrorHandler) *runner {
+func (runner *runner) ErrorHandler(handler interfaces.CronErrorHandler) *runner {
 	runner.errorHandler = handler
 	return runner
 }

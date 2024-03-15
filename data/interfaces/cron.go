@@ -1,9 +1,11 @@
 package interfaces
 
 import (
-	"github.com/lowl11/boost/data/funcs"
 	"time"
 )
+
+type CronHandler func() error
+type CronErrorHandler func(err error) error
 
 type CronRouter interface {
 	Every(every int) EveryScheduler
@@ -11,13 +13,13 @@ type CronRouter interface {
 }
 
 type Scheduler interface {
-	Action() funcs.CronHandler
+	Action() CronHandler
 	GetDuration() time.Duration
 	GetStart() bool
 }
 
 type BaseScheduler interface {
-	Do(jobAction funcs.CronHandler)
+	Do(jobAction CronHandler)
 }
 
 type EveryScheduler interface {

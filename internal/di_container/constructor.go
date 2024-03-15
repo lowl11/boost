@@ -3,7 +3,7 @@ package di_container
 import (
 	"github.com/lowl11/boost/data/enums/di_modes"
 	"github.com/lowl11/boost/log"
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 	"reflect"
 	"strings"
 )

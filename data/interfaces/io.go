@@ -1,7 +1,7 @@
 package interfaces
 
 import (
-	"github.com/lowl11/boost/pkg/io/object"
+	"github.com/lowl11/boost/pkg/system/object"
 )
 
 type IExplorer interface {

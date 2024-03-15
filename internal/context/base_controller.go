@@ -1,6 +1,8 @@
 package context
 
-import "github.com/lowl11/boost/pkg/system/types"
+import (
+	"github.com/lowl11/boost/pkg/io/types"
+)
 
 type createdWithIDNumber struct {
 	ID int `json:"id"`
@@ -26,7 +28,7 @@ func newCreatedWithID(id any) any {
 	}
 
 	return createdWithIDString{
-		ID: types.ToString(id),
+		ID: types.String(id),
 	}
 }
 

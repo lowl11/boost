@@ -3,6 +3,7 @@ package boost
 import (
 	baseContext "context"
 	"github.com/google/uuid"
+	"github.com/lowl11/boost/data/domain"
 	"github.com/lowl11/boost/data/enums/colors"
 	"github.com/lowl11/boost/data/enums/modes"
 	"github.com/lowl11/boost/data/interfaces"
@@ -15,7 +16,6 @@ import (
 	"github.com/lowl11/boost/pkg/system/cancel"
 	"github.com/lowl11/boost/pkg/system/cron"
 	"github.com/lowl11/boost/pkg/system/di"
-	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/boost/pkg/system/validator"
 	"github.com/lowl11/boost/pkg/web/middlewares"
 	"github.com/lowl11/boost/pkg/web/queue/msgbus"
@@ -78,7 +78,7 @@ type Config struct {
 	CorsVary    []string
 
 	// Custom handler of panics
-	PanicHandler types.PanicHandler
+	PanicHandler domain.PanicHandler
 }
 
 func defaultConfig() Config {
@@ -394,7 +394,7 @@ func (app *App) Use(middlewareFunc ...MiddlewareFunc) {
 		return
 	}
 
-	appMiddlewares := make([]types.MiddlewareFunc, 0, len(middlewareFunc))
+	appMiddlewares := make([]domain.MiddlewareFunc, 0, len(middlewareFunc))
 
 	for _, mFunc := range middlewareFunc {
 		if mFunc == nil {
@@ -412,7 +412,7 @@ func (app *App) useGroup(groupID uuid.UUID, middlewareFunc ...MiddlewareFunc) {
 		return
 	}
 
-	groupMiddlewares := make([]types.MiddlewareFunc, 0, len(middlewareFunc))
+	groupMiddlewares := make([]domain.MiddlewareFunc, 0, len(middlewareFunc))
 
 	for _, mFunc := range middlewareFunc {
 		if mFunc == nil {

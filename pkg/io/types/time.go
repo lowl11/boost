@@ -1,7 +1,7 @@
 package types
 
 import (
-	"github.com/lowl11/boost/pkg/system/types/timec"
+	"github.com/lowl11/boost/pkg/io/types/timec"
 	"time"
 )
 

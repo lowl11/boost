@@ -2,7 +2,7 @@ package cache
 
 import (
 	"context"
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 	"github.com/patrickmn/go-cache"
 	"regexp"
 	"strings"

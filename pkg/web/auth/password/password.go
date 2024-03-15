@@ -1,7 +1,7 @@
 package password
 
 import (
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 	"math/rand"
 )
 
@@ -43,5 +43,5 @@ func Generate(length int, useLetters, includeSpecial, includeNumber bool) string
 		password = append(password, charSource[randNum])
 	}
 
-	return types.ToString(password)
+	return types.String(password)
 }

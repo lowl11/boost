@@ -5,8 +5,8 @@ import (
 	"github.com/lowl11/boost/data/enums/redis_types"
 	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/log"
+	"github.com/lowl11/boost/pkg/io/types"
 	"github.com/lowl11/boost/pkg/system/cancel"
-	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/redis/go-redis/v9"
 	"time"
 )

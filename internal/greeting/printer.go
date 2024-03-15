@@ -3,7 +3,7 @@ package greeting
 import (
 	"fmt"
 	"github.com/lowl11/boost/data/enums/colors"
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 	"os"
 	"strings"
 )
@@ -19,7 +19,7 @@ func build(text string, args ...any) string {
 }
 
 func color(text any, color string) string {
-	textInString := types.ToString(text)
+	textInString := types.String(text)
 
 	coloredText := strings.Builder{}
 	coloredText.WriteString(color)

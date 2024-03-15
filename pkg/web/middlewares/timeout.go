@@ -2,15 +2,15 @@ package middlewares
 
 import (
 	"context"
+	"github.com/lowl11/boost/data/domain"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/pkg/io/exception"
-	"github.com/lowl11/boost/pkg/system/types"
 	"net/http"
 	"time"
 )
 
-func Timeout(timeout time.Duration) types.MiddlewareFunc {
+func Timeout(timeout time.Duration) domain.MiddlewareFunc {
 	return func(ctx interfaces.Context) error {
 		if timeout == 0 {
 			if err := ctx.Next(); err != nil {

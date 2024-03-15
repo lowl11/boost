@@ -3,8 +3,8 @@ package log
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/lowl11/boost/pkg/io/types"
 	"github.com/lowl11/boost/pkg/system/logging"
-	"github.com/lowl11/boost/pkg/system/types"
 	"log"
 	"os"
 	"strings"
@@ -214,7 +214,7 @@ func buildMessage(args ...any) string {
 
 	stringArgs := strings.Builder{}
 	for _, arg := range args {
-		stringArgs.WriteString(types.ToString(arg))
+		stringArgs.WriteString(types.String(arg))
 		stringArgs.WriteString(" ")
 	}
 	return stringArgs.String()[:stringArgs.Len()-1]

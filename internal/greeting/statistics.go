@@ -1,7 +1,7 @@
 package greeting
 
 import (
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 	"os"
 	"strings"
 )
@@ -18,8 +18,8 @@ func (greeting *Greeting) getHttpStatistic() string {
 	builder := strings.Builder{}
 
 	// first line
-	routes := types.ToString(greeting.counter.GetRoutes() - staticControllerRoutesCount)
-	groups := types.ToString(greeting.counter.GetGroups())
+	routes := types.String(greeting.counter.GetRoutes() - staticControllerRoutesCount)
+	groups := types.String(greeting.counter.GetGroups())
 
 	builder.WriteString(color(startLine, greeting.getMainColor()))
 	builder.WriteString("Routes: ........")
@@ -33,7 +33,7 @@ func (greeting *Greeting) getHttpStatistic() string {
 
 	// second line
 	port := greeting.ctx.Port
-	pid := types.ToString(os.Getpid())
+	pid := types.String(os.Getpid())
 
 	builder.WriteString(color(startLine, greeting.getMainColor()))
 	builder.WriteString("Port: ..........")
@@ -60,7 +60,7 @@ func (greeting *Greeting) getRPCStatistic() string {
 
 	// first line
 	port := greeting.ctx.Port
-	pid := types.ToString(os.Getpid())
+	pid := types.String(os.Getpid())
 
 	builder.WriteString(color(startLine, greeting.getMainColor()))
 	builder.WriteString("Port: ..........")
@@ -86,8 +86,8 @@ func (greeting *Greeting) getCronStatistic() string {
 	builder := strings.Builder{}
 
 	// first line
-	actions := types.ToString(greeting.counter.GetCronActions())
-	pid := types.ToString(os.Getpid())
+	actions := types.String(greeting.counter.GetCronActions())
+	pid := types.String(os.Getpid())
 
 	builder.WriteString(color(startLine, greeting.getMainColor()))
 	builder.WriteString("Actions: ........")
@@ -113,8 +113,8 @@ func (greeting *Greeting) getListenerStatistic() string {
 	builder := strings.Builder{}
 
 	// first line
-	binds := types.ToString(greeting.counter.GetListenerBind())
-	pid := types.ToString(os.Getpid())
+	binds := types.String(greeting.counter.GetListenerBind())
+	pid := types.String(os.Getpid())
 
 	builder.WriteString(color(startLine, greeting.getMainColor()))
 	builder.WriteString("Binds: ........")

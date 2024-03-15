@@ -2,11 +2,12 @@ package socket
 
 import (
 	"github.com/fasthttp/websocket"
+	"github.com/lowl11/boost/data/domain"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/io/exception"
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 	"github.com/valyala/fasthttp"
 
 	"io"
@@ -68,7 +69,7 @@ func defaultRecover(c *Conn) {
 
 // New returns a new `handler func(*Conn)` that upgrades a client to the
 // websocket protocol, you can pass an optional config.
-func New(handler func(*Conn), config ...Config) types.HandlerFunc {
+func New(handler func(*Conn), config ...Config) domain.HandlerFunc {
 	// Init config
 	var cfg Config
 	if len(config) > 0 {
@@ -98,7 +99,7 @@ func New(handler func(*Conn), config ...Config) types.HandlerFunc {
 			if cfg.Origins[0] == "*" {
 				return true
 			}
-			origin := types.ToString(fctx.Request.Header.Peek("Origin"))
+			origin := types.String(fctx.Request.Header.Peek("Origin"))
 			for i := range cfg.Origins {
 				if cfg.Origins[i] == origin {
 					return true

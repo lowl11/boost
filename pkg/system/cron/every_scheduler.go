@@ -1,7 +1,6 @@
 package cron
 
 import (
-	"github.com/lowl11/boost/data/funcs"
 	"github.com/lowl11/boost/data/interfaces"
 	"time"
 )
@@ -13,7 +12,7 @@ type everyScheduler struct {
 
 	duration time.Duration
 
-	jobAction funcs.CronHandler
+	jobAction interfaces.CronHandler
 }
 
 func newEveryScheduler(schedulersChannel chan interfaces.Scheduler, every int) *everyScheduler {
@@ -62,12 +61,12 @@ func (scheduler *everyScheduler) GetStart() bool {
 	return scheduler.fromStart
 }
 
-func (scheduler *everyScheduler) Do(jobAction funcs.CronHandler) {
+func (scheduler *everyScheduler) Do(jobAction interfaces.CronHandler) {
 	scheduler.jobAction = jobAction
 	scheduler.schedulersChannel <- scheduler
 }
 
-func (scheduler *everyScheduler) Action() funcs.CronHandler {
+func (scheduler *everyScheduler) Action() interfaces.CronHandler {
 	return scheduler.jobAction
 }
 

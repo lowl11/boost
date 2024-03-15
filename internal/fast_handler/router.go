@@ -1,8 +1,8 @@
 package fast_handler
 
 import (
+	"github.com/lowl11/boost/data/domain"
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/pkg/system/types"
 	"strings"
 	"sync"
 )
@@ -18,13 +18,13 @@ func newRouter() *router {
 type RouteContext struct {
 	Path   string
 	Method string
-	Action types.HandlerFunc
+	Action domain.HandlerFunc
 
 	WaitParam bool
 	Params    map[string]string
 
 	GroupID     string
-	Middlewares []types.HandlerFunc
+	Middlewares []domain.HandlerFunc
 }
 
 func (route *RouteContext) Use(middlewares ...func(ctx interfaces.Context) error) {
@@ -32,7 +32,7 @@ func (route *RouteContext) Use(middlewares ...func(ctx interfaces.Context) error
 		return
 	}
 
-	middlewareHandlers := make([]types.HandlerFunc, 0, len(middlewares))
+	middlewareHandlers := make([]domain.HandlerFunc, 0, len(middlewares))
 	for _, middleware := range middlewares {
 		if middleware == nil {
 			continue
@@ -46,7 +46,7 @@ func (route *RouteContext) Use(middlewares ...func(ctx interfaces.Context) error
 
 func (router *router) Register(
 	method, path string,
-	action types.HandlerFunc,
+	action domain.HandlerFunc,
 	groupID string,
 ) interfaces.Route {
 	// if path contains dynamic params

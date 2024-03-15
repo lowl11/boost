@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/lowl11/boost/data/enums/content_types"
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 	"google.golang.org/grpc/codes"
 	"net/http"
 	"strings"
@@ -191,7 +191,7 @@ func (err *customError) String() string {
 
 			builder.WriteString(key)
 			builder.WriteString("=")
-			builder.WriteString(types.ToString(value))
+			builder.WriteString(types.String(value))
 			builder.WriteString(";")
 		}
 	}

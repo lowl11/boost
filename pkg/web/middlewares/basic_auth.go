@@ -2,14 +2,15 @@ package middlewares
 
 import (
 	"encoding/base64"
+	"github.com/lowl11/boost/data/domain"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/errors"
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 	"net/http"
 	"strings"
 )
 
-func BasicAuth(username, password string) types.MiddlewareFunc {
+func BasicAuth(username, password string) domain.MiddlewareFunc {
 	return func(ctx interfaces.Context) error {
 		authorizationToken := ctx.Authorization()
 
@@ -36,7 +37,7 @@ func BasicAuth(username, password string) types.MiddlewareFunc {
 }
 
 func errorBasicAuthParseHeader(err error) error {
-	return errors.New(types.StringFromError(err, "Parse header error")).
+	return errors.New(err.Error()).
 		SetType("ErrorBasicAuthParseHeader").
 		SetHttpCode(http.StatusUnauthorized)
 }

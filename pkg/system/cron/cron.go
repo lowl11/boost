@@ -1,7 +1,6 @@
 package cron
 
 import (
-	"github.com/lowl11/boost/data/funcs"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/fast_handler/counter"
 	"sync"
@@ -13,11 +12,11 @@ type (
 )
 
 type Config struct {
-	ErrorHandler funcs.CronErrorHandler
+	ErrorHandler interfaces.CronErrorHandler
 }
 
 type Cron struct {
-	errorHandler      funcs.CronErrorHandler
+	errorHandler      interfaces.CronErrorHandler
 	schedulersChannel chan interfaces.Scheduler
 	schedulers        []interfaces.Scheduler
 	counter           *counter.Counter

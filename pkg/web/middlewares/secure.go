@@ -2,9 +2,10 @@ package middlewares
 
 import (
 	"fmt"
+	"github.com/lowl11/boost/data/domain"
 	"github.com/lowl11/boost/data/enums/headers"
 	"github.com/lowl11/boost/data/interfaces"
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 )
 
 type SecureConfig struct {
@@ -23,11 +24,11 @@ func defaultSecureConfig() SecureConfig {
 	return SecureConfig{}
 }
 
-func Secure() types.MiddlewareFunc {
+func Secure() domain.MiddlewareFunc {
 	return SecureWithConfig(defaultSecureConfig())
 }
 
-func SecureWithConfig(config SecureConfig) types.MiddlewareFunc {
+func SecureWithConfig(config SecureConfig) domain.MiddlewareFunc {
 	return func(ctx interfaces.Context) error {
 		req := ctx.Request()
 		res := ctx.Response()

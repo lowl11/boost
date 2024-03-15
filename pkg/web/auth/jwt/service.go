@@ -1,7 +1,7 @@
 package jwt
 
 import (
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 )
 
 // JWT is a service which generates & parse JWT tokens

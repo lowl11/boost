@@ -2,7 +2,7 @@ package swagger
 
 import (
 	"github.com/lowl11/boost/pkg/io/file"
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 	"sync"
 )
 
@@ -28,7 +28,7 @@ func ReadFile(name string) string {
 		return ""
 	}
 
-	contentStr := types.ToString(content)
+	contentStr := types.String(content)
 	_cache.Store(name, contentStr)
 	return contentStr
 }

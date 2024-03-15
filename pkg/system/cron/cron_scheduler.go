@@ -2,7 +2,6 @@ package cron
 
 import (
 	"github.com/aptible/supercronic/cronexpr"
-	"github.com/lowl11/boost/data/funcs"
 	"github.com/lowl11/boost/data/interfaces"
 	"time"
 )
@@ -12,7 +11,7 @@ type cronScheduler struct {
 	cronExpression    string
 	fromStart         bool
 
-	jobAction funcs.CronHandler
+	jobAction interfaces.CronHandler
 }
 
 func newCronScheduler(schedulersChannel chan interfaces.Scheduler, cronExpression string) *cronScheduler {
@@ -22,7 +21,7 @@ func newCronScheduler(schedulersChannel chan interfaces.Scheduler, cronExpressio
 	}
 }
 
-func (scheduler *cronScheduler) Action() funcs.CronHandler {
+func (scheduler *cronScheduler) Action() interfaces.CronHandler {
 	return scheduler.jobAction
 }
 
@@ -39,7 +38,7 @@ func (scheduler *cronScheduler) GetDuration() time.Duration {
 	return scheduler.getDuration(scheduler.cronExpression)
 }
 
-func (scheduler *cronScheduler) Do(jobAction funcs.CronHandler) {
+func (scheduler *cronScheduler) Do(jobAction interfaces.CronHandler) {
 	scheduler.jobAction = jobAction
 	scheduler.schedulersChannel <- scheduler
 }

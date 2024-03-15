@@ -4,14 +4,15 @@ import (
 	baseContext "context"
 	"github.com/google/uuid"
 	"github.com/lowl11/boost/config"
+	"github.com/lowl11/boost/data/domain"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/internal/context"
 	"github.com/lowl11/boost/internal/fast_handler/counter"
 	"github.com/lowl11/boost/log"
 	"github.com/lowl11/boost/pkg/io/exception"
+	"github.com/lowl11/boost/pkg/io/types"
 	"github.com/lowl11/boost/pkg/system/cancel"
-	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/boost/pkg/system/validator"
 	"github.com/valyala/fasthttp"
 
@@ -40,12 +41,12 @@ type CorsConfig struct {
 type Handler struct {
 	server            *fasthttp.Server
 	router            *router
-	globalMiddlewares []types.HandlerFunc
-	groupMiddlewares  map[string][]types.HandlerFunc
+	globalMiddlewares []domain.HandlerFunc
+	groupMiddlewares  map[string][]domain.HandlerFunc
 	counter           *counter.Counter
 	validate          *validator.Validator
 	corsConfig        CorsConfig
-	panicHandler      types.PanicHandler
+	panicHandler      domain.PanicHandler
 	needBoost         bool
 }
 
@@ -53,8 +54,8 @@ func New(validate *validator.Validator) *Handler {
 	return &Handler{
 		server:            getServer(),
 		router:            newRouter(),
-		globalMiddlewares: make([]types.HandlerFunc, 0),
-		groupMiddlewares:  make(map[string][]types.HandlerFunc),
+		globalMiddlewares: make([]domain.HandlerFunc, 0),
+		groupMiddlewares:  make(map[string][]domain.HandlerFunc),
 		counter:           counter.New(),
 		validate:          validate,
 	}
@@ -98,7 +99,7 @@ func (handler *Handler) Run(ctx baseContext.Context, port string) error {
 	return nil
 }
 
-func (handler *Handler) RegisterRoute(method, path string, action types.HandlerFunc, groupID string) interfaces.Route {
+func (handler *Handler) RegisterRoute(method, path string, action domain.HandlerFunc, groupID string) interfaces.Route {
 	if action == nil {
 		panic("route action is NULL")
 	}
@@ -111,29 +112,29 @@ func (handler *Handler) RegisterGroup() {
 	handler.counter.Group()
 }
 
-func (handler *Handler) RegisterGlobalMiddlewares(middlewareFunc ...types.MiddlewareFunc) {
-	middlewareHandlers := make([]types.HandlerFunc, 0, len(middlewareFunc))
+func (handler *Handler) RegisterGlobalMiddlewares(middlewareFunc ...domain.MiddlewareFunc) {
+	middlewareHandlers := make([]domain.HandlerFunc, 0, len(middlewareFunc))
 	for _, middleware := range middlewareFunc {
 		if middleware == nil {
 			continue
 		}
 
 		handler.counter.GlobalMiddleware()
-		middlewareHandlers = append(middlewareHandlers, types.HandlerFunc(middleware))
+		middlewareHandlers = append(middlewareHandlers, domain.HandlerFunc(middleware))
 	}
 
 	handler.globalMiddlewares = append(handler.globalMiddlewares, middlewareHandlers...)
 }
 
-func (handler *Handler) RegisterGroupMiddlewares(groupID uuid.UUID, middlewareFunc ...types.MiddlewareFunc) {
-	middlewareHandlers := make([]types.HandlerFunc, 0, len(middlewareFunc))
+func (handler *Handler) RegisterGroupMiddlewares(groupID uuid.UUID, middlewareFunc ...domain.MiddlewareFunc) {
+	middlewareHandlers := make([]domain.HandlerFunc, 0, len(middlewareFunc))
 	for _, middleware := range middlewareFunc {
 		if middleware == nil {
 			continue
 		}
 
 		handler.counter.GroupMiddleware()
-		middlewareHandlers = append(middlewareHandlers, types.HandlerFunc(middleware))
+		middlewareHandlers = append(middlewareHandlers, domain.HandlerFunc(middleware))
 	}
 
 	handler.groupMiddlewares[groupID.String()] = middlewareHandlers
@@ -147,7 +148,7 @@ func (handler *Handler) SetCorsConfig(config CorsConfig) {
 	handler.corsConfig = config
 }
 
-func (handler *Handler) SetPanicHandler(panicHandler types.PanicHandler) {
+func (handler *Handler) SetPanicHandler(panicHandler domain.PanicHandler) {
 	handler.panicHandler = panicHandler
 }
 
@@ -227,13 +228,13 @@ func (handler *Handler) handler(ctx *fasthttp.RequestCtx) {
 	// get group middlewares
 	groupMiddlewares, ok := handler.groupMiddlewares[routeCtx.GroupID]
 	if !ok || routeCtx.GroupID == "" {
-		groupMiddlewares = []types.HandlerFunc{}
+		groupMiddlewares = []domain.HandlerFunc{}
 	}
 
 	// get endpoint middlewares
 	endpointMiddlewares := routeCtx.Middlewares
 	if endpointMiddlewares == nil {
-		endpointMiddlewares = []types.HandlerFunc{}
+		endpointMiddlewares = []domain.HandlerFunc{}
 	}
 
 	// create handlers chain (with middlewares)
@@ -291,7 +292,7 @@ func (handler *Handler) getOrigin(ctx *fasthttp.RequestCtx) string {
 	if handler.corsConfig.debugPrint {
 		headers := make(map[string]string)
 		ctx.Request.Header.VisitAll(func(key, value []byte) {
-			headers[types.ToString(key)] = types.ToString(value)
+			headers[types.String(key)] = types.String(value)
 		})
 		log.Info("CORS Debug -> Headers:", headers)
 	}
@@ -305,7 +306,7 @@ func (handler *Handler) getOrigin(ctx *fasthttp.RequestCtx) string {
 	}
 
 	// get from request headers
-	requestOrigin := types.ToString(ctx.Request.Header.Peek("Origin"))
+	requestOrigin := types.String(ctx.Request.Header.Peek("Origin"))
 	if requestOrigin != "" {
 		if handler.corsConfig.debugPrint {
 			log.Info("CORS origin from request 'Origin' header:", requestOrigin)
@@ -328,7 +329,7 @@ func (handler *Handler) getOrigin(ctx *fasthttp.RequestCtx) string {
 func (handler *Handler) getHeaders(ctx *fasthttp.RequestCtx) string {
 	accessHeaders := make([]string, 0, 10)
 	for _, header := range ctx.Request.Header.PeekKeys() {
-		accessHeaders = append(accessHeaders, types.ToString(header))
+		accessHeaders = append(accessHeaders, types.String(header))
 	}
 
 	accessHeaders = append(accessHeaders, "Content-Type", "Authorization", "Origin")

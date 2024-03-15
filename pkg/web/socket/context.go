@@ -2,7 +2,7 @@ package socket
 
 import (
 	"encoding/json"
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 )
 
 type Context struct {
@@ -24,7 +24,7 @@ func (ctx *Context) Body() []byte {
 }
 
 func (ctx *Context) String() string {
-	return types.ToString(ctx.body)
+	return types.String(ctx.body)
 }
 
 func (ctx *Context) Parse(export any) error {

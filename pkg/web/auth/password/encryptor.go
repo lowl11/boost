@@ -5,7 +5,7 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/base64"
-	"github.com/lowl11/boost/pkg/system/types"
+	"github.com/lowl11/boost/pkg/io/types"
 	"io"
 )
 
@@ -64,5 +64,5 @@ func (encrypt Encryptor) Decrypt(password string) (string, error) {
 	stream := cipher.NewCFBDecrypter(block, iv)
 	stream.XORKeyStream(ciphertext, ciphertext)
 
-	return types.ToString(ciphertext), nil
+	return types.String(ciphertext), nil
 }

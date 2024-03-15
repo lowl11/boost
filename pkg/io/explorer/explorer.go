@@ -4,8 +4,8 @@ import (
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/pkg/io/file"
 	"github.com/lowl11/boost/pkg/io/folder"
-	"github.com/lowl11/boost/pkg/io/object"
 	"github.com/lowl11/boost/pkg/io/paths"
+	"github.com/lowl11/boost/pkg/system/object"
 	"strings"
 	"sync"
 )

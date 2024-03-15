@@ -1,10 +1,10 @@
 package boost
 
 import (
+	"github.com/lowl11/boost/data/domain"
 	"github.com/lowl11/boost/data/interfaces"
 	"github.com/lowl11/boost/internal/healthcheck"
 	"github.com/lowl11/boost/internal/stat"
-	"github.com/lowl11/boost/pkg/system/types"
 	"github.com/lowl11/boost/pkg/web/swagger"
 )
 
@@ -22,7 +22,7 @@ func registerStaticEndpoints(app routing, healthcheck *healthcheck.Healthcheck) 
 	app.GET("/swagger*", staticEndpointSwagger())
 }
 
-func staticEndpointSwagger() types.HandlerFunc {
+func staticEndpointSwagger() domain.HandlerFunc {
 	return func(ctx interfaces.Context) error {
 		if ctx.IsFile() {
 			file := swagger.ReadFile(ctx.FileName())
@@ -33,7 +33,7 @@ func staticEndpointSwagger() types.HandlerFunc {
 	}
 }
 
-func staticEndpointHealthcheck(healthcheck *healthcheck.Healthcheck) types.HandlerFunc {
+func staticEndpointHealthcheck(healthcheck *healthcheck.Healthcheck) domain.HandlerFunc {
 	return func(ctx interfaces.Context) error {
 		if err := healthcheck.Trigger(); err != nil {
 			return ctx.Error(err)
@@ -43,13 +43,13 @@ func staticEndpointHealthcheck(healthcheck *healthcheck.Healthcheck) types.Handl
 	}
 }
 
-func staticEndpointPingPong() types.HandlerFunc {
+func staticEndpointPingPong() domain.HandlerFunc {
 	return func(ctx interfaces.Context) error {
 		return ctx.Ok("pong")
 	}
 }
 
-func staticEndpointStat(healthcheck *healthcheck.Healthcheck) types.HandlerFunc {
+func staticEndpointStat(healthcheck *healthcheck.Healthcheck) domain.HandlerFunc {
 	return func(ctx interfaces.Context) error {
 		return ctx.Ok(stat.Format(healthcheck))
 	}

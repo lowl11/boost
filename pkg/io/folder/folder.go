@@ -2,8 +2,8 @@ package folder
 
 import (
 	"fmt"
-	"github.com/lowl11/boost/pkg/io/object"
 	"github.com/lowl11/boost/pkg/io/paths"
+	"github.com/lowl11/boost/pkg/system/object"
 	"os"
 	"path/filepath"
 	"sort"
