@@ -55,14 +55,9 @@ cdn
 	createFolder("controllers/hello_controller")
 	createFile("controllers/hello_controller/controller.go", []byte(`package hello_controller
 
-import (
-	"github.com/lowl11/boost"
-	"github.com/lowl11/boost/pkg/web/base/controller"
-)
+import "github.com/lowl11/boost"
 
-type Controller struct {
-	controller.Base
-}
+type Controller struct {}
 
 func New() *Controller {
 	return &Controller{}
@@ -72,7 +67,7 @@ func (controller Controller) RegisterEndpoints(router boost.Router) {
 	group := router.Group("/base/group/endpoint")
 
 	group.GET("/hello", func(ctx boost.Context) error {
-		return controller.Ok(ctx, "Hello world")
+		return ctx.Ok("Hello world")
 	})
 }
 `))

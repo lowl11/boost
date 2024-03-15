@@ -8,7 +8,7 @@ import (
 )
 
 type (
-	CronRouter = interfaces.CronRouter
+	Router = interfaces.CronRouter
 )
 
 type Config struct {

@@ -45,7 +45,7 @@ func (repo memRepo) Search(ctx context.Context, pattern string) ([]string, error
 	reg, _ := regexp.Compile(regexPattern)
 
 	matchKeys := make([]string, 0)
-	for key, _ := range all {
+	for key := range all {
 		match := reg.FindAllString(key, -1)
 		if len(match) > 0 && match[0] == key {
 			matchKeys = append(matchKeys, key)

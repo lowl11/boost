@@ -17,13 +17,13 @@ type Explorer struct {
 	mutex      sync.Mutex
 }
 
-func New(path string) interfaces.IExplorer {
+func New(path string) interfaces.Explorer {
 	return &Explorer{
 		path: path,
 	}
 }
 
-func (explorer *Explorer) ThreadSafe() interfaces.IExplorer {
+func (explorer *Explorer) ThreadSafe() interfaces.Explorer {
 	explorer.threadSafe = true
 	return explorer
 }
@@ -52,7 +52,7 @@ func (explorer *Explorer) Restore() error {
 	return nil
 }
 
-func (explorer *Explorer) FileByPath(path string) (interfaces.IFile, error) {
+func (explorer *Explorer) FileByPath(path string) (interfaces.File, error) {
 	explorer.lock()
 	defer explorer.unlock()
 
@@ -100,7 +100,7 @@ func (explorer *Explorer) DeleteFileByPath(path string) error {
 	return file.Delete(paths.Build(explorer.path, path))
 }
 
-func (explorer *Explorer) FolderByPath(path string) (interfaces.IFolder, error) {
+func (explorer *Explorer) FolderByPath(path string) (interfaces.Folder, error) {
 	explorer.lock()
 	defer explorer.unlock()
 
@@ -158,7 +158,7 @@ func (explorer *Explorer) List() ([]object.Object, error) {
 	return folder.Objects(explorer.path)
 }
 
-func (explorer *Explorer) FileList() ([]interfaces.IFile, error) {
+func (explorer *Explorer) FileList() ([]interfaces.File, error) {
 	explorer.lock()
 	defer explorer.unlock()
 
@@ -167,7 +167,7 @@ func (explorer *Explorer) FileList() ([]interfaces.IFile, error) {
 		return nil, err
 	}
 
-	list := make([]interfaces.IFile, 0)
+	list := make([]interfaces.File, 0)
 	for _, obj := range objects {
 		if obj.IsFolder {
 			continue
@@ -184,7 +184,7 @@ func (explorer *Explorer) FileList() ([]interfaces.IFile, error) {
 	return list, nil
 }
 
-func (explorer *Explorer) FolderList() ([]interfaces.IFolder, error) {
+func (explorer *Explorer) FolderList() ([]interfaces.Folder, error) {
 	explorer.lock()
 	defer explorer.unlock()
 
@@ -193,24 +193,24 @@ func (explorer *Explorer) FolderList() ([]interfaces.IFolder, error) {
 		return nil, err
 	}
 
-	list := make([]interfaces.IFolder, 0)
+	list := make([]interfaces.Folder, 0)
 	for _, obj := range objects {
 		if !obj.IsFolder {
 			continue
 		}
 
-		folder, err := explorer.getFolder(obj.Name)
+		directory, err := explorer.getFolder(obj.Name)
 		if err != nil {
 			return nil, err
 		}
 
-		list = append(list, folder)
+		list = append(list, directory)
 	}
 
 	return list, nil
 }
 
-func (explorer *Explorer) File(name string) (interfaces.IFile, error) {
+func (explorer *Explorer) File(name string) (interfaces.File, error) {
 	explorer.lock()
 	defer explorer.unlock()
 
@@ -243,14 +243,14 @@ func (explorer *Explorer) DeleteFile(name string) error {
 	return file.Delete(paths.Build(explorer.path, name))
 }
 
-func (explorer *Explorer) Folder(name string) (interfaces.IFolder, error) {
+func (explorer *Explorer) Folder(name string) (interfaces.Folder, error) {
 	explorer.lock()
 	defer explorer.unlock()
 
 	return explorer.getFolder(name)
 }
 
-func (explorer *Explorer) AddFolder(name string) (interfaces.IFolder, error) {
+func (explorer *Explorer) AddFolder(name string) (interfaces.Folder, error) {
 	explorer.lock()
 	defer explorer.unlock()
 
@@ -289,7 +289,7 @@ func (explorer *Explorer) unlock() {
 	explorer.mutex.Unlock()
 }
 
-func (explorer *Explorer) getFolder(name string) (interfaces.IFolder, error) {
+func (explorer *Explorer) getFolder(name string) (interfaces.Folder, error) {
 	folderName := paths.Build(explorer.path, name)
 
 	if !folder.Exist(folderName) {

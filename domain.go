@@ -25,18 +25,14 @@ type (
 
 	ILogger = interfaces.ILogger
 
-	// Cache is interface for using cache
 	Cache = interfaces.Cache
 
-	// Message Bus
 	Listener     = interfaces.Listener
 	Dispatcher   = interfaces.Dispatcher
 	EventContext = interfaces.EventContext
 
-	// Explorer is tool for File System
-	Explorer = interfaces.IExplorer
+	Explorer = interfaces.Explorer
 
-	// Async
 	Semaphore = interfaces.Semaphore
 	Task      = interfaces.Task
 	TaskGroup = interfaces.TaskGroup
@@ -90,5 +86,5 @@ type ListenerController interface {
 }
 
 type CronController interface {
-	BindCron(cron.CronRouter)
+	BindCron(cron.Router)
 }

@@ -3,7 +3,6 @@ package file
 import (
 	"bytes"
 	"github.com/lowl11/boost/pkg/io/paths"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -178,7 +177,7 @@ func CreateFromFile(source, destination string) error {
 		return nil
 	}
 
-	sourceBody, err := ioutil.ReadFile(source)
+	sourceBody, err := os.ReadFile(source)
 	if err != nil {
 		return err
 	}
@@ -232,7 +231,7 @@ func Read(path string) ([]byte, error) {
 		return nil, ErrorFileIsFolder()
 	}
 
-	content, err := ioutil.ReadFile(path)
+	content, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}

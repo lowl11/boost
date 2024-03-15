@@ -157,8 +157,8 @@ func (repo redisRepo) Close() error {
 }
 
 func pingRedis(client *redis.Client) error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
+	ctx, ctxCancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer ctxCancel()
 
 	if err := client.Ping(ctx).Err(); err != nil {
 		return errors.New("Ping Redis error").

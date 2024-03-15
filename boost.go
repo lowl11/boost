@@ -370,7 +370,7 @@ func (app *App) Group(base string) Group {
 }
 
 // CronApp returns boost cron application
-func (app *App) CronApp() cron.CronRouter {
+func (app *App) CronApp() cron.Router {
 	if app.cron == nil {
 		app.cron = cron.New(app.config.CronConfig, app.handler.GetCounter())
 	}

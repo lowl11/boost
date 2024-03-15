@@ -4,20 +4,20 @@ import (
 	"github.com/lowl11/boost/pkg/system/object"
 )
 
-type IExplorer interface {
-	IFolder
+type Explorer interface {
+	Folder
 
 	/*
 		ThreadSafe turns on thread safe mode.
 		Created folder objects by IManager inherit thread safe mode
 	*/
-	ThreadSafe() IExplorer
+	ThreadSafe() Explorer
 
 	/*
-		FileByPath get IFile object by given path.
+		FileByPath get File object by given path.
 		Path is path inside given root path
 	*/
-	FileByPath(path string) (IFile, error)
+	FileByPath(path string) (File, error)
 
 	/*
 		AddFileByPath creates new file by given path.
@@ -38,10 +38,10 @@ type IExplorer interface {
 	DeleteFileByPath(path string) error
 
 	/*
-		FolderByPath get IFolder object by give path.
+		FolderByPath get Folder object by give path.
 		Path is path inside given root path
 	*/
-	FolderByPath(path string) (IFolder, error)
+	FolderByPath(path string) (Folder, error)
 
 	/*
 		AddFolderByPath	creates path by given path.
@@ -56,7 +56,7 @@ type IExplorer interface {
 	DeleteFolderByPath(path string, force bool) error
 }
 
-type IFolder interface {
+type Folder interface {
 	// Empty is folder does not contain objects
 	Empty() bool
 
@@ -83,19 +83,19 @@ type IFolder interface {
 	List() ([]object.Object, error)
 
 	/*
-		FileList returns list of IFile objects which contains current folder
+		FileList returns list of File objects which contains current folder
 	*/
-	FileList() ([]IFile, error)
+	FileList() ([]File, error)
 
 	/*
-		FolderList returns list of IFolder objects which contains current folder
+		FolderList returns list of Folder objects which contains current folder
 	*/
-	FolderList() ([]IFolder, error)
+	FolderList() ([]Folder, error)
 
 	/*
-		File returns IFile object by name (with extension)
+		File returns File object by name (with extension)
 	*/
-	File(name string) (IFile, error)
+	File(name string) (File, error)
 
 	/*
 		AddFile creates new file
@@ -113,14 +113,14 @@ type IFolder interface {
 	DeleteFile(name string) error
 
 	/*
-		Folder returns IFolder object by name
+		Folder returns Folder object by name
 	*/
-	Folder(name string) (IFolder, error)
+	Folder(name string) (Folder, error)
 
 	/*
 		AddFolder creates new folder by name
 	*/
-	AddFolder(name string) (IFolder, error)
+	AddFolder(name string) (Folder, error)
 
 	/*
 		DeleteFolder removes folder by name
@@ -128,7 +128,7 @@ type IFolder interface {
 	DeleteFolder(name string, force bool) error
 }
 
-type IFile interface {
+type File interface {
 	// Name returns name of file
 	Name() string
 
