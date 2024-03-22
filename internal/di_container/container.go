@@ -3,8 +3,8 @@ package di_container
 import (
 	"github.com/lowl11/boost/data/enums/di_modes"
 	"github.com/lowl11/boost/data/interfaces"
+	"github.com/lowl11/boost/pkg/io/flex"
 	"github.com/lowl11/boost/pkg/io/types"
-	"github.com/lowl11/flex"
 	"reflect"
 	"sync"
 )
@@ -98,7 +98,8 @@ func (c *container) MapControllers(constructors ...any) {
 		}
 
 		// skip, because there is non-empty arguments
-		if flex.Func(service.constructor).ArgumentsCount() > 0 {
+		f, _ := flex.Func(service.constructor)
+		if f.ArgumentsCount() > 0 {
 			continue
 		}
 
@@ -129,8 +130,8 @@ func (c *container) MapControllers(constructors ...any) {
 	// register controller types
 	controllerTypes := make([]reflect.Type, 0, len(constructors))
 	for _, controllerConstructor := range constructors {
-		flexConstructor := flex.Func(controllerConstructor)
-		if flexConstructor.ReturnCount() != 1 {
+		flexConstructor, _ := flex.Func(controllerConstructor)
+		if flexConstructor.ReturnsCount() != 1 {
 			panic("Controller Constructor has no return value or too much values: " + reflect.TypeOf(controllerConstructor).String())
 		}
 

@@ -3,7 +3,7 @@ package sql
 import (
 	"context"
 	"github.com/lowl11/boost/internal/storages"
-	"github.com/lowl11/flex"
+	"github.com/lowl11/boost/pkg/io/flex"
 	"strings"
 )
 
@@ -177,7 +177,7 @@ func (builder *insertBuilder) EntityList(list []any) InsertBuilder {
 
 	getPairs := func(columns []string, entity any) []Pair {
 		pairs := make([]Pair, 0, len(columns))
-		fStr := flex.Struct(entity)
+		fStr, _ := flex.Struct(entity)
 		for _, column := range columns {
 			if strings.Contains(column, ".") {
 				_, after, found := strings.Cut(column, ".")

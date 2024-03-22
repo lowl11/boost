@@ -4,9 +4,8 @@ import (
 	"context"
 	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/log"
-	"github.com/lowl11/flex"
+	"github.com/lowl11/boost/pkg/io/flex"
 	"net/http"
-	"reflect"
 )
 
 var (
@@ -74,7 +73,7 @@ func (s *scanner) Scan(result any) error {
 			return RecordNotFound
 		}
 
-		if flex.Type(flex.Type(reflect.TypeOf(result)).Unwrap()).IsPrimitive() {
+		if flex.Type(result).Unwrap().IsPrimitive() {
 			return rows.Scan(result)
 		}
 

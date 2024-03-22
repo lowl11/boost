@@ -4,7 +4,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/lowl11/boost/errors"
 	"github.com/lowl11/boost/log"
-	"github.com/lowl11/flex"
+	"github.com/lowl11/boost/pkg/io/flex"
 	"reflect"
 	"strings"
 )
@@ -15,32 +15,34 @@ type mappingField struct {
 }
 
 func parseObject(object any) (map[string]mappingField, error) {
-	fxType := flex.Type(reflect.TypeOf(object))
-	fxType.Reset(fxType.Unwrap())
-	if !fxType.IsStruct() {
+	if !flex.Type(object).Unwrap().IsStruct() {
 		return nil, errors.New("Given object is not struct").
 			SetType("ELK_ObjectIsNotStruct")
 	}
 
-	fxObject := flex.Struct(object)
+	fxObject, err := flex.Struct(object)
+	if err != nil {
+		return nil, err
+	}
+
 	fields := fxObject.FieldsRow()
 
 	mappings := make(map[string]mappingField)
 	for _, field := range fields {
-		name := flex.Field(field).Tag("json")
+		name := field.Tag("json")
 		if len(name) == 0 {
 			continue
 		}
 
-		fieldName := field.Type.String()
-		fxFieldType := flex.Type(field.Type)
+		fieldName := field.Type().String()
+		fxFieldType := flex.Type(field.Type())
 		if fxFieldType.IsSlice() {
-			fxFieldType = flex.Type(field.Type.Elem())
+			fxFieldType = flex.Type(field.Type().Elem())
 		}
 
 		if fieldName != "time.Time" && fieldName != "uuid.UUID" {
 			if !fxFieldType.IsPrimitive() && (fxFieldType.IsStruct() || fxFieldType.IsSlice()) && fieldName != "time.Time" && fieldName != "uuid.UUID" {
-				fxFieldType = flex.Type(field.Type.Elem())
+				fxFieldType = flex.Type(field.Type().Elem())
 
 				props, err := parseObject(reflect.New(fxFieldType.Type()).Elem().Interface())
 				if err != nil {
@@ -63,7 +65,7 @@ func parseObject(object any) (map[string]mappingField, error) {
 		}
 
 		mappings[name[0]] = mappingField{
-			Type: convertTypeToMapping(field.Type, name),
+			Type: convertTypeToMapping(flex.Type(field.Type), name),
 		}
 	}
 
@@ -71,10 +73,7 @@ func parseObject(object any) (map[string]mappingField, error) {
 }
 
 func getID(object any) (string, error) {
-	fxType := flex.Type(reflect.TypeOf(object))
-	fxType.Reset(fxType.Unwrap())
-
-	if !fxType.IsStruct() {
+	if !flex.Type(object).Unwrap().IsStruct() {
 		return "", errors.New("Given object is not struct").
 			SetType("ELK_ObjectIsNotStruct")
 	}
@@ -87,7 +86,7 @@ func getID(object any) (string, error) {
 	return "", nil
 }
 
-func convertTypeToMapping(t reflect.Type, tags []string) string {
+func convertTypeToMapping(t flex.ObjectType, tags []string) string {
 	for _, tag := range tags {
 		if strings.Contains(tag, "custom") {
 			_, after, found := strings.Cut(tag, ":")
@@ -97,24 +96,15 @@ func convertTypeToMapping(t reflect.Type, tags []string) string {
 		}
 	}
 
-	fxType := flex.Type(t)
-	fxType.Reset(fxType.Unwrap())
-
-	switch fxType.Type().String() {
-	case "time.Time":
+	if t.IsTime() {
 		return "date"
-	case "uuid.UUID":
+	} else if t.IsUUID() {
 		return "text"
+	} else if t.IsBool() {
+		return "boolean"
+	} else if t.IsNumeric() {
+		return "integer"
 	}
 
-	switch fxType.Type().Kind() {
-	case reflect.Bool:
-		return "boolean"
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
-		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
-		reflect.Float32, reflect.Float64, reflect.Complex64, reflect.Complex128:
-		return "integer"
-	default:
-		return "text"
-	}
+	return "text"
 }

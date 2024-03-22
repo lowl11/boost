@@ -1,7 +1,7 @@
 package storages
 
 import (
-	"github.com/lowl11/flex"
+	"github.com/lowl11/boost/pkg/io/flex"
 	"strings"
 )
 
@@ -9,9 +9,9 @@ func Eat(entity any) (string, string, []string) {
 	var tableName string
 	var aliasName string
 
-	fs := flex.Struct(entity).Fields()
-	for _, f := range fs {
-		tags := flex.Field(f).Tag("ef")
+	fs, _ := flex.Struct(entity)
+	for _, f := range fs.Fields() {
+		tags := f.Tag("ef")
 		if len(tags) == 0 {
 			continue
 		}
@@ -35,10 +35,11 @@ func Eat(entity any) (string, string, []string) {
 		}
 	}
 
-	fields := flex.Struct(entity).FieldsRow()
+	ent, _ := flex.Struct(entity)
+	fields := ent.FieldsRow()
 	columns := make([]string, 0, len(fields))
 	for _, field := range fields {
-		columns = append(columns, flex.Field(field).Tag("db")[0])
+		columns = append(columns, field.Tag("db")[0])
 	}
 
 	return tableName, aliasName, columns

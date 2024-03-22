@@ -1,6 +1,9 @@
 package exception
 
-import "github.com/lowl11/boost/errors"
+import (
+	"fmt"
+	"github.com/lowl11/boost/errors"
+)
 
 func CatchPanic(err any) error {
 	if err == nil {
@@ -21,6 +24,8 @@ func fromAny(err any) string {
 	switch err.(type) {
 	case string:
 		return err.(string)
+	case fmt.Stringer:
+		return err.(fmt.Stringer).String()
 	case error:
 		return err.(error).Error()
 	}

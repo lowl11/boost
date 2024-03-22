@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/lowl11/flex"
+	"github.com/lowl11/boost/pkg/io/flex"
 	"reflect"
 	"strconv"
 	"unsafe"
@@ -40,7 +40,8 @@ func toString(anyValue any, memory bool) string {
 	}
 
 	// try cast uuid
-	if flex.Type(reflect.TypeOf(anyValue)).IsUUID() {
+	fxType := flex.Type(anyValue)
+	if fxType.IsUUID() {
 		uuidValue, ok := anyValue.(uuid.UUID)
 		if ok {
 			return uuidValue.String()
