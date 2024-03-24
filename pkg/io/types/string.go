@@ -103,6 +103,14 @@ func Split(value, separator string) []string {
 	return result
 }
 
+func SplitPtr(value *string, separator string) []string {
+	if value == nil {
+		return []string{}
+	}
+
+	return Split(*value, separator)
+}
+
 func isString(value any) bool {
 	_, ok := value.(string)
 	return ok
