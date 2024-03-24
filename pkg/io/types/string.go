@@ -75,7 +75,7 @@ func toString(anyValue any, memory bool) string {
 		}
 		return string(valueInBytes)
 	case reflect.Ptr:
-		if memory {
+		if memory || value.IsZero() {
 			return fmt.Sprintf("%v", value)
 		}
 

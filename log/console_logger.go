@@ -214,6 +214,11 @@ func buildMessage(args ...any) string {
 
 	stringArgs := strings.Builder{}
 	for _, arg := range args {
+		if arg == nil {
+			stringArgs.WriteString("NULL")
+			continue
+		}
+
 		stringArgs.WriteString(types.String(arg))
 		stringArgs.WriteString(" ")
 	}
