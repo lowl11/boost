@@ -7,6 +7,7 @@ import (
 	"github.com/lowl11/boost/pkg/io/flex"
 	"reflect"
 	"strconv"
+	"strings"
 	"unsafe"
 )
 
@@ -19,9 +20,14 @@ func toString(anyValue any, memory bool) string {
 		return ""
 	}
 
-	// already string type
+	// string type
 	if stringValue, isStr := anyValue.(string); isStr {
 		return stringValue
+	}
+
+	// pointer string type
+	if ptrStringValue, isPtr := anyValue.(*string); isPtr {
+		return *ptrStringValue
 	}
 
 	// try cast to error
@@ -87,6 +93,14 @@ func toString(anyValue any, memory bool) string {
 
 func BytesToString(buffer []byte) string {
 	return *(*string)(unsafe.Pointer(&buffer))
+}
+
+func Split(value, separator string) []string {
+	result := strings.Split(value, separator)
+	if len(result) == 0 && result[0] == "" {
+		return []string{}
+	}
+	return result
 }
 
 func isString(value any) bool {
