@@ -70,36 +70,45 @@ func Map[T any, U any](source []T, fn func(T) U) []U {
 	return newSlice
 }
 
-func Reverse[T any](source []T) {
+func Reverse[T any](source []T) []T {
 	length := len(source)
+	out := make([]T, length)
+	copy(out, source)
 	for i := 0; i < length/2; i++ {
-		source[i], source[length-i-1] = source[length-i-1], source[i]
+		out[i], out[length-i-1] = out[length-i-1], out[i]
 	}
+	return out
 }
 
-func Shuffle[T any](source []T, r ...rand.Source) {
+func Shuffle[T any](source []T, r ...rand.Source) []T {
+	out := make([]T, len(source))
+	copy(out, source)
 	if r == nil || len(r) == 0 {
-		rand.Shuffle(len(source), func(i, j int) {
-			source[i], source[j] = source[j], source[i]
+		rand.Shuffle(len(out), func(i, j int) {
+			out[i], out[j] = out[j], out[i]
 		})
 
-		return
+		return out
 	}
 
 	rnd := rand.New(r[0])
-	rnd.Shuffle(len(source), func(i, j int) {
-		source[i], source[j] = source[j], source[i]
+	rnd.Shuffle(len(out), func(i, j int) {
+		out[i], out[j] = out[j], out[i]
 	})
+	return out
 }
 
-func Sort[T any](source []T, less func(a, b T) bool) {
+func Sort[T any](source []T, less func(a, b T) bool) []T {
 	if len(source) <= 1 {
-		return
+		return source
 	}
 
-	sort.Slice(source, func(i, j int) bool {
-		return less(source[i], source[j])
+	out := make([]T, len(source))
+	copy(out, source)
+	sort.Slice(out, func(i, j int) bool {
+		return less(out[i], out[j])
 	})
+	return out
 }
 
 func Add[T any](source []T, elements ...T) []T {
