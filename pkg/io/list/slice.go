@@ -222,13 +222,3 @@ func Sub[T any](source []T, start, end int) []T {
 
 	return sub
 }
-
-func Where[T any](source []T, fn func(T) bool) []T {
-	out := make([]T, 0, len(source))
-	for _, element := range source {
-		if fn(element) {
-			out = append(out, element)
-		}
-	}
-	return out
-}
