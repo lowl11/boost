@@ -28,6 +28,7 @@ type OfSlice[T any] interface {
 	SliceAny(fn ...func(T) any) []any
 	SliceString(fn ...func(T) string) []string
 	Sub(start, end int) OfSlice[T]
+	Where(fn func(T) bool) OfSlice[T]
 
 	fmt.Stringer
 }
@@ -123,6 +124,10 @@ func (os *ofSlice[T]) SliceString(fn ...func(T) string) []string {
 
 func (os *ofSlice[T]) Sub(start, end int) OfSlice[T] {
 	return newOf(Sub(os.source, start, end))
+}
+
+func (os *ofSlice[T]) Where(fn func(T) bool) OfSlice[T] {
+	return newOf(Where(os.source, fn))
 }
 
 func (os *ofSlice[T]) String() string {
