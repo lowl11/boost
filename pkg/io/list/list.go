@@ -21,6 +21,7 @@ type OfSlice[T any] interface {
 	Shuffle(source ...rand.Source) OfSlice[T]
 	Sort(less func(a, b T) bool) OfSlice[T]
 
+	Join(joins ...[]T) OfSlice[T]
 	Add(elements ...T) OfSlice[T]
 	AddLeft(elements ...T) OfSlice[T]
 	Set(index int, elements ...T) OfSlice[T]
@@ -99,6 +100,11 @@ func (os *ofSlice[T]) Sort(less func(a, b T) bool) OfSlice[T] {
 
 func (os *ofSlice[T]) Add(elements ...T) OfSlice[T] {
 	return newOf(Add(os.source, elements...))
+}
+
+func (os *ofSlice[T]) Join(joins ...[]T) OfSlice[T] {
+	joins = append(joins, os.source)
+	return newOf(Join(joins...))
 }
 
 func (os *ofSlice[T]) AddLeft(elements ...T) OfSlice[T] {

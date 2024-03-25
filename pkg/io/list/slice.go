@@ -122,6 +122,19 @@ func Add[T any](source []T, elements ...T) []T {
 	return Set(source, len(source), elements...)
 }
 
+func Join[T any](joins ...[]T) []T {
+	var capacity int
+	for _, join := range joins {
+		capacity += len(join)
+	}
+
+	out := make([]T, 0, capacity)
+	for _, join := range joins {
+		out = append(out, join...)
+	}
+	return out
+}
+
 func AddLeft[T any](source []T, elements ...T) []T {
 	return Set(source, 0, elements...)
 }
