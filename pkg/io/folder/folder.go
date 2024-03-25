@@ -2,6 +2,7 @@ package folder
 
 import (
 	"fmt"
+	"github.com/lowl11/boost/pkg/io/list"
 	"github.com/lowl11/boost/pkg/io/paths"
 	"github.com/lowl11/boost/pkg/system/object"
 	"os"
@@ -74,41 +75,32 @@ func NotExist(folderPath string) bool {
 // Objects return list of files & folders in custom model.
 // Also returned list of objects sorted by alphabet and "isDirectory" flag
 func Objects(path string) ([]object.Object, error) {
-	objectList := make([]object.Object, 0)
 	folderObjects, err := os.ReadDir(path)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, objectItem := range folderObjects {
+	return list.Of(list.Map(folderObjects, func(objectItem os.DirEntry) object.Object {
 		objectName := objectItem.Name()
 		isFolder := objectItem.IsDir()
 		objectPath := buildObjectPath(path, objectName)
 
-		objectList = append(objectList, object.Object{
+		return object.Object{
 			Name:        objectName,
 			Path:        objectPath,
 			IsFolder:    isFolder,
 			ObjectCount: Count(objectPath),
-		})
-	}
-
-	// sort by folders & files
-	sort.Slice(objectList, func(i, j int) bool {
-		return objectList[i].IsFolder
-	})
-
-	// sort folder by alphabet
-	sort.Slice(objectList, func(i, j int) bool {
-		return (objectList[i].Name < objectList[j].Name) && (objectList[i].IsFolder && objectList[j].IsFolder)
-	})
-
-	// sort files by alphabet
-	sort.Slice(objectList, func(i, j int) bool {
-		return (objectList[i].Name < objectList[j].Name) && (!objectList[i].IsFolder && !objectList[j].IsFolder)
-	})
-
-	return objectList, nil
+		}
+	})).
+		Sort(func(a, b object.Object) bool { // sort by folders & files
+			return a.IsFolder
+		}).
+		Sort(func(a, b object.Object) bool { // sort folder by alphabet
+			return (a.Name < b.Name) && (a.IsFolder && b.IsFolder)
+		}).
+		Sort(func(a, b object.Object) bool { // sort files by alphabet
+			return (a.Name < b.Name) && (!a.IsFolder && !b.IsFolder)
+		}).Slice(), nil
 }
 
 // ObjectsWithDepth return list of files & folders in custom model with all children.

@@ -1,7 +1,6 @@
 package list
 
 import (
-	"github.com/lowl11/boost/pkg/io/types"
 	"math/rand"
 	"sort"
 )
@@ -26,9 +25,9 @@ func Any[T any](source []T, fn func(T) bool) bool {
 	return false
 }
 
-func Each[T any](source []T, fn func(T)) {
-	for _, element := range source {
-		fn(element)
+func Each[T any](source []T, fn func(int, T)) {
+	for index, element := range source {
+		fn(index, element)
 	}
 }
 
@@ -60,6 +59,14 @@ func Single[T any](source []T, fn func(T) bool) *T {
 	}
 
 	return nil
+}
+
+func Get[T any](source []T, index int) *T {
+	if index < 0 || index > len(source) {
+		return nil
+	}
+
+	return &source[index]
 }
 
 func Map[T any, U any](source []T, fn func(T) U) []U {
@@ -178,23 +185,6 @@ func SliceAny[T any](source []T, fn ...func(T) any) []any {
 		}
 	}
 	return sliceAny
-}
-
-func SliceString[T any](source []T, fn ...func(T) string) []string {
-	var mapFn func(T) string
-	if len(fn) > 0 {
-		mapFn = fn[0]
-	}
-
-	sliceString := make([]string, len(source))
-	for i, element := range source {
-		if mapFn != nil {
-			sliceString[i] = mapFn(element)
-		} else {
-			sliceString[i] = types.String(element)
-		}
-	}
-	return sliceString
 }
 
 func Sub[T any](source []T, start, end int) []T {

@@ -1,6 +1,7 @@
 package flex
 
 import (
+	"github.com/lowl11/boost/pkg/io/list"
 	"reflect"
 )
 
@@ -170,15 +171,7 @@ func (t *objectType) Type() reflect.Type {
 }
 
 func (t *objectType) compare(destinations ...reflect.Kind) bool {
-	if len(destinations) == 0 {
-		return false
-	}
-
-	for _, dst := range destinations {
-		if t.t.Kind() == dst {
-			return true
-		}
-	}
-
-	return false
+	return list.Of(destinations).Exist(func(kind reflect.Kind) bool {
+		return t.t.Kind() == kind
+	})
 }

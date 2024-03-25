@@ -2,6 +2,7 @@ package flex
 
 import (
 	"fmt"
+	"github.com/lowl11/boost/pkg/io/list"
 	"reflect"
 	"strings"
 )
@@ -54,12 +55,7 @@ func (f *objectField) Tag(tagName string) []string {
 		return nil
 	}
 
-	values := strings.Split(tagValue, ",")
-	for i := 0; i < len(values); i++ {
-		values[i] = strings.TrimSpace(values[i])
-	}
-
-	return values
+	return list.Of(strings.Split(tagValue, ",")).Map(strings.TrimSpace)
 }
 
 func (f *objectField) String() string {

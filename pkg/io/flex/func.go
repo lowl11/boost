@@ -3,6 +3,7 @@ package flex
 import (
 	"errors"
 	"fmt"
+	"github.com/lowl11/boost/pkg/io/list"
 	"reflect"
 )
 
@@ -154,12 +155,9 @@ func (f *objectFunc) Call(arguments ...any) (returnValues []any, err error) {
 	values := f.funcValue().Call(in)
 
 	// convert result to any
-	returnValues = make([]any, 0, len(values))
-	for _, v := range values {
-		returnValues = append(returnValues, v.Interface())
-	}
-
-	return returnValues, nil
+	return list.Map(values, func(v reflect.Value) any {
+		return v.Interface()
+	}), nil
 }
 
 func (f *objectFunc) funcType() reflect.Type {

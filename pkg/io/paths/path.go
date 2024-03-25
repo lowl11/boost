@@ -1,21 +1,19 @@
 package paths
 
-import "strings"
+import (
+	"github.com/lowl11/boost/pkg/io/list"
+	"strings"
+)
 
 func Build(args ...string) string {
-	if len(args) == 0 {
-		return ""
-	}
-
 	builder := strings.Builder{}
-	for index, item := range args {
+	list.Of(args).Each(func(index int, item string) {
 		builder.WriteString(item)
 
 		if index < len(args)-1 {
 			builder.WriteString(dash)
 		}
-	}
-
+	})
 	return builder.String()
 }
 
