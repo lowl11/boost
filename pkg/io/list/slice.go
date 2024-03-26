@@ -62,10 +62,25 @@ func Single[T any](source []T, fn func(T) bool) *T {
 	return nil
 }
 
-func Contains[T any](source []T, value T) bool {
-	return Single(source, func(element T) bool {
-		return reflect.DeepEqual(element, value)
-	}) != nil
+func Contains[T any](source []T, value T, fn ...func(T, T) bool) bool {
+	var compareFunc func(T, T) bool
+	if len(fn) > 0 {
+		compareFunc = func(a, b T) bool {
+			return fn[0](a, b)
+		}
+	} else {
+		compareFunc = func(a, b T) bool {
+			return reflect.DeepEqual(a, b)
+		}
+	}
+
+	for _, element := range source {
+		if compareFunc(element, value) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func Get[T any](source []T, index int) *T {
