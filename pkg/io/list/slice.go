@@ -32,6 +32,16 @@ func Each[T any](source []T, fn func(int, T)) {
 	}
 }
 
+func EachErr[T any](source []T, fn func(int, T) error) error {
+	for index, element := range source {
+		if err := fn(index, element); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func Filter[T any](source []T, fn func(T) bool) []T {
 	dst := make([]T, 0, len(source))
 	for _, element := range source {
@@ -74,13 +84,9 @@ func Contains[T any](source []T, value T, fn ...func(T, T) bool) bool {
 		}
 	}
 
-	for _, element := range source {
-		if compareFunc(element, value) {
-			return true
-		}
-	}
-
-	return false
+	return Single(source, func(element T) bool {
+		return compareFunc(element, value)
+	}) != nil
 }
 
 func Get[T any](source []T, index int) *T {

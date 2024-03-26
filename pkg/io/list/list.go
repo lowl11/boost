@@ -14,6 +14,7 @@ type OfSlice[T any] interface {
 	All(fn func(T) bool) bool
 	Any(fn func(T) bool) bool
 	Each(fn func(int, T)) OfSlice[T]
+	EachErr(fn func(int, T) error) error
 
 	Filter(fn func(T) bool) OfSlice[T]
 	FilterNot(fn func(T) bool) OfSlice[T]
@@ -37,6 +38,8 @@ type OfSlice[T any] interface {
 	Sub(start, end int) OfSlice[T]
 	Map(fn func(T) T) []T
 
+	Len() int
+	Cap() int
 	fmt.Stringer
 }
 
@@ -73,6 +76,10 @@ func (os *ofSlice[T]) FilterNot(fn func(T) bool) OfSlice[T] {
 func (os *ofSlice[T]) Each(fn func(int, T)) OfSlice[T] {
 	Each(os.source, fn)
 	return os
+}
+
+func (os *ofSlice[T]) EachErr(fn func(int, T) error) error {
+	return EachErr(os.source, fn)
 }
 
 func (os *ofSlice[T]) Single(fn func(T) bool) *T {
@@ -150,11 +157,20 @@ func (os *ofSlice[T]) Map(fn func(T) T) []T {
 	return Map(os.source, fn)
 }
 
+func (os *ofSlice[T]) Len() int {
+	return len(os.source)
+}
+
+func (os *ofSlice[T]) Cap() int {
+	return cap(os.source)
+}
+
 func (os *ofSlice[T]) String() string {
 	return toString(os.source, false)
 }
 
 func toString(anyValue any, memory bool) string {
+	// todo: remove this, use types.String(). Reason: cycle import with types
 	if anyValue == nil {
 		return ""
 	}
