@@ -2,6 +2,7 @@ package list
 
 import (
 	"math/rand"
+	"reflect"
 	"sort"
 )
 
@@ -59,6 +60,12 @@ func Single[T any](source []T, fn func(T) bool) *T {
 	}
 
 	return nil
+}
+
+func Contains[T any](source []T, value T) bool {
+	return Single(source, func(element T) bool {
+		return reflect.DeepEqual(element, value)
+	}) != nil
 }
 
 func Get[T any](source []T, index int) *T {

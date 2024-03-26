@@ -30,6 +30,7 @@ type OfSlice[T any] interface {
 
 	Single(fn func(T) bool) *T
 	Exist(fn func(T) bool) bool
+	Contains(value T) bool
 	Get(index int) *T
 	Slice() []T
 	SliceAny(fn ...func(T) any) []any
@@ -80,6 +81,10 @@ func (os *ofSlice[T]) Single(fn func(T) bool) *T {
 
 func (os *ofSlice[T]) Exist(fn func(T) bool) bool {
 	return Single(os.source, fn) != nil
+}
+
+func (os *ofSlice[T]) Contains(value T) bool {
+	return Contains(os.source, value)
 }
 
 func (os *ofSlice[T]) Get(index int) *T {
